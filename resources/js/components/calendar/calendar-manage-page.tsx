@@ -884,18 +884,18 @@ import {
           onSave={saveForm}
         />
 
-        <section className="grid gap-5">
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section className="calendar-manage-page grid gap-5">
+          <div className="calendar-manage-metrics grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <Metric label="Selected Date" value={selectedDate} icon={CalendarDays} />
             <Metric label="Blocks" value={selectedBlocks.length} icon={ShieldCheck} />
             <Metric label="Bookings" value={selectedBookings.length} icon={Clock3} />
             <Metric label="Public Events" value={selectedPublicEvents.length} icon={Sparkles} />
           </div>
 
-          <div className="grid gap-5 xl:grid-cols-[1fr_25rem]">
+          <div className="calendar-manage-layout grid gap-5 xl:grid-cols-[1fr_25rem]">
             <main className="min-w-0">
-              <section className="overflow-hidden border border-[var(--bccc-backend-line)] bg-[var(--bccc-backend-panel)] shadow-[var(--bccc-backend-shadow-soft)] backdrop-blur-xl">
-                <header className="flex flex-col gap-4 border-b border-[var(--bccc-backend-line)] p-5 lg:flex-row lg:items-center lg:justify-between">
+              <section className="calendar-manage-panel overflow-hidden border border-[var(--bccc-backend-line)] bg-[var(--bccc-backend-panel)] shadow-[var(--bccc-backend-shadow-soft)] backdrop-blur-xl">
+                <header className="calendar-manage-header flex flex-col gap-4 border-b border-[var(--bccc-backend-line)] p-5 lg:flex-row lg:items-center lg:justify-between">
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--bccc-backend-gold)]">
                       Month Board
@@ -910,7 +910,7 @@ import {
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
+                  <div className="calendar-manage-controls flex flex-wrap gap-2">
                     <button
                       type="button"
                       onClick={() => goToMonth(shiftMonth(month, -1))}
@@ -940,7 +940,7 @@ import {
                 </header>
 
                 <div className="calendar-manage-scroll">
-                  <div className="min-w-[70rem]">
+                  <div className="calendar-manage-grid-inner min-w-[70rem]">
                     <div className="grid grid-cols-7 border-b border-[var(--bccc-backend-line)] bg-[var(--bccc-backend-panel-muted)]">
                       {weekdays.map((weekday) => (
                         <div
@@ -965,7 +965,7 @@ import {
                       return (
                         <div
                           key={`week-${weekIndex}`}
-                          className="relative grid grid-cols-7 border-b border-[var(--bccc-backend-line)]"
+                          className="calendar-manage-week relative grid grid-cols-7 border-b border-[var(--bccc-backend-line)]"
                           style={{ minHeight: `${weekHeight}px` }}
                         >
                           {week.map((cell, index) => {
@@ -1079,7 +1079,7 @@ import {
               </section>
             </main>
 
-            <aside className="space-y-5 xl:sticky xl:top-28 xl:self-start">
+            <aside className="calendar-manage-sidebar space-y-5 xl:sticky xl:top-28 xl:self-start">
               <section className="border border-[var(--bccc-backend-line)] bg-[var(--bccc-backend-panel)] p-5 shadow-[var(--bccc-backend-shadow-soft)] backdrop-blur-xl">
                 <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--bccc-backend-gold)]">
                   Selected Date

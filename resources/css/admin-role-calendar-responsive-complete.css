@@ -1,0 +1,627 @@
+/* =========================================================
+   BCCC EASE — Admin / Manager / Staff calendar responsiveness
+   ---------------------------------------------------------
+   Final override layer for:
+   - /admin/calendar
+   - /admin/calendar/manage
+   - /manager/calendar
+   - /manager/calendar/manage
+   - /staff/calendar
+
+   This file is imported last from bccc-system.css so it safely
+   overrides older fixed widths, forced min-widths, and overflow
+   issues without touching booking/calendar business logic.
+   ========================================================= */
+
+.admin-role-calendar-page,
+.admin-role-calendar-page *,
+.calendar-manage-page,
+.calendar-manage-page * {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.admin-role-calendar-page,
+.calendar-manage-page {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+    --role-cal-gap: clamp(0.32rem, 1vw, 0.7rem);
+    --role-cal-day-min: clamp(5rem, 10vw, 9.75rem);
+    --role-cal-radius: clamp(0.78rem, 1.5vw, 1.15rem);
+}
+
+/* Main responsive wrappers */
+.role-calendar-page,
+.role-calendar-layout,
+.role-calendar-stats,
+.role-calendar-month,
+.role-calendar-scroll,
+.role-calendar-grid,
+.calendar-manage-layout,
+.calendar-manage-panel,
+.calendar-manage-scroll,
+.calendar-manage-grid-inner,
+.calendar-manage-metrics {
+    width: 100%;
+    max-width: 100%;
+}
+
+.admin-role-calendar-stats,
+.calendar-manage-metrics {
+    width: 100%;
+}
+
+.admin-role-calendar-stats > article,
+.calendar-manage-metrics > article,
+.admin-role-calendar-month,
+.calendar-manage-panel,
+.admin-role-calendar-legend > div,
+.admin-role-calendar-selected-panel > section,
+.calendar-manage-sidebar > section {
+    border-radius: var(--role-cal-radius);
+}
+
+.admin-role-calendar-layout,
+.calendar-manage-layout {
+    width: 100%;
+    max-width: 100%;
+    align-items: start;
+}
+
+/* Header polish */
+.admin-role-calendar-month-header,
+.calendar-manage-header {
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-role-calendar-month-header::before,
+.calendar-manage-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 0% 0%, rgba(169, 132, 67, 0.12), transparent 32%),
+        radial-gradient(circle at 100% 0%, rgba(23, 56, 45, 0.1), transparent 35%);
+}
+
+.admin-role-calendar-month-header > *,
+.calendar-manage-header > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Controls */
+.admin-role-calendar-controls,
+.calendar-manage-controls {
+    align-items: stretch;
+}
+
+.admin-role-calendar-controls > *,
+.calendar-manage-controls > * {
+    flex: 1 1 auto;
+    white-space: nowrap;
+}
+
+/* Stop forced horizontal overflow from old calendar styles */
+.admin-role-calendar-scroll,
+.calendar-manage-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.admin-role-calendar-grid,
+.calendar-manage-grid-inner {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.admin-role-calendar-grid > .grid,
+.calendar-manage-grid-inner > .grid,
+.calendar-manage-week {
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+    width: 100%;
+}
+
+.admin-role-calendar-grid article,
+.calendar-manage-day {
+    min-width: 0;
+    min-height: var(--role-cal-day-min) !important;
+    overflow: hidden;
+}
+
+.admin-role-calendar-grid article :where(span, p, strong, small, a),
+.calendar-manage-day :where(span, p, strong, small, a),
+.calendar-manage-sidebar :where(h2, h3, p, span, button, a),
+.admin-role-calendar-selected-panel :where(h2, h3, p, span, button, a) {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.role-calendar-event-span,
+.calendar-manage-week > button.absolute {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.admin-role-calendar-selected-panel,
+.calendar-manage-sidebar {
+    width: 100%;
+    max-width: 100%;
+}
+
+.admin-role-calendar-selected-panel > section,
+.calendar-manage-sidebar > section {
+    overflow: hidden;
+}
+
+.admin-role-calendar-legend {
+    width: 100%;
+}
+
+.admin-role-calendar-legend > div {
+    min-height: 100%;
+}
+
+.calendar-manage-week {
+    overflow: hidden;
+}
+
+.calendar-manage-grid-inner > .grid:first-child > div,
+.admin-role-calendar-grid > .grid:first-child > div {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Large desktop */
+@media (min-width: 1536px) {
+    .admin-role-calendar-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(22rem, 26rem) !important;
+    }
+
+    .calendar-manage-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(23rem, 27rem) !important;
+    }
+}
+
+/* Desktop sticky details panel */
+@media (min-width: 1280px) {
+    .admin-role-calendar-selected-panel,
+    .calendar-manage-sidebar {
+        top: calc(var(--bccc-backend-topbar-height, 4rem) + 1.25rem) !important;
+        max-height: calc(100dvh - var(--bccc-backend-topbar-height, 4rem) - 2rem);
+        overflow-y: auto;
+        scrollbar-width: thin;
+        padding-right: 0.1rem;
+    }
+}
+
+/* Tablet / laptop */
+@media (max-width: 1279px) {
+    .admin-role-calendar-layout,
+    .calendar-manage-layout {
+        grid-template-columns: 1fr !important;
+    }
+
+    .admin-role-calendar-selected-panel,
+    .calendar-manage-sidebar {
+        position: static !important;
+        top: auto !important;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .admin-role-calendar-selected-panel > section:first-child,
+    .calendar-manage-sidebar > section:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .admin-role-calendar-grid article,
+    .calendar-manage-day {
+        --role-cal-day-min: clamp(6.25rem, 13vw, 8rem);
+    }
+
+    .calendar-manage-week {
+        min-height: clamp(11.5rem, 22vw, 16rem) !important;
+    }
+}
+
+@media (max-width: 1023px) {
+    .admin-role-calendar-page,
+    .calendar-manage-page {
+        gap: 1rem !important;
+        --role-cal-gap: clamp(0.3rem, 1.25vw, 0.5rem);
+    }
+
+    .admin-role-calendar-stats,
+    .calendar-manage-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.8rem !important;
+    }
+
+    .admin-role-calendar-stats > article,
+    .calendar-manage-metrics > article {
+        padding: 1rem !important;
+    }
+
+    .admin-role-calendar-stats > article p:last-child,
+    .calendar-manage-metrics > article p:last-child {
+        font-size: clamp(1.45rem, 4vw, 2rem) !important;
+    }
+
+    .admin-role-calendar-month-header,
+    .calendar-manage-header {
+        padding: 1rem !important;
+    }
+
+    .admin-role-calendar-month-header h2,
+    .calendar-manage-header h2 {
+        font-size: clamp(1.65rem, 5vw, 2.25rem) !important;
+        line-height: 1.06;
+    }
+
+    .admin-role-calendar-controls,
+    .calendar-manage-controls {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+        gap: 0.5rem !important;
+    }
+
+    .admin-role-calendar-controls > *,
+    .calendar-manage-controls > * {
+        width: 100%;
+        min-height: 2.65rem !important;
+        padding-inline: 0.6rem !important;
+        justify-content: center;
+        letter-spacing: 0.1em !important;
+    }
+
+    .admin-role-calendar-grid article,
+    .calendar-manage-day {
+        padding: 0.55rem !important;
+    }
+
+    .admin-role-calendar-grid article span[class*='h-8'][class*='w-8'],
+    .calendar-manage-day span[class*='h-8'][class*='w-8'] {
+        width: 1.9rem !important;
+        height: 1.9rem !important;
+        font-size: 0.78rem !important;
+    }
+
+    .calendar-manage-week > button.absolute {
+        height: 1.25rem !important;
+        padding-inline: 0.35rem !important;
+        font-size: 0.5rem !important;
+        letter-spacing: 0.05em !important;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .admin-role-calendar-page,
+    .calendar-manage-page {
+        margin-inline: -0.35rem;
+        width: calc(100% + 0.7rem);
+        max-width: calc(100% + 0.7rem);
+        gap: 0.85rem !important;
+        --role-cal-gap: 0.28rem;
+        --role-cal-day-min: clamp(3.9rem, 15.5vw, 5rem);
+        --role-cal-radius: 0.95rem;
+    }
+
+    .admin-role-calendar-stats,
+    .calendar-manage-metrics {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.65rem !important;
+    }
+
+    .admin-role-calendar-stats > article,
+    .calendar-manage-metrics > article {
+        padding: 0.78rem !important;
+        border-radius: 0.9rem !important;
+    }
+
+    .admin-role-calendar-stats > article p:first-child,
+    .calendar-manage-metrics > article p:first-child {
+        font-size: 0.48rem !important;
+        letter-spacing: 0.08em !important;
+    }
+
+    .admin-role-calendar-stats > article p:last-child,
+    .calendar-manage-metrics > article p:last-child {
+        margin-top: 0.45rem !important;
+        font-size: 1.25rem !important;
+        letter-spacing: -0.04em !important;
+    }
+
+    .admin-role-calendar-stats > article svg,
+    .calendar-manage-metrics > article svg {
+        width: 1rem !important;
+        height: 1rem !important;
+    }
+
+    .admin-role-calendar-stats > article span[class*='h-10'],
+    .admin-role-calendar-stats > article span[class*='h-11'],
+    .calendar-manage-metrics > article span[class*='h-10'],
+    .calendar-manage-metrics > article span[class*='h-11'] {
+        width: 2rem !important;
+        height: 2rem !important;
+    }
+
+    .admin-role-calendar-month,
+    .calendar-manage-panel {
+        border-radius: 0.95rem !important;
+    }
+
+    .admin-role-calendar-month-header,
+    .calendar-manage-header {
+        padding: 0.85rem !important;
+        gap: 0.8rem !important;
+    }
+
+    .admin-role-calendar-month-header p:last-child,
+    .calendar-manage-header p:last-child {
+        display: none;
+    }
+
+    .admin-role-calendar-month-header h2,
+    .calendar-manage-header h2 {
+        font-size: clamp(1.35rem, 7vw, 1.75rem) !important;
+    }
+
+    .admin-role-calendar-controls,
+    .calendar-manage-controls {
+        gap: 0.4rem !important;
+    }
+
+    .admin-role-calendar-controls > *,
+    .calendar-manage-controls > * {
+        min-height: 2.35rem !important;
+        padding-inline: 0.35rem !important;
+        font-size: 0.52rem !important;
+        letter-spacing: 0.04em !important;
+    }
+
+    .admin-role-calendar-controls svg,
+    .calendar-manage-controls svg {
+        width: 0.9rem !important;
+        height: 0.9rem !important;
+    }
+
+    .admin-role-calendar-grid > .grid:first-child > div,
+    .calendar-manage-grid-inner > .grid:first-child > div {
+        padding: 0.45rem 0.1rem !important;
+        font-size: 0.5rem !important;
+        letter-spacing: 0.05em !important;
+    }
+
+    .admin-role-calendar-grid article,
+    .calendar-manage-day {
+        min-height: var(--role-cal-day-min) !important;
+        padding: 0.35rem !important;
+        border-radius: 0 !important;
+    }
+
+    .admin-role-calendar-grid article > .relative,
+    .calendar-manage-day > div:first-child {
+        min-height: 0;
+    }
+
+    .admin-role-calendar-grid article span[class*='h-8'][class*='w-8'],
+    .calendar-manage-day span[class*='h-8'][class*='w-8'] {
+        width: 1.55rem !important;
+        height: 1.55rem !important;
+        font-size: 0.68rem !important;
+    }
+
+    .admin-role-calendar-grid article .mt-2.flex,
+    .calendar-manage-day .mt-2.flex {
+        gap: 0.18rem !important;
+        margin-top: 0.3rem !important;
+    }
+
+    .admin-role-calendar-grid article .mt-2.flex > span,
+    .calendar-manage-day .mt-2.flex > span {
+        min-height: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        padding: 0 !important;
+        font-size: 0 !important;
+        letter-spacing: 0 !important;
+    }
+
+    .admin-role-calendar-grid article .mt-2.flex > span::before,
+    .calendar-manage-day .mt-2.flex > span::before {
+        content: '';
+        display: block;
+        width: 0.38rem;
+        height: 0.38rem;
+        border-radius: 999px;
+        background: currentColor;
+        opacity: 0.95;
+    }
+
+    .admin-role-calendar-grid article .mt-2.grid,
+    .calendar-manage-day span.inline-flex.items-center.gap-1\.5 {
+        display: none !important;
+    }
+
+    .admin-role-calendar-grid article > .absolute,
+    .role-calendar-event-span,
+    .calendar-manage-week > button.absolute,
+    .calendar-manage-week > div.absolute {
+        display: none !important;
+    }
+
+    .calendar-manage-week {
+        min-height: var(--role-cal-day-min) !important;
+    }
+
+    .admin-role-calendar-legend {
+        display: flex !important;
+        gap: 0.55rem !important;
+        overflow-x: auto;
+        padding-bottom: 0.15rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .admin-role-calendar-legend > div {
+        flex: 0 0 min(12rem, 76vw);
+        padding: 0.8rem !important;
+        border-radius: 0.9rem !important;
+    }
+
+    .admin-role-calendar-selected-panel,
+    .calendar-manage-sidebar {
+        display: grid;
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem !important;
+    }
+
+    .admin-role-calendar-selected-panel > section,
+    .calendar-manage-sidebar > section {
+        border-radius: 0.95rem !important;
+        padding: 0.95rem !important;
+    }
+
+    .admin-role-calendar-selected-panel h2,
+    .calendar-manage-sidebar h2 {
+        font-size: clamp(1.15rem, 6vw, 1.45rem) !important;
+        line-height: 1.12;
+    }
+
+    .admin-role-calendar-selected-panel .grid,
+    .calendar-manage-sidebar .grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .calendar-manage-sidebar article,
+    .admin-role-calendar-selected-panel article {
+        border-radius: 0.8rem;
+    }
+}
+
+/* Very small phones */
+@media (max-width: 420px) {
+    .admin-role-calendar-page,
+    .calendar-manage-page {
+        margin-inline: -0.55rem;
+        width: calc(100% + 1.1rem);
+        max-width: calc(100% + 1.1rem);
+        --role-cal-day-min: clamp(3.15rem, 14vw, 3.8rem);
+        --role-cal-gap: 0.2rem;
+    }
+
+    .admin-role-calendar-stats,
+    .calendar-manage-metrics {
+        gap: 0.5rem !important;
+    }
+
+    .admin-role-calendar-month-header,
+    .calendar-manage-header {
+        padding-inline: 0.65rem !important;
+    }
+
+    .admin-role-calendar-controls,
+    .calendar-manage-controls {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .admin-role-calendar-controls > *,
+    .calendar-manage-controls > * {
+        min-height: 2.18rem !important;
+        font-size: 0.47rem !important;
+    }
+
+    .admin-role-calendar-grid article,
+    .calendar-manage-day {
+        padding: 0.28rem !important;
+    }
+
+    .admin-role-calendar-grid article span[class*='h-8'][class*='w-8'],
+    .calendar-manage-day span[class*='h-8'][class*='w-8'] {
+        width: 1.35rem !important;
+        height: 1.35rem !important;
+        font-size: 0.6rem !important;
+    }
+
+    .admin-role-calendar-grid article .mt-2.flex,
+    .calendar-manage-day .mt-2.flex {
+        display: none !important;
+    }
+}
+
+/* Ultra-narrow screens */
+@media (max-width: 360px) {
+    .admin-role-calendar-controls > *,
+    .calendar-manage-controls > * {
+        font-size: 0 !important;
+    }
+
+    .admin-role-calendar-controls > * svg,
+    .calendar-manage-controls > * svg {
+        margin: 0 !important;
+    }
+
+    .admin-role-calendar-controls > *::after,
+    .calendar-manage-controls > *::after {
+        font-size: 0.52rem;
+    }
+
+    .admin-role-calendar-stats,
+    .calendar-manage-metrics {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Short desktop screens */
+@media (max-height: 700px) and (min-width: 1280px) {
+    .admin-role-calendar-selected-panel,
+    .calendar-manage-sidebar {
+        position: static !important;
+        max-height: none;
+        overflow: visible;
+    }
+}
+
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .admin-role-calendar-grid article:hover,
+    .calendar-manage-day:hover {
+        transform: none !important;
+    }
+}
+
+/* Print */
+@media print {
+    .admin-role-calendar-page,
+    .calendar-manage-page {
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .admin-role-calendar-grid,
+    .calendar-manage-grid-inner {
+        min-width: 0 !important;
+    }
+
+    .admin-role-calendar-selected-panel,
+    .calendar-manage-sidebar {
+        position: static !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}

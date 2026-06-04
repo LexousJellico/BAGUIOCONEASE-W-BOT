@@ -399,7 +399,7 @@ function SelectedDayPanel({
     const canCreateOnSelectedDate = canCreate && !isEveOnlyDay(day.availability) && availabilityLabel(day.availability, day.key) !== 'Unavailable' && availabilityLabel(day.availability, day.key) !== 'Past / Unavailable';
 
     return (
-        <aside className="role-calendar-selected-panel space-y-4 self-start xl:sticky xl:top-28">
+        <aside className="role-calendar-selected-panel admin-role-calendar-selected-panel space-y-4 self-start xl:sticky xl:top-28">
             <section className="border border-[var(--bccc-backend-line)] bg-[var(--bccc-backend-panel)] p-5 shadow-[var(--bccc-backend-shadow-soft)] backdrop-blur-xl">
                 <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--bccc-backend-gold)]">
                     Selected Date
@@ -457,7 +457,7 @@ function SelectedDayPanel({
                 </div>
             </section>
 
-            <section className="role-calendar-month overflow-hidden border border-[var(--bccc-backend-line)] bg-[var(--bccc-backend-panel)] shadow-[var(--bccc-backend-shadow-soft)] backdrop-blur-xl">
+            <section className="role-calendar-month admin-role-calendar-month overflow-hidden border border-[var(--bccc-backend-line)] bg-[var(--bccc-backend-panel)] shadow-[var(--bccc-backend-shadow-soft)] backdrop-blur-xl">
                 <div className="border-b border-[var(--bccc-backend-line)] p-4">
                     <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[var(--bccc-backend-gold)]">
                         Items on this date
@@ -571,17 +571,17 @@ export function RoleCalendarPage() {
                 </>
             }
         >
-            <section className="role-calendar-page grid gap-5">
-                <div className="role-calendar-stats grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <section className="role-calendar-page admin-role-calendar-page grid gap-5">
+                <div className="role-calendar-stats admin-role-calendar-stats grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     {stats.map((stat) => (
                         <CountCard key={stat.label} label={stat.label} value={stat.value} icon={stat.icon} />
                     ))}
                 </div>
 
-                <div className="role-calendar-layout grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+                <div className="role-calendar-layout admin-role-calendar-layout grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
                     <main className="min-w-0">
-                        <section className="role-calendar-month overflow-hidden border border-[var(--bccc-backend-line)] bg-[var(--bccc-backend-panel)] shadow-[var(--bccc-backend-shadow-soft)] backdrop-blur-xl">
-                            <div className="flex flex-col gap-4 border-b border-[var(--bccc-backend-line)] p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
+                        <section className="role-calendar-month admin-role-calendar-month overflow-hidden border border-[var(--bccc-backend-line)] bg-[var(--bccc-backend-panel)] shadow-[var(--bccc-backend-shadow-soft)] backdrop-blur-xl">
+                            <div className="admin-role-calendar-month-header flex flex-col gap-4 border-b border-[var(--bccc-backend-line)] p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--bccc-backend-gold)]">
                                         Calendar Month
@@ -598,7 +598,7 @@ export function RoleCalendarPage() {
                                     </p>
                                 </div>
 
-                                <div className="flex flex-wrap gap-2">
+                                <div className="admin-role-calendar-controls flex flex-wrap gap-2">
                                     <button
                                         type="button"
                                         onClick={() => goToMonth(previousMonth)}
@@ -628,8 +628,8 @@ export function RoleCalendarPage() {
                                 </div>
                             </div>
 
-                            <div className="role-calendar-scroll overflow-x-auto overscroll-x-contain">
-                                <div className="role-calendar-grid min-w-[56rem]">
+                            <div className="role-calendar-scroll admin-role-calendar-scroll overflow-x-auto overscroll-x-contain">
+                                <div className="role-calendar-grid admin-role-calendar-grid min-w-[56rem]">
                                     <div className="grid grid-cols-7 border-b border-[var(--bccc-backend-line)] bg-[var(--bccc-backend-panel-muted)]">
                                         {weekLabels.map((label) => (
                                             <div
@@ -656,7 +656,7 @@ export function RoleCalendarPage() {
                             </div>
                         </section>
 
-                        <section className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                        <section className="role-calendar-legend admin-role-calendar-legend mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                             {[
                                 ['Available', 'Open or mostly open date', 'bg-emerald-500'],
                                 ['Limited', 'Some blocks occupied', 'bg-blue-500'],

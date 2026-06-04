@@ -464,140 +464,142 @@ export default function UserCalendarIndex() {
             actions={
                 <Link
                     href="/book"
-                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:-translate-y-0.5 hover:shadow-lg"
+                    className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:-translate-y-0.5 hover:shadow-lg sm:w-auto"
                 >
                     <Plus className="h-4 w-4" />
                     New Booking
                 </Link>
             }
         >
-            <section className="user-calendar-responsive-card overflow-hidden rounded-[1.5rem] border border-border bg-card text-card-foreground shadow-[0_28px_80px_rgba(0,0,0,0.10)] dark:shadow-[0_28px_90px_rgba(0,0,0,0.35)]">
-                <div className="relative border-b border-border bg-muted/40 p-4 sm:p-6">
-                    <button
-                        type="button"
-                        onClick={() => goToMonth(addMonth(month, -1))}
-                        className="absolute left-4 top-5 grid h-11 w-11 place-items-center border border-border bg-background/70 text-foreground transition hover:-translate-x-0.5 hover:border-primary/40 hover:bg-primary/10 sm:left-6"
-                        aria-label="Previous month"
-                    >
-                        <ArrowLeft className="h-4 w-4" />
-                    </button>
+            <section className="my-calendar-page user-calendar-responsive-card overflow-hidden rounded-[1.5rem] border border-border bg-card text-card-foreground shadow-[0_28px_80px_rgba(0,0,0,0.10)] dark:shadow-[0_28px_90px_rgba(0,0,0,0.35)]">
+                <div className="user-calendar-toolbar border-b border-border bg-muted/40 p-3 sm:p-5 lg:p-6">
+                    <div className="user-calendar-month-switcher">
+                        <button
+                            type="button"
+                            onClick={() => goToMonth(addMonth(month, -1))}
+                            className="user-calendar-nav-button grid h-11 w-11 shrink-0 place-items-center rounded-full border border-border bg-background/80 text-foreground transition hover:-translate-x-0.5 hover:border-primary/40 hover:bg-primary/10"
+                            aria-label="Previous month"
+                        >
+                            <ArrowLeft className="h-4 w-4" />
+                        </button>
 
-                    <div className="mx-auto max-w-2xl px-14 text-center">
-                        <p className="text-[0.68rem] font-black uppercase tracking-[0.32em] text-muted-foreground">Client Calendar</p>
-                        <h2 className="mt-2 text-3xl font-semibold tracking-[-0.06em] text-foreground sm:text-4xl">
-                            {monthLabel(month)}
-                        </h2>
-                        <p className="mx-auto mt-2 max-w-lg text-xs leading-6 text-muted-foreground sm:text-sm">
-                            Your own bookings appear by status. Reserved dates from other clients stay private, while past unavailable dates are faded gray.
-                        </p>
+                        <div className="user-calendar-month-copy min-w-0 text-center">
+                            <p className="text-[0.62rem] font-black uppercase tracking-[0.26em] text-muted-foreground sm:text-[0.68rem] sm:tracking-[0.32em]">Client Calendar</p>
+                            <h2 className="mt-1 text-2xl font-semibold tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl">
+                                {monthLabel(month)}
+                            </h2>
+                            <p className="mx-auto mt-2 max-w-2xl text-xs leading-6 text-muted-foreground sm:text-sm">
+                                Your bookings are highlighted by status. Other private reservations stay hidden while unavailable dates remain clearly marked.
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={() => goToMonth(addMonth(month, 1))}
+                            className="user-calendar-nav-button grid h-11 w-11 shrink-0 place-items-center rounded-full border border-border bg-background/80 text-foreground transition hover:translate-x-0.5 hover:border-primary/40 hover:bg-primary/10"
+                            aria-label="Next month"
+                        >
+                            <ArrowRight className="h-4 w-4" />
+                        </button>
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={() => goToMonth(addMonth(month, 1))}
-                        className="absolute right-4 top-5 grid h-11 w-11 place-items-center border border-border bg-background/70 text-foreground transition hover:translate-x-0.5 hover:border-primary/40 hover:bg-primary/10 sm:right-6"
-                        aria-label="Next month"
-                    >
-                        <ArrowRight className="h-4 w-4" />
-                    </button>
-
-                    <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-                        {[
-                            ['Mine', statusCounts.mine, 'bg-blue-500'],
-                            ['Available', statusCounts.available, 'bg-emerald-500'],
-                            ['Limited', statusCounts.limited, 'bg-yellow-500'],
-                            ['Reserved', statusCounts.reserved, 'bg-rose-500'],
-                            ['Public', statusCounts.public, 'bg-sky-500'],
-                            ['Past / Unavailable', statusCounts.unavailable, 'bg-slate-400'],
-                        ].map(([label, count, dot]) => (
-                            <span
-                                key={String(label)}
-                                className="inline-flex min-h-9 items-center gap-2 rounded-full border border-border bg-background/70 px-3 text-[0.68rem] font-black uppercase tracking-[0.14em] text-muted-foreground"
-                            >
-                                <i className={cx('h-2.5 w-2.5 rounded-full', String(dot))} />
-                                {label}
-                                <b className="font-black text-foreground">{count}</b>
-                            </span>
-                        ))}
+                    <div className="user-calendar-legend-scroller mt-4" aria-label="Calendar status legend">
+                        <div className="user-calendar-legend flex items-center gap-2">
+                            {[
+                                ['Mine', statusCounts.mine, 'bg-blue-500'],
+                                ['Available', statusCounts.available, 'bg-emerald-500'],
+                                ['Limited', statusCounts.limited, 'bg-yellow-500'],
+                                ['Reserved', statusCounts.reserved, 'bg-rose-500'],
+                                ['Public', statusCounts.public, 'bg-sky-500'],
+                                ['Past / Unavailable', statusCounts.unavailable, 'bg-slate-400'],
+                            ].map(([label, count, dot]) => (
+                                <span
+                                    key={String(label)}
+                                    className="user-calendar-legend-pill inline-flex min-h-9 shrink-0 items-center gap-2 rounded-full border border-border bg-background/75 px-3 text-[0.65rem] font-black uppercase tracking-[0.14em] text-muted-foreground"
+                                >
+                                    <i className={cx('h-2.5 w-2.5 rounded-full', String(dot))} />
+                                    <span>{label}</span>
+                                    <b className="font-black text-foreground">{count}</b>
+                                </span>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                <div className="user-calendar-layout grid gap-0 xl:grid-cols-[minmax(0,1fr)_24rem]">
-                    <div className="user-calendar-grid-scroll overflow-x-auto p-3 sm:p-5">
-                        <div className="user-calendar-grid-inner min-w-[42rem] overflow-hidden">
-                            <div className="user-calendar-grid grid grid-cols-7 gap-2">
-                                {weekLabels.map((label) => (
-                                    <div
-                                        key={label}
-                                        className="px-2 py-3 text-center text-[0.68rem] font-black uppercase tracking-[0.24em] text-muted-foreground"
-                                    >
-                                        {label}
-                                    </div>
-                                ))}
-
-                                {grid.map((day) => {
-                                    const dayAvailability = availability[day.key];
-                                    const own = ownBookingForDate(events, day.key);
-                                    const status = dayStatus(dayAvailability, day.key, own);
-                                    const tone = dayTone(status);
-                                    const selected = day.key === selectedDate;
-                                    const hasVisibleEvents = eventsForDate(events, day.key).length > 0;
-
-                                    return (
-                                        <button
-                                            key={day.key}
-                                            type="button"
-                                            onClick={() => setSelectedDate(day.key)}
-                                            className={cx(
-                                                'user-calendar-day group relative min-h-[6.1rem] overflow-hidden border bg-background/70 p-3 text-left transition duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-[0_18px_40px_rgba(0,0,0,0.10)] dark:bg-white/[0.035] sm:min-h-[6.7rem]',
-                                                tone.border,
-                                                !day.current && 'opacity-40',
-                                                selected && cx('z-10 bg-background shadow-[0_0_0_1px_rgba(180,140,80,0.20),0_24px_65px_rgba(0,0,0,0.16)] dark:bg-white/[0.07]', tone.selectedBorder),
-                                                day.today && !selected && 'ring-1 ring-inset ring-primary/35',
-                                            )}
-                                            aria-label={`${fullDateLabel(day.key)} ${status}`}
+                <div className="user-calendar-layout grid gap-0 xl:grid-cols-[minmax(0,1fr)_24rem] 2xl:grid-cols-[minmax(0,1fr)_26rem]">
+                    <div className="user-calendar-calendar-wrap min-w-0 p-2 sm:p-4 lg:p-5">
+                        <div className="user-calendar-grid-scroll overflow-x-auto">
+                            <div className="user-calendar-grid-inner w-full overflow-hidden">
+                                <div className="user-calendar-grid grid grid-cols-7 gap-1.5 sm:gap-2">
+                                    {weekLabels.map((label) => (
+                                        <div
+                                            key={label}
+                                            className="user-calendar-week-label px-1 py-2 text-center text-[0.56rem] font-black uppercase tracking-[0.12em] text-muted-foreground sm:px-2 sm:py-3 sm:text-[0.68rem] sm:tracking-[0.22em]"
                                         >
-                                            <span className={cx('pointer-events-none absolute inset-0 transition duration-300', tone.fill)} />
+                                            {label}
+                                        </div>
+                                    ))}
 
-                                            <span className="relative z-10 flex h-full min-h-[4.9rem] flex-col justify-between gap-2">
-                                                <span className="flex items-start justify-between gap-2">
-                                                    <strong className={cx('text-lg font-black tracking-[-0.03em]', day.current ? 'text-foreground' : 'text-muted-foreground')}>
-                                                        {day.number}
-                                                    </strong>
+                                    {grid.map((day) => {
+                                        const dayAvailability = availability[day.key];
+                                        const own = ownBookingForDate(events, day.key);
+                                        const status = dayStatus(dayAvailability, day.key, own);
+                                        const tone = dayTone(status);
+                                        const selected = day.key === selectedDate;
+                                        const hasVisibleEvents = eventsForDate(events, day.key).length > 0;
+                                        const dayBadge = own ? ownBookingStage(own) : selected ? 'Selected' : hasVisibleEvents ? 'Item' : '';
 
-                                                    <span className={cx('mt-1 h-2.5 w-2.5 rounded-full', tone.dot)} />
+                                        return (
+                                            <button
+                                                key={day.key}
+                                                type="button"
+                                                onClick={() => setSelectedDate(day.key)}
+                                                className={cx(
+                                                    'user-calendar-day group relative min-h-[4.55rem] overflow-hidden rounded-2xl border bg-background/70 p-2 text-left transition duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-[0_18px_40px_rgba(0,0,0,0.10)] dark:bg-white/[0.035] sm:min-h-[6.2rem] sm:p-3 lg:min-h-[6.7rem]',
+                                                    tone.border,
+                                                    !day.current && 'opacity-40',
+                                                    selected && cx('z-10 bg-background shadow-[0_0_0_1px_rgba(180,140,80,0.20),0_24px_65px_rgba(0,0,0,0.16)] dark:bg-white/[0.07]', tone.selectedBorder),
+                                                    day.today && !selected && 'ring-1 ring-inset ring-primary/35',
+                                                )}
+                                                aria-label={`${fullDateLabel(day.key)} ${status}`}
+                                                aria-pressed={selected}
+                                            >
+                                                <span className={cx('pointer-events-none absolute inset-0 transition duration-300', tone.fill)} />
+
+                                                <span className="relative z-10 flex h-full min-h-[3.65rem] flex-col justify-between gap-1.5 sm:min-h-[4.9rem] sm:gap-2">
+                                                    <span className="flex items-start justify-between gap-1.5">
+                                                        <strong className={cx('user-calendar-day-number text-base font-black tracking-[-0.03em] sm:text-lg', day.current ? 'text-foreground' : 'text-muted-foreground')}>
+                                                            {day.number}
+                                                        </strong>
+
+                                                        <span className={cx('user-calendar-day-dot mt-1 h-2.5 w-2.5 rounded-full', tone.dot)} />
+                                                    </span>
+
+                                                    <span className="min-w-0">
+                                                        {dayBadge ? (
+                                                            <span className={cx('user-calendar-day-badge block truncate rounded-full px-1.5 py-1 text-center text-[0.5rem] font-black uppercase tracking-[0.08em] sm:px-2 sm:text-[0.56rem] sm:tracking-[0.12em]', own || selected ? tone.badge : 'text-muted-foreground')}>
+                                                                {dayBadge}
+                                                            </span>
+                                                        ) : null}
+                                                    </span>
                                                 </span>
-
-                                                <span className="min-w-0">
-                                                    {own ? (
-                                                        <span className={cx('block truncate rounded-full px-2 py-1 text-[0.56rem] font-black uppercase tracking-[0.12em]', tone.badge)}>
-                                                            {ownBookingStage(own)}
-                                                        </span>
-                                                    ) : selected ? (
-                                                        <span className={cx('block truncate rounded-full px-2 py-1 text-[0.56rem] font-black uppercase tracking-[0.12em]', tone.badge)}>
-                                                            Selected
-                                                        </span>
-                                                    ) : hasVisibleEvents ? (
-                                                        <span className="block truncate text-[0.62rem] font-bold text-muted-foreground">Calendar item</span>
-                                                    ) : null}
-                                                </span>
-                                            </span>
-                                        </button>
-                                    );
-                                })}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <aside className="user-calendar-detail-panel border-t border-border bg-muted/30 p-4 sm:p-5 xl:border-l xl:border-t-0">
-                        <div className="rounded-[1.2rem] border border-border bg-card p-4 shadow-[0_18px_45px_rgba(0,0,0,0.08)] dark:shadow-[0_18px_55px_rgba(0,0,0,0.24)]">
-                            <p className="text-[0.66rem] font-black uppercase tracking-[0.28em] text-muted-foreground">Selected Date</p>
-                            <h3 className="mt-2 text-2xl font-semibold tracking-[-0.05em] text-foreground">{fullDateLabel(selectedDate)}</h3>
+                    <aside className="user-calendar-detail-panel border-t border-border bg-muted/30 p-3 sm:p-5 xl:border-l xl:border-t-0">
+                        <div className="user-calendar-detail-card rounded-[1.2rem] border border-border bg-card p-4 shadow-[0_18px_45px_rgba(0,0,0,0.08)] dark:shadow-[0_18px_55px_rgba(0,0,0,0.24)] sm:p-5">
+                            <p className="text-[0.64rem] font-black uppercase tracking-[0.24em] text-muted-foreground">Selected Date</p>
+                            <h3 className="mt-2 text-xl font-semibold tracking-[-0.05em] text-foreground sm:text-2xl">{fullDateLabel(selectedDate)}</h3>
 
-                            <div className={cx('mt-4 inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-black uppercase tracking-[0.14em]', selectedTone.badge)}>
-                                <SelectedIcon className="h-4 w-4" />
-                                <span className={cx('h-2.5 w-2.5 rounded-full', selectedTone.dot)} />
-                                {selectedStatus}
+                            <div className={cx('mt-4 inline-flex max-w-full items-center gap-2 rounded-full px-3 py-2 text-[0.68rem] font-black uppercase tracking-[0.12em] sm:text-xs sm:tracking-[0.14em]', selectedTone.badge)}>
+                                <SelectedIcon className="h-4 w-4 shrink-0" />
+                                <span className={cx('h-2.5 w-2.5 shrink-0 rounded-full', selectedTone.dot)} />
+                                <span className="min-w-0 truncate">{selectedStatus}</span>
                             </div>
 
                             <p className="mt-4 text-sm leading-7 text-muted-foreground">{dayStatusDescription(selectedStatus)}</p>
@@ -608,7 +610,7 @@ export default function UserCalendarIndex() {
                                     const times = blockTimes(block);
                                     const content = (
                                         <>
-                                            <span className="inline-flex min-w-0 items-start gap-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
+                                            <span className="inline-flex min-w-0 items-start gap-2 text-xs font-black uppercase tracking-[0.14em] text-muted-foreground">
                                                 <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                                                 <span className="min-w-0">
                                                     <span className="block">{times.label}</span>
@@ -616,7 +618,7 @@ export default function UserCalendarIndex() {
                                                 </span>
                                             </span>
 
-                                            <strong className={cx('shrink-0 text-xs font-black uppercase tracking-[0.13em]', available ? 'text-emerald-700 dark:text-emerald-200' : 'text-slate-600 dark:text-slate-200')}>
+                                            <strong className={cx('shrink-0 text-[0.68rem] font-black uppercase tracking-[0.11em] sm:text-xs sm:tracking-[0.13em]', available ? 'text-emerald-700 dark:text-emerald-200' : 'text-slate-600 dark:text-slate-200')}>
                                                 {available ? 'Book This' : selectedOwnBooking ? 'Your Booking' : 'Not Available'}
                                             </strong>
                                         </>
@@ -626,12 +628,12 @@ export default function UserCalendarIndex() {
                                         <Link
                                             key={block}
                                             href={blockBookingHref(selectedDate, block)}
-                                            className="user-calendar-block-row flex items-center justify-between gap-3 border border-emerald-500/20 bg-emerald-500/10 px-3 py-3 transition hover:-translate-y-0.5 hover:border-primary/45 hover:bg-primary/10 hover:shadow-[0_14px_32px_rgba(0,0,0,0.10)]"
+                                            className="user-calendar-block-row flex items-center justify-between gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-3 transition hover:-translate-y-0.5 hover:border-primary/45 hover:bg-primary/10 hover:shadow-[0_14px_32px_rgba(0,0,0,0.10)]"
                                         >
                                             {content}
                                         </Link>
                                     ) : (
-                                        <div key={block} className="user-calendar-block-row flex items-center justify-between gap-3 border border-border bg-background/70 px-3 py-3 opacity-80">
+                                        <div key={block} className="user-calendar-block-row flex items-center justify-between gap-3 rounded-2xl border border-border bg-background/70 px-3 py-3 opacity-80">
                                             {content}
                                         </div>
                                     );
@@ -639,21 +641,21 @@ export default function UserCalendarIndex() {
                             </div>
 
                             <div className="mt-5 grid gap-2">
-                                <p className="text-[0.66rem] font-black uppercase tracking-[0.22em] text-muted-foreground">Small Details</p>
+                                <p className="text-[0.64rem] font-black uppercase tracking-[0.22em] text-muted-foreground">Small Details</p>
 
                                 {selectedEvents.length > 0 ? (
                                     selectedEvents.map((event, index) => {
                                         const href = bookingHref(event);
                                         const body = (
-                                            <div className="flex items-start gap-2">
-                                                {normalize(event.kind) === 'block' ? <LockKeyhole className="mt-0.5 h-4 w-4" /> : <CalendarDays className="mt-0.5 h-4 w-4" />}
+                                            <div className="flex min-w-0 items-start gap-2">
+                                                {normalize(event.kind) === 'block' ? <LockKeyhole className="mt-0.5 h-4 w-4 shrink-0" /> : <CalendarDays className="mt-0.5 h-4 w-4 shrink-0" />}
                                                 <div className="min-w-0 flex-1">
                                                     <strong className="block truncate font-bold">{eventLabel(event)}</strong>
-                                                    <span className="mt-1 inline-flex items-center gap-1 text-xs opacity-75">
-                                                        <MapPin className="h-3.5 w-3.5" />
-                                                        {event.area || event.block || 'BCCC'}
+                                                    <span className="mt-1 inline-flex max-w-full items-center gap-1 text-xs opacity-75">
+                                                        <MapPin className="h-3.5 w-3.5 shrink-0" />
+                                                        <span className="min-w-0 truncate">{event.area || event.block || 'BCCC'}</span>
                                                     </span>
-                                                    <span className="mt-1 block text-[0.68rem] font-black uppercase tracking-[0.12em] opacity-80">
+                                                    <span className="mt-1 block truncate text-[0.68rem] font-black uppercase tracking-[0.12em] opacity-80">
                                                         {eventStatusLabel(event)}
                                                     </span>
                                                 </div>

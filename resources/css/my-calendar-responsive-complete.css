@@ -1,0 +1,384 @@
+/* =========================================================
+   BCCC EASE — My Calendar responsive completion
+   ---------------------------------------------------------
+   Final overrides for the client /my-calendar page.
+   The calendar must never require horizontal page scrolling,
+   must remain readable from 320px phones to large desktops,
+   and must keep the details panel accessible on every size.
+   ========================================================= */
+
+.role-workspace-body:has(.my-calendar-page),
+.my-calendar-page,
+.my-calendar-page * {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.role-workspace-body:has(.my-calendar-page) {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+}
+
+.my-calendar-page {
+    width: 100%;
+    max-width: 100%;
+    isolation: isolate;
+    --calendar-gap: clamp(0.35rem, 1.1vw, 0.65rem);
+    --calendar-day-radius: clamp(0.72rem, 2vw, 1rem);
+}
+
+.my-calendar-page .user-calendar-toolbar {
+    position: relative;
+    overflow: hidden;
+}
+
+.my-calendar-page .user-calendar-toolbar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 12% 5%, rgba(169, 132, 67, 0.13), transparent 32%),
+        radial-gradient(circle at 88% 0%, rgba(23, 56, 45, 0.11), transparent 34%);
+}
+
+.my-calendar-page .user-calendar-toolbar > * {
+    position: relative;
+    z-index: 1;
+}
+
+.my-calendar-page .user-calendar-month-switcher {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    width: 100%;
+}
+
+.my-calendar-page .user-calendar-month-copy {
+    max-width: min(56rem, 100%);
+    margin-inline: auto;
+}
+
+.my-calendar-page .user-calendar-nav-button {
+    border-radius: 999px !important;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.my-calendar-page .user-calendar-legend-scroller {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.25rem;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.my-calendar-page .user-calendar-legend {
+    justify-content: center;
+    width: max-content;
+    min-width: 100%;
+    padding-inline: 0.15rem;
+}
+
+.my-calendar-page .user-calendar-legend-pill {
+    white-space: nowrap;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.04);
+}
+
+.my-calendar-page .user-calendar-layout {
+    width: 100%;
+    max-width: 100%;
+}
+
+.my-calendar-page .user-calendar-calendar-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.my-calendar-page .user-calendar-grid-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+}
+
+.my-calendar-page .user-calendar-grid-inner {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.my-calendar-page .user-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--calendar-gap) !important;
+    width: 100%;
+}
+
+.my-calendar-page .user-calendar-week-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.my-calendar-page .user-calendar-day {
+    width: 100%;
+    min-width: 0;
+    border-radius: var(--calendar-day-radius) !important;
+    touch-action: manipulation;
+    outline-offset: 2px;
+}
+
+.my-calendar-page .user-calendar-day:hover {
+    transform: translateY(-2px);
+}
+
+.my-calendar-page .user-calendar-day-number,
+.my-calendar-page .user-calendar-day-badge,
+.my-calendar-page .user-calendar-day-dot {
+    position: relative;
+    z-index: 1;
+}
+
+.my-calendar-page .user-calendar-day-badge {
+    max-width: 100%;
+}
+
+.my-calendar-page .user-calendar-detail-panel {
+    min-width: 0;
+    width: 100%;
+}
+
+.my-calendar-page .user-calendar-detail-card {
+    width: 100%;
+    max-width: 100%;
+}
+
+.my-calendar-page .user-calendar-block-row {
+    min-width: 0;
+    border-radius: 1rem !important;
+}
+
+.my-calendar-page .user-calendar-block-row > span:first-child {
+    min-width: 0;
+}
+
+@media (min-width: 1280px) {
+    .my-calendar-page .user-calendar-detail-panel {
+        align-self: stretch;
+    }
+
+    .my-calendar-page .user-calendar-detail-card {
+        position: sticky;
+        top: calc(var(--bccc-backend-topbar-height, 4rem) + 1.25rem);
+        max-height: calc(100dvh - var(--bccc-backend-topbar-height, 4rem) - 2.5rem);
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
+}
+
+@media (max-width: 1279px) {
+    .my-calendar-page .user-calendar-layout {
+        grid-template-columns: 1fr !important;
+    }
+
+    .my-calendar-page .user-calendar-detail-panel {
+        border-left: 0 !important;
+    }
+
+    .my-calendar-page .user-calendar-detail-card {
+        display: grid;
+        gap: 0;
+    }
+}
+
+@media (max-width: 1024px) {
+    .role-workspace-body:has(.my-calendar-page) {
+        padding-inline: 0 !important;
+    }
+
+    .my-calendar-page {
+        border-radius: 1.15rem !important;
+    }
+
+    .my-calendar-page .user-calendar-calendar-wrap {
+        padding: 0.9rem !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .role-workspace-header:has(+ .role-workspace-body .my-calendar-page),
+    .role-workspace-header:has(~ .role-workspace-body .my-calendar-page) {
+        border-radius: 1rem !important;
+    }
+
+    .my-calendar-page {
+        margin-inline: -0.25rem;
+        width: calc(100% + 0.5rem);
+        border-radius: 1rem !important;
+    }
+
+    .my-calendar-page .user-calendar-toolbar {
+        padding: 0.85rem !important;
+    }
+
+    .my-calendar-page .user-calendar-month-switcher {
+        gap: 0.5rem;
+    }
+
+    .my-calendar-page .user-calendar-nav-button {
+        width: 2.35rem !important;
+        height: 2.35rem !important;
+    }
+
+    .my-calendar-page .user-calendar-month-copy h2 {
+        font-size: clamp(1.35rem, 7vw, 2rem) !important;
+        line-height: 1.05;
+    }
+
+    .my-calendar-page .user-calendar-month-copy p:last-child {
+        display: none;
+    }
+
+    .my-calendar-page .user-calendar-legend {
+        justify-content: flex-start;
+        min-width: max-content;
+    }
+
+    .my-calendar-page .user-calendar-legend-pill {
+        min-height: 2rem !important;
+        padding-inline: 0.65rem !important;
+        font-size: 0.58rem !important;
+        letter-spacing: 0.08em !important;
+    }
+
+    .my-calendar-page .user-calendar-calendar-wrap {
+        padding: 0.65rem !important;
+    }
+
+    .my-calendar-page .user-calendar-week-label {
+        padding-block: 0.45rem !important;
+        font-size: 0.53rem !important;
+        letter-spacing: 0.08em !important;
+    }
+
+    .my-calendar-page .user-calendar-day {
+        min-height: clamp(3.25rem, 13.8vw, 4.35rem) !important;
+        padding: 0.45rem !important;
+        border-radius: 0.78rem !important;
+    }
+
+    .my-calendar-page .user-calendar-day > span.relative {
+        min-height: clamp(2.35rem, 10.5vw, 3.35rem) !important;
+    }
+
+    .my-calendar-page .user-calendar-day-number {
+        font-size: clamp(0.82rem, 3.8vw, 1rem) !important;
+    }
+
+    .my-calendar-page .user-calendar-day-dot {
+        width: 0.48rem !important;
+        height: 0.48rem !important;
+    }
+
+    .my-calendar-page .user-calendar-day-badge {
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border: 0 !important;
+        font-size: 0.46rem !important;
+        letter-spacing: 0.04em !important;
+        text-align: left !important;
+    }
+
+    .my-calendar-page .user-calendar-detail-panel {
+        padding: 0.75rem !important;
+    }
+
+    .my-calendar-page .user-calendar-detail-card {
+        border-radius: 1rem !important;
+        padding: 0.95rem !important;
+    }
+
+    .my-calendar-page .user-calendar-detail-card h3 {
+        font-size: clamp(1.05rem, 5vw, 1.35rem) !important;
+        line-height: 1.15;
+    }
+
+    .my-calendar-page .user-calendar-block-row {
+        align-items: flex-start !important;
+        gap: 0.75rem !important;
+        padding: 0.8rem !important;
+    }
+
+    .my-calendar-page .user-calendar-block-row strong {
+        max-width: 6.5rem;
+        text-align: right;
+        white-space: normal;
+    }
+}
+
+@media (max-width: 380px) {
+    .my-calendar-page {
+        margin-inline: -0.45rem;
+        width: calc(100% + 0.9rem);
+    }
+
+    .my-calendar-page .user-calendar-toolbar {
+        padding-inline: 0.65rem !important;
+    }
+
+    .my-calendar-page .user-calendar-month-switcher {
+        gap: 0.35rem;
+    }
+
+    .my-calendar-page .user-calendar-nav-button {
+        width: 2.15rem !important;
+        height: 2.15rem !important;
+    }
+
+    .my-calendar-page .user-calendar-grid {
+        gap: 0.25rem !important;
+    }
+
+    .my-calendar-page .user-calendar-day {
+        min-height: 2.95rem !important;
+        padding: 0.35rem !important;
+        border-radius: 0.65rem !important;
+    }
+
+    .my-calendar-page .user-calendar-day > span.relative {
+        min-height: 2.2rem !important;
+    }
+
+    .my-calendar-page .user-calendar-day-badge {
+        display: none !important;
+    }
+
+    .my-calendar-page .user-calendar-detail-panel {
+        padding-inline: 0.55rem !important;
+    }
+}
+
+@media (max-height: 680px) and (min-width: 1280px) {
+    .my-calendar-page .user-calendar-detail-card {
+        position: static;
+        max-height: none;
+    }
+}
+
+@media print {
+    .my-calendar-page {
+        box-shadow: none !important;
+        border-color: #ddd !important;
+    }
+
+    .my-calendar-page .user-calendar-detail-card,
+    .my-calendar-page .user-calendar-day {
+        box-shadow: none !important;
+    }
+}

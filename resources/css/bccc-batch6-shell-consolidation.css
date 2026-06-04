@@ -1,0 +1,793 @@
+/* =========================================================
+   BCCC EASE — Batch 6 shell consolidation
+   ---------------------------------------------------------
+   Purpose:
+   - keep one final safety layer after the older CSS patches
+   - reduce sticky/header/footer regressions caused by duplicate files
+   - make public, backend, and booking shells predictable
+   - avoid changing colors/design language unless needed for layout safety
+   ========================================================= */
+
+   :root {
+    --bccc-public-header-height: 68px;
+    --bccc-backend-topbar-height: 72px;
+    --bccc-sidebar-width: 17.25rem;
+    --bccc-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --bccc-shell-max-width: 1760px;
+}
+
+html,
+body,
+#app {
+    min-height: 100%;
+    width: 100%;
+    min-width: 0;
+}
+
+html {
+    overflow-x: clip;
+    scroll-padding-top: var(--bccc-public-header-height);
+}
+
+body {
+    margin: 0;
+    min-width: 0;
+    overflow-x: clip;
+    background: #f8f5ef;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.dark body {
+    background: #0d0f12;
+}
+
+#app {
+    isolation: isolate;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+img,
+svg,
+video,
+canvas {
+    max-width: 100%;
+}
+
+/* ---------- Public shell: no footer gap, one fixed header offset ---------- */
+.bccc-public-shell {
+    display: flex !important;
+    min-height: 100dvh !important;
+    min-width: 0 !important;
+    flex-direction: column !important;
+    overflow-x: clip !important;
+    background: #f8f5ef;
+}
+
+.dark .bccc-public-shell {
+    background: #0d0f12;
+}
+
+.bccc-public-main {
+    flex: 1 0 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding-top: var(--bccc-public-header-height) !important;
+    padding-bottom: 0 !important;
+    overflow-x: clip !important;
+}
+
+.client-booking-public-shell .bccc-public-main,
+.client-booking-public-shell .client-booking-public-main {
+    padding-top: 0 !important;
+}
+
+.client-booking-public-shell .client-booking-public-hero {
+    margin-top: var(--bccc-public-header-height) !important;
+}
+
+.bccc-public-footer {
+    flex: 0 0 auto !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: max(1.25rem, calc(1rem + var(--bccc-safe-bottom))) !important;
+}
+
+.bccc-public-shell > .bccc-public-footer:last-of-type {
+    margin-bottom: 0 !important;
+}
+
+.bccc-public-shell > :last-child:not(.bccc-floating-quick-links):not(.bccc-availability-dock) {
+    margin-bottom: 0 !important;
+}
+
+body:has(.bccc-public-shell),
+body:has(.client-booking-public-shell) {
+    padding-bottom: 0 !important;
+}
+
+/* Fixed availability dock should reserve room in content, but never create dead space below footer. */
+body:has(.bccc-availability-dock) .bccc-public-main:not(.client-booking-public-main) {
+    padding-bottom: clamp(7rem, 11dvh, 10rem) !important;
+}
+
+body:has(.bccc-public-footer) .bccc-public-footer + .bccc-availability-dock,
+body:has(.bccc-public-footer) .bccc-public-footer + .bccc-floating-quick-links {
+    margin-bottom: 0 !important;
+}
+
+/* ---------- Public header: single source of sticky truth ---------- */
+.bccc-public-header,
+.client-booking-public-header {
+    position: fixed !important;
+    inset-block-start: 0 !important;
+    inset-inline: 0 !important;
+    z-index: 99980 !important;
+    min-height: var(--bccc-public-header-height) !important;
+    height: var(--bccc-public-header-height) !important;
+    max-height: var(--bccc-public-header-height) !important;
+    overflow: visible !important;
+    isolation: isolate !important;
+}
+
+.bccc-public-header-inner,
+.client-booking-public-header-inner {
+    min-height: var(--bccc-public-header-height) !important;
+    height: var(--bccc-public-header-height) !important;
+    max-height: var(--bccc-public-header-height) !important;
+    min-width: 0 !important;
+}
+
+.bccc-public-header :is(a, button),
+.client-booking-public-header :is(a, button) {
+    flex-shrink: 0;
+}
+
+.bccc-public-brand,
+.client-booking-brand {
+    min-width: 0 !important;
+    max-width: min(47vw, 34rem) !important;
+}
+
+.bccc-public-caption {
+    min-width: 0 !important;
+    max-width: min(31vw, 26rem) !important;
+}
+
+.bccc-public-caption p {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.bccc-public-actions {
+    min-width: 0 !important;
+}
+
+/* ---------- Backend shell: fixed sidebar + sticky topbar without horizontal overflow ---------- */
+.backend-shell {
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    overflow-x: clip !important;
+    background: var(--bccc-backend-bg, #f5efe3);
+}
+
+.dark .backend-shell {
+    background: var(--bccc-backend-bg, #07090c);
+}
+
+.backend-sidebar {
+    position: fixed !important;
+    inset-block: 0 !important;
+    inset-inline-start: 0 !important;
+    z-index: 120 !important;
+    width: var(--bccc-sidebar-width) !important;
+    max-width: var(--bccc-sidebar-width) !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+}
+
+.backend-sidebar > * {
+    min-height: 0 !important;
+}
+
+.backend-sidebar [class*='overflow-y-auto'],
+.backend-sidebar [data-radix-scroll-area-viewport] {
+    overscroll-behavior: contain !important;
+}
+
+.backend-main {
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    min-height: 100dvh !important;
+    overflow-x: clip !important;
+}
+
+@media (min-width: 1024px) {
+    .backend-main {
+        padding-left: var(--bccc-sidebar-width) !important;
+    }
+}
+
+.backend-topbar,
+.backend-main-topbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 110 !important;
+    min-height: var(--bccc-backend-topbar-height) !important;
+    isolation: isolate !important;
+}
+
+.backend-main-topbar-inner {
+    min-height: var(--bccc-backend-topbar-height) !important;
+    min-width: 0 !important;
+}
+
+.backend-app-content {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding-top: clamp(0.65rem, 1vw, 1rem) !important;
+    padding-bottom: clamp(5.5rem, 8dvh, 7rem) !important;
+    overflow-x: clip !important;
+}
+
+.backend-app-content > .mx-auto,
+.backend-page-container,
+.backend-page-shell,
+.backend-admin-page,
+.backend-booking-page {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: var(--bccc-shell-max-width) !important;
+}
+
+.role-workspace-header {
+    margin-bottom: clamp(0.75rem, 1.2vw, 1.25rem) !important;
+    border-radius: 1.25rem !important;
+}
+
+/* ---------- Booking wizard: one bottom bar height, one floating summary position ---------- */
+html.booking-wizard-screen-active,
+body.booking-wizard-screen-active {
+    overflow-x: clip !important;
+    overflow-y: auto !important;
+    scroll-padding-top: calc(var(--bccc-backend-topbar-height) + 1rem) !important;
+    padding-bottom: calc(5.6rem + var(--bccc-safe-bottom)) !important;
+}
+
+html.booking-wizard-screen-active #app {
+    min-height: 100% !important;
+    overflow: visible !important;
+}
+
+.booking-lux-form,
+.booking-step-panel,
+.booking-wizard-stage,
+.booking-package-screen-step,
+.booking-schedule-step-panel {
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+html.booking-wizard-screen-active .booking-lux-form {
+    padding-bottom: calc(5.6rem + var(--bccc-safe-bottom)) !important;
+}
+
+.booking-stepper {
+    position: sticky !important;
+    top: calc(var(--bccc-backend-topbar-height) + 0.55rem) !important;
+    z-index: 90 !important;
+    margin-block: 0.65rem 0.9rem !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    overscroll-behavior-inline: contain !important;
+    scrollbar-width: none !important;
+}
+
+.booking-stepper::-webkit-scrollbar {
+    display: none !important;
+}
+
+.booking-step-footer,
+.booking-step-footer-sticky {
+    position: fixed !important;
+    inset-inline-start: var(--bccc-sidebar-width) !important;
+    inset-inline-end: 0 !important;
+    inset-block-end: 0 !important;
+    z-index: 9500 !important;
+    width: auto !important;
+    max-width: calc(100vw - var(--bccc-sidebar-width)) !important;
+    min-height: calc(4.25rem + var(--bccc-safe-bottom)) !important;
+    margin: 0 !important;
+    border-top: 1px solid var(--bccc-backend-line, rgba(148, 116, 65, 0.24)) !important;
+    padding: 0.48rem clamp(0.85rem, 1.6vw, 1.25rem) calc(0.48rem + var(--bccc-safe-bottom)) !important;
+    background: color-mix(in srgb, var(--bccc-backend-panel, #fffaf0) 95%, transparent) !important;
+    box-shadow: 0 -18px 54px rgba(47, 37, 23, 0.12) !important;
+    backdrop-filter: blur(22px) !important;
+    -webkit-backdrop-filter: blur(22px) !important;
+}
+
+.booking-step-footer-inner {
+    display: grid !important;
+    width: min(100%, 1500px) !important;
+    max-width: 100% !important;
+    margin-inline: auto !important;
+    grid-template-columns: minmax(7rem, auto) minmax(0, 1fr) minmax(12rem, auto) !important;
+    align-items: center !important;
+    gap: 0.65rem !important;
+}
+
+.booking-step-footer-actions {
+    display: flex !important;
+    min-width: 0 !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 0.5rem !important;
+}
+
+.booking-step-footer-status {
+    min-width: 0 !important;
+    text-align: center !important;
+}
+
+.booking-step-footer-status span,
+.booking-step-footer-status strong {
+    display: block !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.booking-step-footer-status span {
+    font-size: 0.62rem !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0.14em !important;
+}
+
+.booking-step-footer-status strong {
+    font-size: 0.82rem !important;
+    line-height: 1.18 !important;
+}
+
+.booking-step-footer :is(.booking-secondary-action, .booking-ghost-action, .booking-primary-action),
+.booking-step-footer-sticky :is(.booking-secondary-action, .booking-ghost-action, .booking-primary-action) {
+    min-height: 2.5rem !important;
+    border-radius: 999px !important;
+    padding: 0.6rem 0.95rem !important;
+}
+
+.booking-summary-fab {
+    position: fixed !important;
+    inset-block-start: 50% !important;
+    inset-inline-end: 1.2rem !important;
+    inset-block-end: auto !important;
+    inset-inline-start: auto !important;
+    z-index: 9600 !important;
+    display: inline-flex !important;
+    min-width: 3rem !important;
+    min-height: 3rem !important;
+    transform: translateY(-50%) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+.booking-summary-drawer {
+    z-index: 9800 !important;
+}
+
+.booking-summary-overlay {
+    z-index: 9700 !important;
+}
+
+/* ---------- Rails: hide scrollbars only on intentional horizontal UI, not the entire page ---------- */
+.public-horizontal-rail,
+.luxury-horizontal-rail,
+.booking-package-choice-grid,
+.booking-package-usage-compact,
+.booking-hotel-carousel,
+.booking-game-carousel,
+.booking-field-carousel,
+.booking-guideline-carousel,
+.booking-review-carousel {
+    overscroll-behavior-inline: contain !important;
+    scrollbar-width: none !important;
+}
+
+.public-horizontal-rail::-webkit-scrollbar,
+.luxury-horizontal-rail::-webkit-scrollbar,
+.booking-package-choice-grid::-webkit-scrollbar,
+.booking-package-usage-compact::-webkit-scrollbar,
+.booking-hotel-carousel::-webkit-scrollbar,
+.booking-game-carousel::-webkit-scrollbar,
+.booking-field-carousel::-webkit-scrollbar,
+.booking-guideline-carousel::-webkit-scrollbar,
+.booking-review-carousel::-webkit-scrollbar {
+    display: none !important;
+}
+
+/* ---------- Responsive final decisions ---------- */
+@media (max-width: 1280px) {
+    :root {
+        --bccc-sidebar-width: 15.5rem;
+    }
+
+    .bccc-public-caption {
+        max-width: min(27vw, 22rem) !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    :root {
+        --bccc-public-header-height: 64px;
+        --bccc-backend-topbar-height: 66px;
+        --bccc-sidebar-width: 0px;
+    }
+
+    .backend-sidebar {
+        width: min(88vw, 18rem) !important;
+        max-width: min(88vw, 18rem) !important;
+    }
+
+    .backend-main {
+        padding-left: 0 !important;
+    }
+
+    .booking-step-footer,
+    .booking-step-footer-sticky {
+        inset-inline-start: 0 !important;
+        max-width: 100vw !important;
+    }
+
+    .booking-stepper {
+        top: calc(var(--bccc-backend-topbar-height) + 0.35rem) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --bccc-public-header-height: 60px;
+        --bccc-backend-topbar-height: 62px;
+    }
+
+    .bccc-public-caption,
+    .bccc-public-actions .bccc-public-breathe-logo,
+    .bccc-public-actions a[href*='visita'],
+    .bccc-public-actions a[href*='creative'] {
+        display: none !important;
+    }
+
+    .bccc-public-header-inner,
+    .client-booking-public-header-inner {
+        gap: 0.45rem !important;
+        padding-inline: 0.7rem !important;
+    }
+
+    .bccc-public-seal {
+        width: 2.25rem !important;
+        height: 2.25rem !important;
+    }
+
+    .backend-app-content {
+        padding-inline: 0.75rem !important;
+        padding-bottom: 9.75rem !important;
+    }
+
+    .role-workspace-header {
+        border-radius: 1rem !important;
+        padding: 1rem !important;
+    }
+
+    .role-workspace-header h1 {
+        font-size: clamp(1.75rem, 8vw, 2.45rem) !important;
+    }
+
+    .booking-stepper {
+        display: flex !important;
+        gap: 0.55rem !important;
+        margin-block: 0.55rem 0.8rem !important;
+        padding: 0.55rem !important;
+    }
+
+    .booking-stepper > * {
+        flex: 0 0 auto !important;
+        min-width: 10.25rem !important;
+    }
+
+    .booking-step-footer-inner {
+        grid-template-columns: 1fr !important;
+        gap: 0.45rem !important;
+    }
+
+    .booking-step-footer-status {
+        order: -1 !important;
+    }
+
+    .booking-step-footer-actions {
+        display: grid !important;
+        width: 100% !important;
+        grid-template-columns: 1fr !important;
+        gap: 0.45rem !important;
+    }
+
+    .booking-step-footer :is(.booking-secondary-action, .booking-ghost-action, .booking-primary-action),
+    .booking-step-footer-sticky :is(.booking-secondary-action, .booking-ghost-action, .booking-primary-action),
+    .booking-footer-previous {
+        width: 100% !important;
+        min-width: 0 !important;
+        justify-content: center !important;
+    }
+
+    html.booking-wizard-screen-active,
+    body.booking-wizard-screen-active,
+    html.booking-wizard-screen-active .booking-lux-form {
+        padding-bottom: calc(10.75rem + var(--bccc-safe-bottom)) !important;
+    }
+
+    .booking-summary-fab {
+        inset-block-start: auto !important;
+        inset-inline-end: 0.75rem !important;
+        inset-block-end: calc(5.2rem + var(--bccc-safe-bottom)) !important;
+        transform: none !important;
+        min-width: 2.75rem !important;
+        min-height: 2.75rem !important;
+        padding: 0.72rem 0.9rem !important;
+        font-size: 0.68rem !important;
+    }
+
+    .booking-summary-fab:hover {
+        transform: translateY(-3px) !important;
+    }
+
+    .booking-summary-drawer {
+        width: 100vw !important;
+        max-width: 100vw !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .backend-app-content {
+        padding-inline: 0.65rem !important;
+    }
+
+    .booking-step-footer-status span {
+        font-size: 0.58rem !important;
+    }
+
+    .booking-step-footer-status strong {
+        font-size: 0.78rem !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* =========================================================
+   BCCC EASE — Batch 5 strict backend shell correction
+   Purpose: one source of truth for sidebar width, fixed topbar,
+   responsive content expansion, and navbar clearance.
+   ========================================================= */
+
+:root {
+    --bccc-backend-sidebar-expanded-width: 17.25rem;
+    --bccc-backend-sidebar-collapsed-width: 5.25rem;
+    --bccc-backend-sidebar-width: var(--bccc-backend-sidebar-expanded-width);
+    --bccc-sidebar-width: var(--bccc-backend-sidebar-width);
+    --bccc-backend-topbar-height: 4.5rem;
+    --bccc-shell-max-width: 1920px;
+}
+
+.backend-boneyard-root {
+    --bccc-sidebar-width: var(--bccc-backend-sidebar-width, 17.25rem);
+    min-width: 0 !important;
+    overflow-x: clip !important;
+}
+
+.backend-boneyard-root[data-sidebar-collapsed='true'] {
+    --bccc-backend-sidebar-width: var(--bccc-backend-sidebar-collapsed-width, 5.25rem);
+    --bccc-sidebar-width: var(--bccc-backend-sidebar-collapsed-width, 5.25rem);
+}
+
+.backend-boneyard-root[data-sidebar-collapsed='false'] {
+    --bccc-backend-sidebar-width: var(--bccc-backend-sidebar-expanded-width, 17.25rem);
+    --bccc-sidebar-width: var(--bccc-backend-sidebar-expanded-width, 17.25rem);
+}
+
+.bccc-backend-chrome-portal {
+    --bccc-sidebar-width: var(--bccc-backend-sidebar-width, 17.25rem);
+    pointer-events: none;
+    position: relative;
+    z-index: 99950;
+}
+
+.bccc-backend-chrome-portal :is(.backend-sidebar, .backend-topbar, .backend-main-topbar, button, a, input, select, textarea, [role='button']) {
+    pointer-events: auto;
+}
+
+.backend-shell,
+.backend-main,
+.backend-app-content,
+.backend-app-content-inner {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: clip !important;
+}
+
+.backend-shell {
+    width: 100% !important;
+}
+
+.backend-main {
+    min-height: 100dvh !important;
+    padding-left: 0 !important;
+    transition:
+        padding-left 280ms cubic-bezier(0.22, 1, 0.36, 1),
+        width 280ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.backend-sidebar {
+    position: fixed !important;
+    inset-block: 0 !important;
+    inset-inline-start: 0 !important;
+    z-index: 99970 !important;
+    display: none !important;
+    width: var(--bccc-backend-sidebar-width, 17.25rem) !important;
+    max-width: var(--bccc-backend-sidebar-width, 17.25rem) !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+    transition:
+        width 280ms cubic-bezier(0.22, 1, 0.36, 1),
+        max-width 280ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 280ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.backend-main-topbar,
+.backend-topbar {
+    position: fixed !important;
+    inset-block-start: 0 !important;
+    inset-inline-start: 0 !important;
+    inset-inline-end: 0 !important;
+    z-index: 99960 !important;
+    min-height: var(--bccc-backend-topbar-height, 4.5rem) !important;
+    height: auto !important;
+    max-width: none !important;
+    transform: translateZ(0);
+    transition:
+        left 280ms cubic-bezier(0.22, 1, 0.36, 1),
+        inset-inline-start 280ms cubic-bezier(0.22, 1, 0.36, 1),
+        width 280ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.backend-main-topbar-inner {
+    min-height: var(--bccc-backend-topbar-height, 4.5rem) !important;
+    min-width: 0 !important;
+    max-width: var(--bccc-shell-max-width, 1920px) !important;
+}
+
+.backend-app-content {
+    width: 100% !important;
+    min-height: 100dvh !important;
+    padding-top: calc(var(--bccc-backend-topbar-height, 4.5rem) + clamp(0.85rem, 1.4vw, 1.25rem)) !important;
+    padding-bottom: clamp(4.5rem, 7dvh, 6.5rem) !important;
+}
+
+.backend-app-content-inner {
+    width: 100% !important;
+    max-width: min(100%, var(--bccc-shell-max-width, 1920px)) !important;
+}
+
+.backend-app-content :is(.role-workspace-header, .role-workspace-body, .backend-booking-page, .backend-page-shell, .backend-page-container, .bccc-resource-page, .bccc-admin-command-center, .bccc-admin-polished-page) {
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.backend-app-content :is(.role-workspace-body, .backend-booking-page, .backend-page-shell, .backend-page-container) > * {
+    min-width: 0 !important;
+}
+
+@media (min-width: 1024px) {
+    .backend-sidebar {
+        display: flex !important;
+    }
+
+    .backend-main {
+        padding-left: var(--bccc-backend-sidebar-width, 17.25rem) !important;
+        width: 100% !important;
+    }
+
+    .backend-main-topbar,
+    .backend-topbar {
+        inset-inline-start: var(--bccc-backend-sidebar-width, 17.25rem) !important;
+        left: var(--bccc-backend-sidebar-width, 17.25rem) !important;
+        width: calc(100vw - var(--bccc-backend-sidebar-width, 17.25rem)) !important;
+    }
+
+    .backend-boneyard-root[data-sidebar-collapsed='true'] .backend-app-content-inner {
+        max-width: min(100%, 1960px) !important;
+    }
+}
+
+@media (max-width: 1023px) {
+    .backend-sidebar {
+        display: none !important;
+    }
+
+    .backend-main {
+        padding-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .backend-main-topbar,
+    .backend-topbar {
+        left: 0 !important;
+        inset-inline-start: 0 !important;
+        width: 100vw !important;
+        min-height: 4.25rem !important;
+    }
+
+    .backend-main-topbar-inner {
+        min-height: 4.25rem !important;
+    }
+
+    .backend-app-content {
+        padding-top: calc(4.25rem + 0.9rem) !important;
+        padding-inline: clamp(0.75rem, 2.6vw, 1rem) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .backend-main-topbar-inner {
+        padding-inline: 0.65rem !important;
+    }
+
+    .backend-main-topbar h1,
+    .backend-topbar h1 {
+        font-size: clamp(0.98rem, 4.2vw, 1.2rem) !important;
+        line-height: 1.15 !important;
+        max-width: 100% !important;
+    }
+
+    .backend-app-content {
+        padding-top: calc(4.25rem + 0.75rem) !important;
+        padding-inline: 0.7rem !important;
+        padding-bottom: max(1.25rem, env(safe-area-inset-bottom)) !important;
+    }
+}
+
+@media print {
+    .bccc-backend-chrome-portal,
+    .backend-sidebar,
+    .backend-main-topbar,
+    .backend-topbar {
+        display: none !important;
+    }
+
+    .backend-main,
+    .backend-app-content,
+    .backend-app-content-inner {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+    }
+}

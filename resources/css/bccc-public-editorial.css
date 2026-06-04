@@ -1,0 +1,373 @@
+/* =========================================================
+   BCCC PUBLIC HEADER FIX
+   Cleaner sticky top header, proper spacing, responsive nav
+   ========================================================= */
+
+   .bccc-topbar {
+    position: fixed;
+    top: 0;
+    inset-inline: 0;
+    z-index: 200;
+    pointer-events: none;
+}
+
+.bccc-topbar-shell {
+    width: min(100% - 1rem, 1480px);
+    margin-inline: auto;
+    padding-top: 0.75rem;
+    pointer-events: none;
+}
+
+.bccc-topbar-inner {
+    pointer-events: auto;
+    display: grid;
+    align-items: center;
+    gap: 1rem;
+    grid-template-columns: auto 1fr auto;
+    min-height: 72px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 999px;
+    background: rgba(255, 253, 248, 0.94);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+    transition:
+        background 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+.bccc-topbar-inner.is-scrolled {
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
+}
+
+.dark .bccc-topbar-inner {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(9, 14, 18, 0.92);
+}
+
+.bccc-topbar-left {
+    min-width: 0;
+}
+
+.bccc-brand {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.75rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+.bccc-brand-logo {
+    height: 40px;
+    width: 40px;
+    border-radius: 999px;
+    object-fit: cover;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.bccc-brand-text {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.bccc-brand-text strong {
+    color: var(--public-ink);
+    font-size: 0.86rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+}
+
+.bccc-brand-text span {
+    color: var(--public-muted);
+    font-size: 0.67rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.bccc-topbar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.4rem;
+    min-width: 0;
+}
+
+.bccc-topbar-link {
+    position: relative;
+    color: var(--public-muted);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 140ms ease;
+}
+
+.bccc-topbar-link:hover,
+.bccc-topbar-link.is-active {
+    color: var(--public-ink);
+}
+
+.bccc-topbar-link.is-active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.9rem;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--public-ink);
+}
+
+.bccc-topbar-right {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.65rem;
+}
+
+.bccc-icon-button,
+.bccc-mobile-toggle {
+    display: inline-flex;
+    height: 42px;
+    width: 42px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--public-ink);
+    transition:
+        transform 140ms ease,
+        background 140ms ease,
+        border-color 140ms ease;
+}
+
+.dark .bccc-icon-button,
+.dark .bccc-mobile-toggle {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.bccc-icon-button:hover,
+.bccc-mobile-toggle:hover {
+    transform: translateY(-1px);
+}
+
+.bccc-account-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 42px;
+    padding: 0 0.85rem;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--public-ink);
+    text-decoration: none;
+}
+
+.dark .bccc-account-button {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.bccc-account-badge {
+    display: inline-flex;
+    height: 28px;
+    width: 28px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #153127;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+}
+
+.bccc-account-text {
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.bccc-book-button {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.2rem;
+    border-radius: 999px;
+    background: #153127;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-decoration: none;
+    transition:
+        transform 140ms ease,
+        background 140ms ease;
+}
+
+.bccc-book-button:hover {
+    transform: translateY(-1px);
+    background: #0f241d;
+}
+
+.bccc-mobile-toggle {
+    display: none;
+}
+
+.bccc-mobile-panel {
+    pointer-events: auto;
+    margin-top: 0.6rem;
+    padding: 0.75rem;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 24px;
+    background: rgba(255, 253, 248, 0.98);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
+}
+
+.dark .bccc-mobile-panel {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(9, 14, 18, 0.98);
+}
+
+.bccc-mobile-nav {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.bccc-mobile-link {
+    display: flex;
+    align-items: center;
+    min-height: 46px;
+    padding: 0 0.95rem;
+    border-radius: 14px;
+    color: var(--public-ink);
+    font-size: 0.84rem;
+    font-weight: 850;
+    text-decoration: none;
+    transition: background 140ms ease;
+}
+
+.bccc-mobile-link:hover,
+.bccc-mobile-link.is-active {
+    background: rgba(21, 49, 39, 0.08);
+}
+
+.dark .bccc-mobile-link:hover,
+.dark .bccc-mobile-link.is-active {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.bccc-mobile-actions {
+    display: grid;
+    gap: 0.65rem;
+    margin-top: 0.6rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.dark .bccc-mobile-actions {
+    border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.bccc-mobile-primary,
+.bccc-mobile-secondary {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    border-radius: 14px;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.bccc-mobile-primary {
+    background: #153127;
+    color: #ffffff;
+}
+
+.bccc-mobile-secondary {
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    color: var(--public-ink);
+}
+
+.dark .bccc-mobile-secondary {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 1240px) {
+    .bccc-topbar-nav {
+        gap: 0.95rem;
+    }
+
+    .bccc-topbar-link {
+        font-size: 0.67rem;
+        letter-spacing: 0.14em;
+    }
+
+    .bccc-account-text,
+    .bccc-book-button {
+        font-size: 0.68rem;
+    }
+}
+
+@media (max-width: 1080px) {
+    .bccc-topbar-inner {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    .bccc-topbar-nav {
+        display: none;
+    }
+
+    .bccc-mobile-toggle {
+        display: inline-flex;
+    }
+
+    .bccc-account-button {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .bccc-topbar-shell {
+        width: min(100% - 0.75rem, 1480px);
+        padding-top: 0.45rem;
+    }
+
+    .bccc-topbar-inner {
+        min-height: 64px;
+        padding: 0.65rem 0.8rem;
+        border-radius: 22px;
+    }
+
+    .bccc-brand-text span {
+        display: none;
+    }
+
+    .bccc-book-button {
+        display: none;
+    }
+
+    .bccc-brand-logo {
+        height: 36px;
+        width: 36px;
+    }
+}

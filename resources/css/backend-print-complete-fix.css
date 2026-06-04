@@ -1,0 +1,1052 @@
+/* Final print layer: keep every print route/document visible after older print rules. */
+@media print {
+    @page {
+        size: A4;
+        margin: 10mm;
+    }
+
+    html,
+    body,
+    #app,
+    #app > *,
+    [data-page-root],
+    main {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        color: #111111 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+    }
+
+    body * {
+        visibility: visible !important;
+        opacity: 1 !important;
+        filter: none !important;
+        text-shadow: none !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .no-print,
+    .no-print *,
+    .print\:hidden,
+    .print\:hidden *,
+    [data-no-print='true'],
+    [data-no-print='true'] *,
+    .bccc-full-screen-loader,
+    .bccc-full-screen-loader *,
+    .backend-sidebar,
+    .backend-sidebar *,
+    .backend-main-topbar,
+    .backend-main-topbar *,
+    .backend-breadcrumb-row,
+    .backend-breadcrumb-row *,
+    .backend-route-overlay,
+    .backend-route-overlay *,
+    .backend-route-loader,
+    .backend-route-loader *,
+    .route-loading-overlay,
+    .route-loading-overlay *,
+    .global-feedback-layer,
+    .global-feedback-layer *,
+    .bccc-backend-chrome-portal,
+    .bccc-backend-chrome-portal *,
+    .bccc-public-header-portal,
+    .bccc-public-header-portal *,
+    .bccc-floating-quick-links-portal,
+    .bccc-floating-quick-links-portal * {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+
+    .backend-main,
+    .backend-app-content,
+    .bccc-public-main,
+    .booking-show-page,
+    .mice-report-page,
+    .payment-review-page,
+    .resource-page-shell,
+    body:has(.print-report-page) .backend-main,
+    body:has(.print-report-page) .backend-app-content,
+    body:has(.booking-print-shell) .backend-main,
+    body:has(.booking-print-shell) .backend-app-content,
+    body:has(.bccc-print-root) .backend-main,
+    body:has(.bccc-print-root) .backend-app-content,
+    body:has(.official-mice-print) .backend-main,
+    body:has(.official-mice-print) .backend-app-content,
+    body:has(.official-reservation-preview) .backend-main,
+    body:has(.official-reservation-preview) .backend-app-content,
+    body:has(.bccc-admin-command-center) .backend-main,
+    body:has(.bccc-admin-command-center) .backend-app-content {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+    }
+
+    .print-report-page,
+    .print-report-paper,
+    .booking-print-document,
+    .booking-print-shell,
+    .bccc-print-root,
+    .bccc-form-paper,
+    .official-mice-print,
+    .official-reservation-preview,
+    .official-form-paper,
+    .mice-print-document,
+    .analytics-print-page,
+    .bccc-admin-command-center {
+        display: block !important;
+        position: static !important;
+        inset: auto !important;
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
+        height: auto !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        color: #111111 !important;
+        box-shadow: none !important;
+        transform: none !important;
+        filter: none !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .print-report-page,
+    .print-report-paper,
+    .booking-print-shell,
+    .bccc-print-root,
+    .official-mice-print,
+    .official-reservation-preview,
+    .official-form-paper,
+    .bccc-admin-command-center {
+        padding: 0 !important;
+    }
+
+    .print-report-page *,
+    .booking-print-shell *,
+    .bccc-print-root *,
+    .official-mice-print *,
+    .official-reservation-preview *,
+    .bccc-admin-command-center * {
+        overflow: visible !important;
+        color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    table,
+    .print-report-table,
+    .print-report-table table,
+    .booking-print-shell table,
+    .bccc-print-root table,
+    .official-mice-print table,
+    .official-reservation-preview table,
+    .bccc-admin-command-center table {
+        width: 100% !important;
+        min-width: 0 !important;
+        border-collapse: collapse !important;
+        page-break-inside: auto;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tfoot {
+        display: table-footer-group;
+    }
+
+    tr,
+    img,
+    section,
+    header,
+    footer,
+    .print-card,
+    .print-avoid-break,
+    .booking-print-section,
+    .mice-print-section,
+    .print-report-section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    th,
+    td {
+        white-space: normal !important;
+        word-break: normal !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    a[href]::after {
+        content: '' !important;
+    }
+}
+
+/* Compact official print pass: denser paper forms with styled headers/footers. */
+@media print {
+    @page {
+        size: A4;
+        margin: 7mm;
+    }
+
+    html,
+    body {
+        font-size: 8.25pt !important;
+        line-height: 1.22 !important;
+    }
+
+    .print-report-paper,
+    .booking-print-shell,
+    .bccc-form-paper,
+    .official-form-paper,
+    .official-mice-print > div,
+    .bccc-admin-command-center {
+        font-family:
+            Inter,
+            ui-sans-serif,
+            system-ui,
+            -apple-system,
+            BlinkMacSystemFont,
+            'Segoe UI',
+            sans-serif !important;
+        letter-spacing: 0 !important;
+    }
+
+    .print-report-paper,
+    .booking-print-shell,
+    .bccc-form-paper,
+    .official-form-paper,
+    .official-mice-print > div {
+        border: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+    }
+
+    .print-report-header,
+    .booking-print-header,
+    .bccc-form-header,
+    .official-form-header,
+    .official-mice-header {
+        margin: 0 0 5pt !important;
+        border: 1px solid #b7d0c9 !important;
+        border-top: 5px solid #176456 !important;
+        border-bottom: 2px solid #d7b56d !important;
+        border-radius: 0 !important;
+        background: #f7fbfa !important;
+        padding: 5pt 6pt !important;
+        color: #111827 !important;
+        box-shadow: none !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    .print-report-header p,
+    .booking-print-header p:first-child,
+    .booking-print-header .inline-flex,
+    .bccc-form-small,
+    .official-mice-header p {
+        margin: 0 !important;
+        color: #176456 !important;
+        font-size: 6.2pt !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.13em !important;
+        line-height: 1.15 !important;
+        text-transform: uppercase !important;
+    }
+
+    .print-report-header h1,
+    .booking-print-header h1,
+    .bccc-form-header h1,
+    .official-form-header h1,
+    .official-mice-header h1 {
+        margin: 1.5pt 0 0 !important;
+        color: #0f172a !important;
+        font-size: 15pt !important;
+        font-weight: 900 !important;
+        letter-spacing: -0.02em !important;
+        line-height: 1.02 !important;
+    }
+
+    .official-mice-header h2,
+    .booking-print-header h2 {
+        margin: 1pt 0 0 !important;
+        color: #176456 !important;
+        font-size: 10pt !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.1em !important;
+        line-height: 1.1 !important;
+        text-transform: uppercase !important;
+    }
+
+    .print-report-header span,
+    .booking-print-header :is(span, small, p),
+    .official-mice-header small,
+    .bccc-form-office {
+        color: #465569 !important;
+        font-size: 6.8pt !important;
+        line-height: 1.25 !important;
+    }
+
+    .booking-print-header > div {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 60mm !important;
+        align-items: start !important;
+        gap: 6pt !important;
+    }
+
+    .booking-print-header-card {
+        width: auto !important;
+        border: 1px solid #d8c8a8 !important;
+        border-radius: 6pt !important;
+        background: #fffaf0 !important;
+        padding: 4pt !important;
+    }
+
+    .booking-print-header .inline-flex {
+        gap: 2pt !important;
+        padding: 1pt 3pt !important;
+    }
+
+    .booking-print-header h1 {
+        font-size: 13.5pt !important;
+    }
+
+    .booking-print-header-card > p.mt-2 {
+        display: none !important;
+    }
+
+    .booking-print-header-card h2 {
+        font-size: 8.8pt !important;
+    }
+
+    .booking-print-header-card .mt-4 {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 1pt 4pt !important;
+        margin-top: 3pt !important;
+    }
+
+    .booking-print-header-card .mt-4 span:last-child {
+        display: none !important;
+    }
+
+    .booking-print-shell > :not([hidden]) ~ :not([hidden]) {
+        margin-top: 5pt !important;
+    }
+
+    .booking-print-shell > section.grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+        gap: 5pt !important;
+    }
+
+    .booking-print-shell > section.grid:first-of-type {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    .booking-print-section,
+    .print-report-section,
+    .bccc-form-section,
+    .mice-print-section {
+        margin-top: 5pt !important;
+        border: 1px solid #cad8d3 !important;
+        border-radius: 5pt !important;
+        background: #ffffff !important;
+        padding: 4pt !important;
+        box-shadow: none !important;
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+    }
+
+    .booking-print-section:first-child,
+    .print-report-section:first-child,
+    .bccc-form-section:first-child {
+        margin-top: 0 !important;
+    }
+
+    .booking-print-section-eyebrow,
+    .print-report-section h2,
+    .bccc-form-section-title,
+    .mice-report-section-header p,
+    .mice-survey-section-header p {
+        color: #176456 !important;
+        font-size: 6.2pt !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.12em !important;
+        line-height: 1.1 !important;
+        text-transform: uppercase !important;
+    }
+
+    .booking-print-section-title,
+    .print-report-section h2,
+    .mice-report-section-header h3,
+    .mice-survey-section-header h3 {
+        margin: 0 0 3pt !important;
+        color: #111827 !important;
+        font-size: 8.8pt !important;
+        font-weight: 900 !important;
+        letter-spacing: 0 !important;
+        line-height: 1.12 !important;
+    }
+
+    .booking-print-section-body,
+    .booking-print-section-body .mt-4,
+    .bccc-form-section {
+        margin-top: 3pt !important;
+    }
+
+    .booking-print-section :is(.grid, .flex),
+    .print-report-section :is(.grid, .flex),
+    .bccc-form-section :is(.grid, .flex) {
+        gap: 3pt !important;
+    }
+
+    .booking-print-section-body > .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .booking-print-shell
+        > section.grid:first-of-type
+        .booking-print-section-body
+        > .grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .booking-print-field,
+    .bccc-form-line,
+    .official-form-field {
+        display: grid !important;
+        grid-template-columns: 20mm minmax(0, 1fr) !important;
+        align-items: start !important;
+        gap: 3pt !important;
+        min-height: 0 !important;
+        border: 1px solid #d9c7a6 !important;
+        border-radius: 4pt !important;
+        background: #fffdf7 !important;
+        padding: 2.5pt 3pt !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    .booking-print-field-label,
+    .bccc-form-line span,
+    .official-form-field label {
+        margin: 0 !important;
+        color: #7a5b20 !important;
+        font-size: 5.7pt !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.08em !important;
+        line-height: 1.12 !important;
+        text-transform: uppercase !important;
+    }
+
+    .booking-print-field-value,
+    .bccc-form-line strong,
+    .official-form-field strong {
+        margin: 0 !important;
+        color: #111827 !important;
+        font-size: 7.2pt !important;
+        font-weight: 750 !important;
+        line-height: 1.18 !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    .booking-print-table-wrap,
+    .print-report-section:has(.print-report-table),
+    .bccc-form-charge-block,
+    .official-mice-print section:has(table) {
+        border: 1px solid #cad8d3 !important;
+        border-radius: 4pt !important;
+        overflow: visible !important;
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+    }
+
+    .print-report-table,
+    .booking-print-table,
+    .bccc-form-table,
+    .official-mice-print table,
+    .official-form-paper table {
+        width: 100% !important;
+        min-width: 0 !important;
+        border: 1px solid #cad8d3 !important;
+        border-collapse: collapse !important;
+        table-layout: fixed !important;
+        font-size: 6.6pt !important;
+    }
+
+    .print-report-table th,
+    .print-report-table td,
+    .booking-print-table th,
+    .booking-print-table td,
+    .bccc-form-table th,
+    .bccc-form-table td,
+    .official-mice-print th,
+    .official-mice-print td,
+    .official-form-paper th,
+    .official-form-paper td {
+        border: 1px solid #dbe4e1 !important;
+        padding: 2.2pt 2.6pt !important;
+        color: #111827 !important;
+        font-size: 6.6pt !important;
+        line-height: 1.15 !important;
+        vertical-align: top !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
+    }
+
+    .print-report-table th,
+    .booking-print-table th,
+    .bccc-form-table th,
+    .official-mice-print th,
+    .official-form-paper th {
+        background: #e7f1ee !important;
+        color: #0d443d !important;
+        font-size: 6pt !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.04em !important;
+        text-transform: uppercase !important;
+    }
+
+    .booking-print-money-row,
+    .bccc-form-totals > div {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 6pt !important;
+        border-bottom: 1px solid #dbe4e1 !important;
+        padding: 1.8pt 0 !important;
+    }
+
+    .booking-print-money-row span,
+    .bccc-form-totals span {
+        font-size: 6.8pt !important;
+        line-height: 1.15 !important;
+    }
+
+    .booking-print-note {
+        margin-top: 5pt !important;
+        border: 1px solid #d9c7a6 !important;
+        border-left: 4px solid #176456 !important;
+        border-radius: 4pt !important;
+        background: #fffaf0 !important;
+        padding: 3pt 4pt !important;
+        color: #3b372f !important;
+        font-size: 6.6pt !important;
+        line-height: 1.25 !important;
+        break-inside: avoid !important;
+    }
+
+    .print-report-footer,
+    .booking-print-footer-signatures,
+    .bccc-form-footer,
+    .official-form-signatures,
+    .official-mice-print section:last-child {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 5pt !important;
+        margin-top: 6pt !important;
+        border-top: 2px solid #176456 !important;
+        background: #f7fbfa !important;
+        padding: 4pt !important;
+        color: #465569 !important;
+        font-size: 6.4pt !important;
+        line-height: 1.2 !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    .print-report-footer {
+        grid-template-columns: auto minmax(0, 1fr) auto !important;
+    }
+
+    .print-report-footer::after,
+    .bccc-form-footer::after {
+        content: 'Official BCCC EASE system-generated print copy';
+        color: #176456;
+        font-weight: 800;
+        text-align: right;
+    }
+
+    .booking-print-footer-signatures > div,
+    .official-form-signatures > div,
+    .official-mice-print section:last-child > div {
+        border: 1px solid #cad8d3 !important;
+        border-radius: 4pt !important;
+        background: #ffffff !important;
+        padding: 4pt !important;
+    }
+
+    .booking-print-footer-signatures [class*='mt-8'],
+    .official-form-signatures [class*='mt-'],
+    .official-mice-print section:last-child [class*='pt-10'] {
+        margin-top: 12pt !important;
+        padding-top: 3pt !important;
+    }
+
+    .booking-print-footer-signatures p,
+    .official-mice-print section:last-child p {
+        font-size: 6.2pt !important;
+        line-height: 1.15 !important;
+    }
+
+    .official-mice-print {
+        font-size: 6.4pt !important;
+    }
+
+    .official-mice-print > div {
+        max-width: none !important;
+        padding: 0 !important;
+    }
+
+    .official-mice-print .mt-4,
+    .official-mice-print .mt-5,
+    .official-mice-print .mt-6 {
+        margin-top: 5pt !important;
+    }
+
+    .official-mice-print .grid-cols-5 {
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        gap: 3pt !important;
+    }
+
+    .official-mice-print article {
+        border: 1px solid #cad8d3 !important;
+        background: #f7fbfa !important;
+        padding: 3pt !important;
+    }
+
+    .official-mice-print article p:first-child {
+        color: #176456 !important;
+        font-size: 5.8pt !important;
+        letter-spacing: 0.1em !important;
+    }
+
+    .official-mice-print article p:last-child {
+        margin-top: 1pt !important;
+        color: #111827 !important;
+        font-size: 10pt !important;
+        line-height: 1 !important;
+    }
+
+    .bccc-form-paper {
+        min-height: 0 !important;
+    }
+
+    .bccc-form-grid,
+    .bccc-form-signatures {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 3pt 5pt !important;
+    }
+
+    .bccc-form-section-title {
+        border: 0 !important;
+        border-left: 4px solid #176456 !important;
+        border-radius: 0 !important;
+        background: #e7f1ee !important;
+        padding: 2.5pt 4pt !important;
+    }
+
+    .bccc-form-charge-title,
+    .bccc-form-subtotal-row td {
+        background: #f7fbfa !important;
+    }
+}
+
+/* Baguio paper refinement: tighter rhythm plus pine/mist/gold print furniture. */
+@media print {
+    @page {
+        size: A4;
+        margin: 5mm;
+    }
+
+    :root {
+        --print-pine: #0e5f52;
+        --print-pine-dark: #0a3f39;
+        --print-pine-soft: #dceee9;
+        --print-mist: #f6fbf8;
+        --print-gold: #d1a33c;
+        --print-gold-soft: #f8efd8;
+        --print-ink: #0f172a;
+        --print-muted: #435466;
+    }
+
+    html,
+    body {
+        font-size: 8.2pt !important;
+        line-height: 1.13 !important;
+    }
+
+    .print-report-paper,
+    .booking-print-shell,
+    .bccc-form-paper,
+    .official-form-paper,
+    .official-mice-print > div {
+        gap: 0 !important;
+    }
+
+    .print-report-header,
+    .booking-print-header,
+    .bccc-form-header,
+    .official-form-header,
+    .official-mice-header {
+        position: relative !important;
+        overflow: hidden !important;
+        margin: 0 0 2pt !important;
+        border: 1px solid #9ec4bb !important;
+        border-top: 0 !important;
+        border-bottom: 2px solid var(--print-gold) !important;
+        background:
+            linear-gradient(
+                    90deg,
+                    var(--print-pine) 0 58%,
+                    var(--print-gold) 58% 72%,
+                    #8eb7a9 72% 100%
+                )
+                top / 100% 3.2pt no-repeat,
+            radial-gradient(
+                circle at 14% -35%,
+                rgba(51, 132, 111, 0.2),
+                transparent 36%
+            ),
+            linear-gradient(
+                145deg,
+                var(--print-mist),
+                #ffffff 60%,
+                var(--print-gold-soft)
+            ) !important;
+        padding: 4pt 5pt 3pt !important;
+        color: var(--print-ink) !important;
+    }
+
+    .print-report-header::after,
+    .booking-print-header::after,
+    .bccc-form-header::after,
+    .official-form-header::after,
+    .official-mice-header::after {
+        content: '' !important;
+        position: absolute !important;
+        right: 5pt !important;
+        bottom: 3pt !important;
+        width: 24mm !important;
+        height: 7mm !important;
+        pointer-events: none !important;
+        opacity: 0.58 !important;
+        background:
+            linear-gradient(
+                145deg,
+                transparent 0 45%,
+                rgba(14, 95, 82, 0.32) 46% 49%,
+                transparent 50%
+            ),
+            linear-gradient(
+                160deg,
+                transparent 0 55%,
+                rgba(14, 95, 82, 0.22) 56% 59%,
+                transparent 60%
+            ),
+            linear-gradient(
+                180deg,
+                transparent 0 70%,
+                rgba(209, 163, 60, 0.44) 71% 75%,
+                transparent 76%
+            ) !important;
+    }
+
+    .print-report-header p,
+    .booking-print-header p:first-child,
+    .booking-print-header .inline-flex,
+    .bccc-form-small,
+    .official-mice-header p {
+        color: var(--print-pine) !important;
+        font-size: 5.9pt !important;
+        letter-spacing: 0.1em !important;
+        line-height: 1.08 !important;
+    }
+
+    .print-report-header h1,
+    .booking-print-header h1,
+    .bccc-form-header h1,
+    .official-form-header h1,
+    .official-mice-header h1 {
+        margin-top: 1pt !important;
+        color: var(--print-ink) !important;
+        font-size: 13.6pt !important;
+        line-height: 0.98 !important;
+    }
+
+    .official-mice-header h2,
+    .booking-print-header h2 {
+        font-size: 8.8pt !important;
+        color: var(--print-pine-dark) !important;
+        line-height: 1.02 !important;
+    }
+
+    .print-report-header span,
+    .booking-print-header :is(span, small, p),
+    .official-mice-header small,
+    .bccc-form-office {
+        color: var(--print-muted) !important;
+        font-size: 6.4pt !important;
+        line-height: 1.1 !important;
+    }
+
+    .booking-print-header > div {
+        grid-template-columns: minmax(0, 1fr) 55mm !important;
+        gap: 4pt !important;
+    }
+
+    .booking-print-header-card {
+        border-color: #c9ddcb !important;
+        background:
+            linear-gradient(90deg, rgba(14, 95, 82, 0.1), transparent 46%),
+            #fffaf0 !important;
+        padding: 3pt !important;
+    }
+
+    .booking-print-header-card h2 {
+        font-size: 8.6pt !important;
+    }
+
+    .booking-print-header-card .mt-4 {
+        gap: 0.5pt 3pt !important;
+        margin-top: 2pt !important;
+    }
+
+    .booking-print-shell > :not([hidden]) ~ :not([hidden]),
+    .official-mice-print .mt-4,
+    .official-mice-print .mt-5,
+    .official-mice-print .mt-6 {
+        margin-top: 2pt !important;
+    }
+
+    .booking-print-shell > section.grid,
+    .booking-print-shell > section.grid:first-of-type,
+    .print-report-two-col,
+    .bccc-form-grid,
+    .bccc-form-signatures {
+        gap: 2pt !important;
+    }
+
+    .booking-print-section,
+    .print-report-section,
+    .bccc-form-section,
+    .mice-print-section {
+        margin-top: 2pt !important;
+        border-color: #c7d7d2 !important;
+        border-radius: 4pt !important;
+        padding: 2.5pt !important;
+    }
+
+    .booking-print-section-title,
+    .print-report-section h2,
+    .mice-report-section-header h3,
+    .mice-survey-section-header h3 {
+        margin-bottom: 2pt !important;
+        font-size: 8.5pt !important;
+        line-height: 1.04 !important;
+    }
+
+    .booking-print-section-eyebrow,
+    .bccc-form-section-title,
+    .mice-report-section-header p,
+    .mice-survey-section-header p {
+        font-size: 5.7pt !important;
+        letter-spacing: 0.09em !important;
+    }
+
+    .booking-print-section-body,
+    .booking-print-section-body .mt-4,
+    .bccc-form-section {
+        margin-top: 2pt !important;
+    }
+
+    .booking-print-section :is(.grid, .flex),
+    .print-report-section :is(.grid, .flex),
+    .bccc-form-section :is(.grid, .flex) {
+        gap: 2pt !important;
+    }
+
+    .booking-print-field,
+    .bccc-form-line,
+    .official-form-field {
+        grid-template-columns: 18mm minmax(0, 1fr) !important;
+        gap: 2pt !important;
+        border-color: #d6c49e !important;
+        border-radius: 3pt !important;
+        background: #fffdf8 !important;
+        padding: 1.5pt 2pt !important;
+    }
+
+    .booking-print-field-label,
+    .bccc-form-line span,
+    .official-form-field label {
+        font-size: 5.4pt !important;
+        letter-spacing: 0.06em !important;
+        line-height: 1.05 !important;
+    }
+
+    .booking-print-field-value,
+    .bccc-form-line strong,
+    .official-form-field strong {
+        font-size: 7.1pt !important;
+        line-height: 1.1 !important;
+    }
+
+    .print-report-table,
+    .booking-print-table,
+    .bccc-form-table,
+    .official-mice-print table,
+    .official-form-paper table {
+        font-size: 6.5pt !important;
+    }
+
+    .print-report-table th,
+    .print-report-table td,
+    .booking-print-table th,
+    .booking-print-table td,
+    .bccc-form-table th,
+    .bccc-form-table td,
+    .official-mice-print th,
+    .official-mice-print td,
+    .official-form-paper th,
+    .official-form-paper td {
+        padding: 1.25pt 1.8pt !important;
+        font-size: 6.5pt !important;
+        line-height: 1.06 !important;
+    }
+
+    .print-report-table th,
+    .booking-print-table th,
+    .bccc-form-table th,
+    .official-mice-print th,
+    .official-form-paper th {
+        background: linear-gradient(
+            90deg,
+            var(--print-pine-soft),
+            #edf6f3
+        ) !important;
+        color: var(--print-pine-dark) !important;
+        font-size: 5.9pt !important;
+        letter-spacing: 0.035em !important;
+    }
+
+    .booking-print-money-row,
+    .bccc-form-totals > div {
+        gap: 4pt !important;
+        padding: 1.2pt 0 !important;
+    }
+
+    .booking-print-money-row span,
+    .bccc-form-totals span {
+        font-size: 6.5pt !important;
+        line-height: 1.08 !important;
+    }
+
+    .booking-print-note {
+        margin-top: 2pt !important;
+        border-left-color: var(--print-pine) !important;
+        background: linear-gradient(90deg, #fffaf0, #ffffff) !important;
+        padding: 2.2pt 3pt !important;
+        font-size: 6.5pt !important;
+        line-height: 1.16 !important;
+    }
+
+    .print-report-footer,
+    .booking-print-footer-signatures,
+    .bccc-form-footer,
+    .official-form-signatures,
+    .official-mice-print section:last-child {
+        margin-top: 2.5pt !important;
+        border-top: 0 !important;
+        border-bottom: 1px solid #b8d1c9 !important;
+        background:
+            linear-gradient(
+                    90deg,
+                    var(--print-pine) 0 48%,
+                    var(--print-gold) 48% 62%,
+                    #91b9ac 62% 100%
+                )
+                top / 100% 2.6pt no-repeat,
+            linear-gradient(
+                135deg,
+                var(--print-mist),
+                #ffffff 70%,
+                var(--print-gold-soft)
+            ) !important;
+        padding: 3pt 2.5pt 2.5pt !important;
+        color: var(--print-muted) !important;
+        font-size: 6.2pt !important;
+        line-height: 1.1 !important;
+    }
+
+    .print-report-footer strong,
+    .bccc-form-footer strong,
+    .booking-print-footer-signatures p,
+    .official-mice-print section:last-child p {
+        color: var(--print-pine-dark) !important;
+        font-size: 6.1pt !important;
+        letter-spacing: 0.08em !important;
+    }
+
+    .print-report-footer::after,
+    .bccc-form-footer::after {
+        content: 'Baguio Convention and Cultural Center | Pine City official print copy' !important;
+        color: var(--print-pine-dark) !important;
+        font-size: 6pt !important;
+        font-weight: 900 !important;
+    }
+
+    .booking-print-footer-signatures > div,
+    .official-form-signatures > div,
+    .official-mice-print section:last-child > div {
+        border-color: #c7d7d2 !important;
+        border-radius: 3pt !important;
+        padding: 2.5pt !important;
+    }
+
+    .booking-print-footer-signatures [class*='mt-8'],
+    .official-form-signatures [class*='mt-'],
+    .official-mice-print section:last-child [class*='pt-10'] {
+        margin-top: 6pt !important;
+        padding-top: 2pt !important;
+    }
+
+    .booking-print-footer-signatures p,
+    .official-mice-print section:last-child p {
+        font-size: 6pt !important;
+        line-height: 1.05 !important;
+    }
+
+    .official-mice-print {
+        font-size: 6.5pt !important;
+    }
+
+    .official-mice-print article {
+        padding: 2pt !important;
+    }
+
+    .official-mice-print article p:first-child {
+        font-size: 5.6pt !important;
+    }
+
+    .official-mice-print article p:last-child {
+        font-size: 9.2pt !important;
+    }
+}

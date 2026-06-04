@@ -1,0 +1,596 @@
+/* =========================================================
+   BCCC EASE — Batch 5 responsive/sticky consolidation
+   Loaded last from resources/js/app.tsx. This file intentionally
+   overrides older patch CSS without deleting historical files yet.
+   ========================================================= */
+
+   :root {
+    --bccc-public-header-height: 68px;
+    --bccc-backend-topbar-height: 72px;
+    --bccc-sidebar-width: 17.25rem;
+    --bccc-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html,
+body,
+#app {
+    width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+}
+
+body {
+    overscroll-behavior-y: none;
+}
+
+/* ---------- Public shell / footer whitespace ---------- */
+.bccc-public-shell {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: clip;
+    background: #f8f5ef;
+}
+
+.dark .bccc-public-shell {
+    background: #0d0f12;
+}
+
+.bccc-public-main {
+    flex: 1 0 auto;
+    min-height: 0;
+    padding-top: var(--bccc-public-header-height);
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.bccc-public-footer {
+    flex-shrink: 0;
+    margin-top: 0 !important;
+    padding-bottom: max(1rem, var(--bccc-safe-bottom)) !important;
+}
+
+.bccc-public-footer + *,
+.bccc-public-shell > :last-child {
+    margin-bottom: 0 !important;
+}
+
+body:has(.bccc-public-shell),
+body:has(.bccc-public-header) {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+body:has(.bccc-public-shell) main,
+body:has(.bccc-public-header) main {
+    padding-bottom: 0 !important;
+}
+
+/* Availability dock gets enough room only when it is fixed on-screen, never after the footer. */
+body:has(.bccc-availability-dock) .bccc-public-main {
+    padding-bottom: clamp(7.5rem, 12svh, 10.5rem) !important;
+}
+
+body:has(.bccc-public-footer) .bccc-public-footer {
+    margin-bottom: 0 !important;
+}
+
+/* ---------- Public header: sticky/fixed and compact across public + booking views ---------- */
+.bccc-public-header,
+.client-booking-public-header {
+    position: fixed !important;
+    inset-inline: 0 !important;
+    top: 0 !important;
+    z-index: 99980 !important;
+    min-height: var(--bccc-public-header-height) !important;
+    height: var(--bccc-public-header-height) !important;
+    max-height: var(--bccc-public-header-height) !important;
+    overflow: visible !important;
+    isolation: isolate;
+}
+
+.bccc-public-header-inner,
+.client-booking-public-header-inner {
+    min-height: var(--bccc-public-header-height) !important;
+    height: var(--bccc-public-header-height) !important;
+    max-height: var(--bccc-public-header-height) !important;
+    min-width: 0 !important;
+}
+
+.bccc-public-header a,
+.bccc-public-header button,
+.client-booking-public-header a,
+.client-booking-public-header button {
+    flex-shrink: 0;
+}
+
+.bccc-public-brand,
+.client-booking-brand {
+    min-width: 0 !important;
+    max-width: min(48vw, 34rem);
+}
+
+.bccc-public-caption {
+    min-width: 0;
+    max-width: min(32vw, 27rem) !important;
+}
+
+.bccc-public-caption p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bccc-public-actions {
+    min-width: 0;
+}
+
+.client-booking-public-shell .bccc-public-main {
+    padding-top: 0 !important;
+}
+
+.client-booking-public-shell .client-booking-public-hero {
+    margin-top: var(--bccc-public-header-height) !important;
+}
+
+/* ---------- Backend shell: sidebar + navbar true sticky ---------- */
+.backend-shell {
+    --bccc-sidebar-width: 17.25rem;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    align-items: stretch;
+}
+
+.backend-sidebar {
+    position: fixed !important;
+    inset-block: 0 !important;
+    left: 0 !important;
+    z-index: 120 !important;
+    width: var(--bccc-sidebar-width) !important;
+    height: 100svh !important;
+    max-height: 100svh !important;
+    overflow: hidden !important;
+}
+
+.backend-sidebar > div {
+    min-height: 0 !important;
+    height: 100% !important;
+}
+
+.backend-sidebar [class*='overflow-y-auto'] {
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+}
+
+.backend-sidebar [class*='overflow-y-auto']::-webkit-scrollbar {
+    display: none;
+}
+
+.backend-main {
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    min-height: 100svh;
+    overflow: visible;
+}
+
+@media (min-width: 1024px) {
+    .backend-main {
+        padding-left: var(--bccc-sidebar-width) !important;
+    }
+}
+
+.backend-topbar,
+.backend-main-topbar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 110 !important;
+    min-height: var(--bccc-backend-topbar-height) !important;
+    isolation: isolate;
+}
+
+.backend-main-topbar-inner {
+    min-height: var(--bccc-backend-topbar-height) !important;
+    min-width: 0 !important;
+}
+
+.backend-app-content {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding-top: clamp(0.65rem, 1.2vw, 1rem) !important;
+    padding-bottom: clamp(5.5rem, 9svh, 7rem) !important;
+}
+
+.role-workspace-header {
+    margin-bottom: clamp(0.75rem, 1.2vw, 1.25rem) !important;
+    border-radius: 1.35rem !important;
+}
+
+/* ---------- Booking form: predictable scroll, sticky stepper, compact confirm bar ---------- */
+html.booking-wizard-screen-active,
+body.booking-wizard-screen-active {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-x: clip !important;
+    overflow-y: auto !important;
+    scroll-padding-top: calc(var(--bccc-backend-topbar-height) + 1rem);
+    padding-bottom: 5.75rem !important;
+}
+
+html.booking-wizard-screen-active #app {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: visible !important;
+}
+
+.booking-lux-form {
+    min-width: 0;
+}
+
+html.booking-wizard-screen-active .booking-lux-form {
+    padding-bottom: 5.75rem !important;
+}
+
+.booking-wizard-stage,
+.booking-step-panel,
+.booking-package-screen-step,
+.booking-schedule-step-panel {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+.booking-stepper {
+    position: sticky !important;
+    top: calc(var(--bccc-backend-topbar-height) + 0.55rem) !important;
+    z-index: 90 !important;
+    margin-block: 0.75rem 1rem !important;
+    border: 1px solid var(--bccc-backend-line, rgba(148, 116, 65, 0.24)) !important;
+    background: color-mix(in srgb, var(--bccc-backend-panel, #fffaf0) 93%, transparent) !important;
+    box-shadow: 0 18px 50px rgba(47, 37, 23, 0.08) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.booking-step-footer-sticky,
+.booking-step-footer {
+    position: fixed !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: var(--bccc-sidebar-width) !important;
+    z-index: 9500 !important;
+    width: auto !important;
+    max-width: calc(100vw - var(--bccc-sidebar-width)) !important;
+    border-top: 1px solid var(--bccc-backend-line, rgba(148, 116, 65, 0.24)) !important;
+    background: color-mix(in srgb, var(--bccc-backend-panel, #fffaf0) 95%, transparent) !important;
+    padding: 0.48rem clamp(0.85rem, 1.6vw, 1.25rem) calc(0.48rem + var(--bccc-safe-bottom)) !important;
+    box-shadow: 0 -18px 54px rgba(47, 37, 23, 0.12) !important;
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+}
+
+.booking-step-footer-inner {
+    display: grid !important;
+    grid-template-columns: minmax(7.5rem, auto) minmax(0, 1fr) minmax(12rem, auto) !important;
+    align-items: center !important;
+    gap: 0.7rem !important;
+    width: min(100%, 1500px) !important;
+    max-width: 100% !important;
+    margin-inline: auto !important;
+}
+
+.booking-step-footer-actions {
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 0.55rem !important;
+    min-width: 0 !important;
+}
+
+.booking-step-footer-status {
+    min-width: 0 !important;
+    text-align: center !important;
+    line-height: 1.15 !important;
+}
+
+.booking-step-footer-status span {
+    display: block;
+    font-size: 0.62rem !important;
+    letter-spacing: 0.14em !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.booking-step-footer-status strong {
+    display: block;
+    font-size: 0.82rem !important;
+    line-height: 1.18 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.booking-step-footer-sticky .booking-secondary-action,
+.booking-step-footer-sticky .booking-ghost-action,
+.booking-step-footer-sticky .booking-primary-action,
+.booking-step-footer .booking-secondary-action,
+.booking-step-footer .booking-ghost-action,
+.booking-step-footer .booking-primary-action {
+    min-height: 2.55rem !important;
+    padding: 0.62rem 0.95rem !important;
+    border-radius: 999px !important;
+}
+
+.booking-footer-previous {
+    min-width: 7.5rem !important;
+}
+
+/* Right-middle floating summary. This replaces the older disabled/hidden summary variants. */
+.booking-summary-fab {
+    position: fixed !important;
+    top: 50% !important;
+    right: 1.2rem !important;
+    bottom: auto !important;
+    left: auto !important;
+    z-index: 9600 !important;
+    transform: translateY(-50%) !important;
+    display: inline-flex !important;
+    min-height: 3rem !important;
+    min-width: 3rem !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    border: 1px solid var(--bccc-backend-gold-line, rgba(176, 141, 72, 0.5)) !important;
+    border-radius: 999px !important;
+    background: color-mix(in srgb, var(--bccc-backend-panel, #fffaf0) 94%, transparent) !important;
+    color: var(--bccc-backend-text, #21180d) !important;
+    padding: 0.85rem 1rem !important;
+    font-size: 0.74rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 20px 60px rgba(47, 37, 23, 0.2) !important;
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease !important;
+}
+
+.booking-summary-fab:hover {
+    transform: translateY(-50%) translateX(-4px) scale(1.025) !important;
+    border-color: var(--bccc-backend-gold, #b08d48) !important;
+    box-shadow: 0 26px 74px rgba(47, 37, 23, 0.28) !important;
+}
+
+.booking-summary-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 9700 !important;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0);
+    opacity: 0;
+    transition: opacity 220ms ease, background 220ms ease;
+}
+
+.booking-summary-overlay.is-open {
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.42);
+    opacity: 1;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.booking-summary-drawer {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 9800 !important;
+    width: min(100vw, 28rem) !important;
+    max-width: 28rem !important;
+    overflow-y: auto !important;
+    background: var(--bccc-backend-panel, #fffaf0) !important;
+    color: var(--bccc-backend-text, #21180d) !important;
+    border-left: 1px solid var(--bccc-backend-line, rgba(148, 116, 65, 0.24)) !important;
+    box-shadow: -26px 0 90px rgba(0, 0, 0, 0.24) !important;
+    transform: translateX(105%) !important;
+    transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.booking-summary-drawer.is-open {
+    transform: translateX(0) !important;
+}
+
+/* Horizontal rails should not convert wheel/drag gestures into page bouncing. */
+.public-horizontal-rail,
+.luxury-horizontal-rail,
+.booking-package-choice-grid,
+.booking-package-usage-compact,
+.booking-stepper {
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+}
+
+.public-horizontal-rail::-webkit-scrollbar,
+.luxury-horizontal-rail::-webkit-scrollbar,
+.booking-package-choice-grid::-webkit-scrollbar,
+.booking-package-usage-compact::-webkit-scrollbar,
+.booking-stepper::-webkit-scrollbar {
+    display: none;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1280px) {
+    :root {
+        --bccc-sidebar-width: 15.5rem;
+    }
+
+    .bccc-public-caption {
+        max-width: min(28vw, 22rem) !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    :root {
+        --bccc-public-header-height: 64px;
+        --bccc-backend-topbar-height: 66px;
+        --bccc-sidebar-width: 0px;
+    }
+
+    .backend-main {
+        padding-left: 0 !important;
+    }
+
+    .backend-topbar,
+    .backend-main-topbar {
+        min-height: var(--bccc-backend-topbar-height) !important;
+    }
+
+    .backend-main-topbar-inner {
+        min-height: var(--bccc-backend-topbar-height) !important;
+    }
+
+    .booking-step-footer-sticky,
+    .booking-step-footer {
+        left: 0 !important;
+        max-width: 100vw !important;
+    }
+
+    .booking-stepper {
+        top: calc(var(--bccc-backend-topbar-height) + 0.35rem) !important;
+    }
+
+    .booking-summary-fab {
+        right: 0.85rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --bccc-public-header-height: 60px;
+        --bccc-backend-topbar-height: 62px;
+    }
+
+    .bccc-public-caption,
+    .bccc-public-actions .bccc-public-breathe-logo,
+    .bccc-public-actions a[href*='visita'],
+    .bccc-public-actions a[href*='creative'] {
+        display: none !important;
+    }
+
+    .bccc-public-header-inner,
+    .client-booking-public-header-inner {
+        padding-inline: 0.7rem !important;
+        gap: 0.45rem !important;
+    }
+
+    .bccc-public-seal {
+        width: 2.25rem !important;
+        height: 2.25rem !important;
+    }
+
+    .backend-main-topbar-inner {
+        min-height: var(--bccc-backend-topbar-height) !important;
+        padding-inline: 0.75rem !important;
+    }
+
+    .role-workspace-header {
+        border-radius: 1.05rem !important;
+        padding: 1rem !important;
+    }
+
+    .role-workspace-header h1 {
+        font-size: clamp(1.75rem, 8vw, 2.45rem) !important;
+    }
+
+    .booking-stepper {
+        display: flex !important;
+        gap: 0.55rem !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding: 0.55rem !important;
+        margin-block: 0.6rem 0.85rem !important;
+    }
+
+    .booking-stepper > * {
+        flex: 0 0 auto !important;
+        min-width: 10.25rem !important;
+    }
+
+    .booking-summary-fab {
+        top: auto !important;
+        right: 0.75rem !important;
+        bottom: calc(5.25rem + var(--bccc-safe-bottom)) !important;
+        transform: none !important;
+        min-height: 2.75rem !important;
+        min-width: 2.75rem !important;
+        padding: 0.75rem 0.9rem !important;
+        font-size: 0.68rem !important;
+    }
+
+    .booking-summary-fab:hover {
+        transform: translateY(-3px) !important;
+    }
+
+    .booking-step-footer-sticky,
+    .booking-step-footer {
+        padding: 0.5rem 0.75rem calc(0.5rem + var(--bccc-safe-bottom)) !important;
+    }
+
+    .booking-step-footer-inner {
+        grid-template-columns: 1fr !important;
+        gap: 0.45rem !important;
+    }
+
+    .booking-step-footer-status {
+        order: -1 !important;
+    }
+
+    .booking-step-footer-actions {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 0.45rem !important;
+        width: 100% !important;
+    }
+
+    .booking-footer-previous,
+    .booking-step-footer-sticky .booking-secondary-action,
+    .booking-step-footer-sticky .booking-ghost-action,
+    .booking-step-footer-sticky .booking-primary-action,
+    .booking-step-footer .booking-secondary-action,
+    .booking-step-footer .booking-ghost-action,
+    .booking-step-footer .booking-primary-action {
+        width: 100% !important;
+        min-width: 0 !important;
+        justify-content: center !important;
+    }
+
+    html.booking-wizard-screen-active,
+    body.booking-wizard-screen-active {
+        padding-bottom: 10.75rem !important;
+    }
+
+    html.booking-wizard-screen-active .booking-lux-form {
+        padding-bottom: 10.75rem !important;
+    }
+
+    .booking-summary-drawer {
+        width: 100vw !important;
+        max-width: 100vw !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .backend-app-content {
+        padding-inline: 0.7rem !important;
+    }
+
+    .booking-step-footer-status span {
+        font-size: 0.58rem !important;
+    }
+
+    .booking-step-footer-status strong {
+        font-size: 0.78rem !important;
+    }
+}

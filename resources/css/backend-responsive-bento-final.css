@@ -1,0 +1,537 @@
+/* Final backend chrome, breadcrumb path, and mobile/tablet bento responsiveness. */
+
+.backend-boneyard-root,
+.backend-shell,
+.backend-main,
+.backend-app-content,
+.backend-app-content-inner {
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.backend-boneyard-root {
+    overflow-x: clip !important;
+}
+
+.backend-main {
+    padding-top: 0 !important;
+}
+
+.bccc-backend-chrome-portal {
+    pointer-events: none;
+    position: relative;
+    z-index: 99950;
+}
+
+.bccc-backend-chrome-portal
+    :is(
+        .backend-sidebar,
+        .backend-main-topbar,
+        .backend-topbar,
+        button,
+        a,
+        input,
+        select,
+        textarea,
+        [role='button']
+    ) {
+    pointer-events: auto;
+}
+
+.backend-sidebar {
+    width: var(--bccc-backend-sidebar-width, 17.25rem) !important;
+    min-width: var(--bccc-backend-sidebar-width, 17.25rem) !important;
+    max-width: var(--bccc-backend-sidebar-width, 17.25rem) !important;
+    overflow: hidden !important;
+}
+
+.backend-sidebar > div {
+    min-height: 0 !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+    padding-top: max(0.75rem, env(safe-area-inset-top, 0px)) !important;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.backend-sidebar [class*='overflow-y-auto'] {
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    scrollbar-width: thin;
+}
+
+.backend-main-topbar,
+.backend-topbar,
+header.backend-topbar {
+    min-height: var(
+        --bccc-backend-chrome-height,
+        var(--bccc-backend-topbar-height, 3.95rem)
+    ) !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.backend-main-topbar-inner {
+    box-sizing: border-box;
+    min-height: var(
+        --bccc-backend-titlebar-height,
+        var(--bccc-backend-topbar-height, 3.95rem)
+    ) !important;
+    overflow: visible !important;
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+}
+
+.backend-topbar-title {
+    min-width: 0 !important;
+}
+
+.backend-topbar-title h1 {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.backend-topbar-shortcuts,
+.backend-topbar-controls {
+    min-width: 0;
+}
+
+.backend-breadcrumb-row {
+    box-sizing: border-box;
+    margin-left: 0 !important;
+    min-height: var(--bccc-backend-breadcrumb-height, 0rem) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+}
+
+.backend-breadcrumb-inner {
+    min-width: 0;
+    mask-image: linear-gradient(90deg, #000 calc(100% - 2rem), transparent);
+}
+
+.backend-breadcrumb-inner > span {
+    min-width: 0;
+}
+
+.backend-breadcrumb-row :is(a, span) {
+    white-space: nowrap;
+}
+
+.backend-breadcrumb-row a,
+.backend-breadcrumb-row span:last-child > span {
+    max-width: min(24rem, 48vw);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.backend-app-content {
+    padding-top: calc(
+        var(
+                --bccc-backend-chrome-height,
+                var(--bccc-backend-topbar-height, 3.95rem)
+            ) +
+            clamp(3.35rem, 5vw, 4.25rem)
+    ) !important;
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
+    overflow-x: clip !important;
+}
+
+.backend-boneyard-root[data-backend-has-breadcrumbs='true']
+    main.backend-app-content.backend-app-content {
+    padding-top: calc(
+        var(
+                --bccc-backend-chrome-height,
+                var(--bccc-backend-topbar-height, 3.95rem)
+            ) +
+            clamp(3.35rem, 5vw, 4.25rem)
+    ) !important;
+}
+
+.backend-boneyard-root[data-backend-has-breadcrumbs='false']
+    main.backend-app-content.backend-app-content {
+    padding-top: calc(
+        var(
+                --bccc-backend-chrome-height,
+                var(--bccc-backend-topbar-height, 3.95rem)
+            ) +
+            clamp(1rem, 2vw, 1.45rem)
+    ) !important;
+}
+
+.backend-app-content-inner {
+    gap: clamp(0.9rem, 1.5vw, 1.25rem) !important;
+}
+
+.bccc-booking-computation-aside,
+.bccc-booking-side-panel,
+.bccc-booking-summary-card,
+.notification-monitoring-layout > aside {
+    top: calc(
+        var(
+                --bccc-backend-chrome-height,
+                var(--bccc-backend-topbar-height, 3.95rem)
+            ) +
+            1rem
+    ) !important;
+}
+
+.backend-bento-grid,
+.role-dashboard-kpi-grid,
+.role-action-grid,
+.workspace-kpi-grid,
+.workspace-actions-grid {
+    display: grid !important;
+    grid-auto-flow: dense;
+    align-items: stretch;
+}
+
+.backend-bento-grid > *,
+.role-dashboard-kpi-grid > *,
+.role-action-grid > *,
+.workspace-kpi-grid > *,
+.workspace-actions-grid > * {
+    min-width: 0;
+    height: 100%;
+}
+
+.role-kpi-card,
+.role-action-card,
+.workspace-kpi-card,
+.workspace-action-card,
+.workspace-panel,
+.role-workspace-header {
+    border-radius: 0.9rem !important;
+}
+
+.workspace-action-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.backend-mobile-menu {
+    left: max(0.75rem, env(safe-area-inset-left, 0px)) !important;
+    right: max(0.75rem, env(safe-area-inset-right, 0px));
+    top: max(0.75rem, env(safe-area-inset-top, 0px)) !important;
+}
+
+.backend-mobile-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: 0.75rem;
+    align-content: start;
+}
+
+.backend-mobile-section {
+    min-width: 0;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+.backend-mobile-section.is-active {
+    border-color: rgba(244, 216, 148, 0.32);
+    background: rgba(244, 216, 148, 0.07);
+}
+
+.backend-mobile-section-items {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+
+.backend-mobile-nav-item {
+    min-width: 0;
+    min-height: 4.45rem;
+    align-items: flex-start;
+    border: 1px solid rgba(255, 255, 255, 0.075);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.backend-mobile-nav-item[data-active='true'] {
+    border-color: rgba(255, 255, 255, 0.32);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+}
+
+.backend-mobile-footer {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.backend-mobile-footer > * {
+    min-width: 0;
+}
+
+.backend-notification-menu,
+.backend-account-trigger + div {
+    max-width: calc(100vw - 1rem) !important;
+}
+
+@media (min-width: 1024px) {
+    .backend-sidebar {
+        display: flex !important;
+    }
+
+    .backend-main {
+        padding-left: var(--bccc-backend-sidebar-width, 17.25rem) !important;
+    }
+
+    .backend-main-topbar,
+    .backend-topbar,
+    header.backend-topbar {
+        left: var(--bccc-backend-sidebar-width, 17.25rem) !important;
+        inset-inline-start: var(
+            --bccc-backend-sidebar-width,
+            17.25rem
+        ) !important;
+        width: calc(
+            100vw - var(--bccc-backend-sidebar-width, 17.25rem)
+        ) !important;
+    }
+}
+
+@media (min-width: 1181px) and (max-width: 1440px) {
+    .backend-account-trigger span:nth-child(2) {
+        max-width: 6.5rem !important;
+    }
+}
+
+@media (max-width: 1180px) {
+    .backend-account-trigger span:nth-child(2) {
+        display: none !important;
+    }
+
+    .role-dashboard-main-grid,
+    .backend-dashboard-main-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .backend-bento-grid,
+    .role-dashboard-kpi-grid,
+    .role-action-grid,
+    .workspace-kpi-grid,
+    .workspace-actions-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .backend-bento-grid:not(.backend-bento-grid-compact) > :first-child,
+    .role-dashboard-kpi-grid > :first-child,
+    .role-action-grid > :first-child,
+    .workspace-kpi-grid > :first-child,
+    .workspace-actions-grid > :first-child {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 1023px) {
+    .backend-sidebar {
+        display: none !important;
+    }
+
+    .backend-main {
+        padding-left: 0 !important;
+    }
+
+    .backend-main-topbar,
+    .backend-topbar,
+    header.backend-topbar {
+        left: 0 !important;
+        inset-inline-start: 0 !important;
+        width: 100vw !important;
+    }
+
+    .backend-main-topbar-inner {
+        gap: 0.55rem !important;
+    }
+
+    .backend-app-content {
+        padding-inline: clamp(0.75rem, 2.5vw, 1rem) !important;
+    }
+
+    .role-workspace-header .relative.grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .role-workspace-actions {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .role-workspace-actions > * {
+        width: 100%;
+    }
+}
+
+@media (min-width: 700px) and (max-width: 1023px) {
+    .backend-mobile-section.is-active {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 767px) {
+    .backend-topbar-title h1 {
+        max-width: 44vw;
+        font-size: 1.05rem !important;
+        line-height: 1.12 !important;
+        letter-spacing: 0 !important;
+    }
+
+    .backend-topbar-title .rounded-full {
+        max-width: 36vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .backend-topbar-title .h-1,
+    .backend-topbar-title .h-1 + span {
+        display: none !important;
+    }
+
+    .backend-topbar-controls {
+        gap: 0.4rem !important;
+    }
+
+    .backend-main-topbar
+        :is(button, .backend-notification-button, .backend-account-trigger) {
+        min-height: 2.45rem !important;
+    }
+
+    .backend-notification-button,
+    .backend-main-topbar [aria-label='Toggle backend theme'],
+    .backend-main-topbar [aria-label='Open workspace menu'],
+    .backend-account-trigger {
+        height: 2.45rem !important;
+        width: 2.45rem !important;
+        border-radius: 0.8rem !important;
+    }
+
+    .backend-account-trigger {
+        padding-inline: 0.35rem !important;
+    }
+
+    .backend-account-trigger > span:first-child {
+        height: 1.75rem !important;
+        width: 1.75rem !important;
+    }
+
+    .backend-account-trigger svg {
+        display: none !important;
+    }
+
+    .backend-breadcrumb-label {
+        display: none !important;
+    }
+
+    .backend-breadcrumb-row {
+        padding-inline: 0.65rem !important;
+    }
+
+    .backend-breadcrumb-row a,
+    .backend-breadcrumb-row span:last-child > span {
+        max-width: 42vw;
+    }
+
+    .backend-app-content {
+        padding-top: calc(
+            var(--bccc-backend-chrome-height, 3.95rem) +
+                clamp(3.45rem, 8vw, 4.35rem)
+        ) !important;
+    }
+
+    .backend-boneyard-root[data-backend-has-breadcrumbs='false']
+        main.backend-app-content.backend-app-content {
+        padding-top: calc(
+            var(--bccc-backend-chrome-height, 3.95rem) +
+                clamp(1rem, 3vw, 1.4rem)
+        ) !important;
+    }
+
+    .role-workspace-header,
+    .workspace-hero {
+        padding: 1rem !important;
+    }
+
+    .role-workspace-header h1,
+    .workspace-hero h1 {
+        font-size: 2rem !important;
+        line-height: 1.02 !important;
+        letter-spacing: 0 !important;
+    }
+
+    .role-workspace-header p,
+    .workspace-hero span {
+        font-size: 0.86rem !important;
+        line-height: 1.65 !important;
+    }
+}
+
+@media (max-width: 560px) {
+    .backend-bento-grid,
+    .role-dashboard-kpi-grid,
+    .role-action-grid,
+    .workspace-kpi-grid,
+    .workspace-actions-grid,
+    .role-workspace-actions {
+        grid-template-columns: 1fr !important;
+    }
+
+    .backend-bento-grid > *,
+    .role-dashboard-kpi-grid > *,
+    .role-action-grid > *,
+    .workspace-kpi-grid > *,
+    .workspace-actions-grid > *,
+    .role-workspace-actions > * {
+        grid-column: auto !important;
+    }
+
+    .backend-mobile-menu {
+        width: calc(100vw - 1.5rem) !important;
+    }
+
+    .backend-mobile-nav-grid,
+    .backend-mobile-section-items,
+    .backend-mobile-footer {
+        grid-template-columns: 1fr;
+    }
+
+    .backend-mobile-nav-item {
+        min-height: 3.65rem;
+    }
+
+    .backend-mobile-nav-description {
+        display: none !important;
+    }
+}
+
+@media (max-width: 420px) {
+    .backend-main-topbar [aria-label='Toggle backend theme'] {
+        display: none !important;
+    }
+
+    .backend-topbar-title h1 {
+        max-width: 48vw;
+        font-size: 1rem !important;
+    }
+
+    .backend-breadcrumb-row {
+        font-size: 10px !important;
+    }
+
+    .backend-app-content {
+        padding-inline: 0.65rem !important;
+    }
+}
+
+@media print {
+    .backend-main {
+        padding-left: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    .backend-app-content {
+        padding: 0 !important;
+    }
+}

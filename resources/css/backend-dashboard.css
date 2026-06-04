@@ -1,0 +1,129 @@
+@layer components {
+    .backend-page-shell {
+        min-height: calc(100vh - 4rem);
+        color: hsl(var(--foreground));
+    }
+
+    .backend-page-container {
+        width: 100%;
+        max-width: 1540px;
+        margin-inline: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    @media (min-width: 640px) {
+        .backend-page-container {
+            padding: 1.5rem;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .backend-page-container {
+            padding: 2rem;
+        }
+    }
+
+    .backend-page-hero {
+        position: relative;
+        border-radius: 1.75rem;
+        border-color: hsl(var(--border));
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.1),
+                transparent 34%
+            ),
+            hsl(var(--card));
+        box-shadow: 0 18px 50px rgb(15 23 42 / 0.06);
+    }
+
+    .dark .backend-page-hero {
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.12),
+                transparent 34%
+            ),
+            rgb(255 255 255 / 0.055);
+        border-color: rgb(255 255 255 / 0.1);
+        box-shadow: 0 18px 50px rgb(0 0 0 / 0.18);
+    }
+
+    .backend-page-content {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .backend-kpi-card,
+    .backend-action-card,
+    .backend-dashboard-section {
+        position: relative;
+        isolation: isolate;
+        border-radius: 1.5rem;
+        border-color: hsl(var(--border));
+        background: hsl(var(--card));
+        box-shadow: 0 16px 44px rgb(15 23 42 / 0.055);
+    }
+
+    .dark .backend-kpi-card,
+    .dark .backend-action-card,
+    .dark .backend-dashboard-section {
+        border-color: rgb(255 255 255 / 0.1);
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(255 255 255 / 0.045),
+                transparent 36%
+            ),
+            rgb(255 255 255 / 0.055);
+        box-shadow: 0 18px 50px rgb(0 0 0 / 0.18);
+    }
+
+    .backend-kpi-card,
+    .backend-action-card {
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            background 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .backend-kpi-card:hover,
+    .backend-action-card:hover {
+        transform: translateY(-2px);
+        border-color: rgb(201 169 106 / 0.35);
+    }
+
+    .backend-table-row {
+        transition: background 0.18s ease;
+    }
+
+    .backend-table-row:hover {
+        background: hsl(var(--muted) / 0.45);
+    }
+
+    .dark .backend-table-row:hover {
+        background: rgb(255 255 255 / 0.045);
+    }
+
+    .backend-dashboard-section table td {
+        vertical-align: middle;
+    }
+
+    @media (max-width: 768px) {
+        .backend-page-hero {
+            border-radius: 1.35rem;
+        }
+
+        .backend-kpi-card,
+        .backend-action-card,
+        .backend-dashboard-section {
+            border-radius: 1.25rem;
+        }
+    }
+}

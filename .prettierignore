@@ -1,0 +1,15 @@
+node_modules
+vendor
+public/build
+public/hot
+public/storage
+storage
+bootstrap/cache
+bootstrap/ssr
+resources/js/actions
+resources/js/routes
+resources/js/wayfinder
+resources/js/components/ui/*
+resources/js/components/admin-resource/_archive_old/**
+resources/views/mail/*
+*.log

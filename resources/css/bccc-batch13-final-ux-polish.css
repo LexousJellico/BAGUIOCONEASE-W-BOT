@@ -1,0 +1,358 @@
+/* =========================================================
+   BCCC EASE — Batch 13 Final UX Polish Layer
+   ---------------------------------------------------------
+   Additive final pass for accessibility, small-screen edge
+   cases, print/export readability, safe-area padding, focus
+   states, and remaining table/form overflow issues.
+   ========================================================= */
+
+:root {
+  --bccc-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --bccc-safe-top: env(safe-area-inset-top, 0px);
+  --bccc-focus-ring: 0 0 0 3px rgba(214, 176, 92, 0.32), 0 0 0 1px rgba(17, 24, 39, 0.92);
+  --bccc-focus-ring-dark: 0 0 0 3px rgba(244, 216, 148, 0.24), 0 0 0 1px rgba(255, 255, 255, 0.82);
+  --bccc-fluid-card-pad: clamp(0.875rem, 2.4vw, 1.35rem);
+  --bccc-fluid-section-gap: clamp(0.875rem, 2.2vw, 1.5rem);
+}
+
+/* Skip links — keyboard users can jump past large fixed headers/nav. */
+.bccc-skip-link {
+  position: fixed;
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
+  top: max(0.75rem, env(safe-area-inset-top, 0px));
+  z-index: 100000;
+  transform: translateY(-150%);
+  border: 1px solid rgba(214, 176, 92, 0.55);
+  background: #0b0f14;
+  color: #fff;
+  padding: 0.7rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.22);
+  transition: transform 0.18s ease;
+}
+
+.bccc-skip-link:focus,
+.bccc-skip-link:focus-visible {
+  transform: translateY(0);
+  outline: none;
+}
+
+/* Strong, consistent focus treatment without changing mouse appearance. */
+:where(a, button, input, select, textarea, [role='button'], [tabindex]:not([tabindex='-1'])):focus-visible {
+  outline: none !important;
+  box-shadow: var(--bccc-focus-ring) !important;
+}
+
+.dark :where(a, button, input, select, textarea, [role='button'], [tabindex]:not([tabindex='-1'])):focus-visible {
+  box-shadow: var(--bccc-focus-ring-dark) !important;
+}
+
+/* Mobile browser safety: prevents iOS zoom on focus and improves touch targets. */
+:where(input, select, textarea) {
+  font-size: max(16px, 1rem);
+  min-width: 0;
+}
+
+:where(button, a, input, select, textarea, [role='button']) {
+  touch-action: manipulation;
+}
+
+:where(button, a, [role='button']) {
+  -webkit-tap-highlight-color: rgba(214, 176, 92, 0.18);
+}
+
+/* Remaining global overflow guards for long names, emails, references, and package titles. */
+:where(.backend-app-content, .bccc-public-main, .resource-page-shell, .role-workspace-body, .booking-form-page, .booking-show-page, .notification-page, .mice-report-page, .payment-review-page) :where(h1, h2, h3, h4, p, span, a, td, th, li, label, dd, dt) {
+  overflow-wrap: anywhere;
+}
+
+:where(.backend-app-content, .bccc-public-main, .resource-page-shell, .role-workspace-body, .booking-form-page, .booking-show-page, .notification-page, .mice-report-page, .payment-review-page) :where(img, video, canvas, svg) {
+  max-width: 100%;
+}
+
+/* Safer app/public main targets for skip links and focus jumps. */
+#backend-main-content:focus,
+#public-main-content:focus {
+  outline: none;
+}
+
+/* Fixed chrome safe-area polish. */
+.backend-main-topbar,
+.bccc-public-header-portal > * {
+  padding-top: var(--bccc-safe-top);
+}
+
+@media (max-width: 480px) {
+  .backend-main-topbar-inner {
+    gap: 0.45rem !important;
+    padding-left: max(0.65rem, env(safe-area-inset-left, 0px)) !important;
+    padding-right: max(0.65rem, env(safe-area-inset-right, 0px)) !important;
+  }
+
+  .backend-main-topbar h1 {
+    max-width: 58vw;
+    font-size: 0.98rem !important;
+    letter-spacing: -0.03em !important;
+  }
+
+  .backend-main-topbar [aria-label='Toggle backend theme'] {
+    display: none !important;
+  }
+
+  .backend-main-topbar .backend-notification-bell,
+  .backend-main-topbar [aria-label='Open account menu'],
+  .backend-main-topbar [aria-label='Open workspace menu'] {
+    width: 2.45rem !important;
+    height: 2.45rem !important;
+  }
+
+  .backend-app-content {
+    padding-top: calc(4.85rem + var(--bccc-safe-top)) !important;
+    padding-left: max(0.7rem, env(safe-area-inset-left, 0px)) !important;
+    padding-right: max(0.7rem, env(safe-area-inset-right, 0px)) !important;
+    padding-bottom: calc(1rem + var(--bccc-safe-bottom)) !important;
+  }
+
+  .bccc-public-main {
+    padding-top: calc(4.35rem + var(--bccc-safe-top)) !important;
+  }
+}
+
+/* Final responsive card/form defaults for remaining pages. */
+:where(.resource-page-shell, .role-workspace-body, .calendar-index-page, .mice-report-page, .payment-review-page, .booking-show-page, .settings-layout, .notification-page) :where(.rounded-2xl, .rounded-3xl, .rounded-\[1\.5rem\], .rounded-\[2rem\]) {
+  border-radius: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  :where(.resource-page-shell, .role-workspace-body, .calendar-index-page, .mice-report-page, .payment-review-page, .booking-show-page, .settings-layout, .notification-page) :where(.rounded-2xl, .rounded-3xl, .rounded-\[1\.5rem\], .rounded-\[2rem\]) {
+    border-radius: 0.75rem !important;
+  }
+
+  :where(.resource-page-shell, .role-workspace-body, .calendar-index-page, .mice-report-page, .payment-review-page, .booking-show-page, .settings-layout, .notification-page) :where(.p-6, .p-7, .p-8, .px-6, .px-7, .px-8) {
+    padding-left: var(--bccc-fluid-card-pad) !important;
+    padding-right: var(--bccc-fluid-card-pad) !important;
+  }
+
+  :where(.resource-page-shell, .role-workspace-body, .calendar-index-page, .mice-report-page, .payment-review-page, .booking-show-page, .settings-layout, .notification-page) :where(.py-6, .py-7, .py-8) {
+    padding-top: var(--bccc-fluid-card-pad) !important;
+    padding-bottom: var(--bccc-fluid-card-pad) !important;
+  }
+
+  :where(.resource-page-shell, .role-workspace-body, .calendar-index-page, .mice-report-page, .payment-review-page, .booking-show-page, .settings-layout, .notification-page) :where(.gap-6, .gap-7, .gap-8) {
+    gap: var(--bccc-fluid-section-gap) !important;
+  }
+}
+
+/* Table and export preview comfort. */
+[data-slot='table-container'],
+.bccc-table-scroll,
+.resource-table-wrap,
+.report-table-wrap,
+.mice-export-preview,
+.payment-review-table-wrap {
+  border-radius: 0.9rem;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-gutter: stable;
+}
+
+[data-slot='table-container'] table,
+.resource-table-wrap table,
+.report-table-wrap table,
+.mice-export-preview table,
+.payment-review-table-wrap table {
+  min-width: max-content;
+}
+
+[data-slot='table-container'] th,
+[data-slot='table-container'] td {
+  white-space: normal;
+  vertical-align: top;
+}
+
+@media (max-width: 640px) {
+  [data-slot='table-container'] {
+    margin-inline: -0.25rem;
+    max-width: calc(100vw - 1.25rem);
+  }
+
+  [data-slot='table-container'] table {
+    font-size: 0.78rem;
+  }
+}
+
+/* Dialog/modal viewport containment across booking, auth, resource, and notification screens. */
+:where([role='dialog'], .fixed.inset-0) :where(.max-h-screen, .max-h-\[90vh\], .max-h-\[calc\(100dvh-2rem\)\]) {
+  max-height: calc(100dvh - 1rem - var(--bccc-safe-top) - var(--bccc-safe-bottom)) !important;
+}
+
+:where([role='dialog']) {
+  max-width: min(100vw - 1rem, var(--radix-dialog-content-available-width, 100vw));
+}
+
+/* Public detail pages: keep images cinematic but contained. */
+.bccc-public-shell :where(.public-page-hero, .official-page-hero, .facility-detail-hero, .event-detail-hero) {
+  overflow: clip;
+}
+
+.bccc-public-shell :where(.public-page-hero img, .official-page-hero img, .facility-detail-hero img, .event-detail-hero img) {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .bccc-public-shell :where(.public-section, section) {
+    scroll-margin-top: 5.5rem;
+  }
+
+  .bccc-floating-quick-links-portal {
+    bottom: calc(1rem + var(--bccc-safe-bottom)) !important;
+    right: max(0.8rem, env(safe-area-inset-right, 0px)) !important;
+  }
+}
+
+/* Booking connected pages: final small-screen action safety. */
+.booking-show-page :where(.booking-action-grid, .booking-show-actions, .booking-payment-actions),
+.booking-list-page :where(.booking-card-actions, .booking-filter-actions),
+.payment-review-page :where(.payment-review-actions),
+.mice-report-page :where(.mice-report-actions),
+.resource-page-shell :where(.resource-toolbar, .resource-actions) {
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .booking-show-page :where(.booking-action-grid, .booking-show-actions, .booking-payment-actions),
+  .booking-list-page :where(.booking-card-actions, .booking-filter-actions),
+  .payment-review-page :where(.payment-review-actions),
+  .mice-report-page :where(.mice-report-actions),
+  .resource-page-shell :where(.resource-toolbar, .resource-actions) {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .booking-show-page :where(.booking-action-grid, .booking-show-actions, .booking-payment-actions) > *,
+  .booking-list-page :where(.booking-card-actions, .booking-filter-actions) > *,
+  .payment-review-page :where(.payment-review-actions) > *,
+  .mice-report-page :where(.mice-report-actions) > *,
+  .resource-page-shell :where(.resource-toolbar, .resource-actions) > * {
+    width: 100% !important;
+    justify-content: center;
+  }
+}
+
+/* Touch-friendly horizontal rails. */
+:where(.luxury-horizontal-rail, .facilities-rail, .events-rail, .package-rail, .public-card-rail, .booking-area-carousel, .role-workspace-horizontal-nav) {
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+}
+
+:where(.luxury-horizontal-rail, .facilities-rail, .events-rail, .package-rail, .public-card-rail, .booking-area-carousel, .role-workspace-horizontal-nav) > * {
+  scroll-snap-align: start;
+}
+
+/* More readable toast/feedback on phones. */
+:where(.global-feedback-layer, .action-feedback-popup, .success-popup, .route-loading-overlay) {
+  max-width: 100vw;
+}
+
+@media (max-width: 480px) {
+  :where(.global-feedback-layer, .action-feedback-popup, .success-popup) {
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+    bottom: calc(0.75rem + var(--bccc-safe-bottom)) !important;
+    width: auto !important;
+  }
+}
+
+/* Print/export: strip fixed chrome, preserve official documents, and avoid clipped tables. */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  html,
+  body,
+  #app {
+    overflow: visible !important;
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .bccc-skip-link,
+  .backend-topbar,
+  .bccc-backend-chrome-portal,
+  .bccc-public-header-portal,
+  .bccc-floating-quick-links-portal,
+  .backend-route-loader,
+  .route-loading-overlay,
+  .global-feedback-layer,
+  .no-print,
+  [data-no-print='true'] {
+    display: none !important;
+  }
+
+  .backend-main,
+  .backend-app-content,
+  .bccc-public-main,
+  .booking-show-page,
+  .mice-report-page,
+  .payment-review-page,
+  .resource-page-shell {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    background: #fff !important;
+  }
+
+  :where(.booking-print-document, .official-reservation-preview, .mice-print-document, .print-report-page, .analytics-print-page) {
+    color: #111 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  table {
+    width: 100% !important;
+    min-width: 0 !important;
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+  }
+
+  tr,
+  img,
+  .print-avoid-break,
+  .booking-print-section,
+  .mice-print-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  th,
+  td {
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
+  a[href]::after {
+    content: '' !important;
+  }
+}
+
+/* Reduced motion: preserve clarity for users who request it. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

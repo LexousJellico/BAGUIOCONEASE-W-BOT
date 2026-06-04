@@ -1,0 +1,498 @@
+@layer base {
+    .backend-smooth-scroll-active {
+        scroll-behavior: smooth;
+    }
+
+    .backend-smooth-scroll-active body {
+        scroll-behavior: smooth;
+    }
+}
+
+@layer components {
+    .backend-app-content {
+        min-width: 0;
+        scroll-behavior: smooth;
+    }
+
+    .backend-page-frame {
+        min-width: 0;
+        overflow-x: clip;
+    }
+
+    .backend-page-container {
+        width: 100%;
+        max-width: 1540px;
+        margin-inline: auto;
+    }
+
+    .backend-page-shell,
+    .backend-admin-page,
+    .backend-booking-page,
+    .backend-page-content {
+        min-width: 0;
+    }
+
+    .backend-page-shell img,
+    .backend-admin-page img,
+    .backend-booking-page img {
+        max-width: 100%;
+    }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+
+    .backend-sidebar {
+        --sidebar-background: 24 20 16;
+        --sidebar-foreground: 247 242 232;
+        --sidebar-primary: 201 169 106;
+        --sidebar-primary-foreground: 24 20 16;
+        --sidebar-accent: 201 169 106 / 0.14;
+        --sidebar-accent-foreground: 247 242 232;
+        --sidebar-border: 255 255 255 / 0.09;
+        --sidebar-ring: 201 169 106;
+    }
+
+    .backend-sidebar [data-sidebar='sidebar'] {
+        background:
+            radial-gradient(
+                circle at 14% 0%,
+                rgb(201 169 106 / 0.18),
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 100% 24%,
+                rgb(255 255 255 / 0.04),
+                transparent 22%
+            ),
+            linear-gradient(180deg, #231e17 0%, #17130f 45%, #0f0d0a 100%) !important;
+        border-color: rgb(255 255 255 / 0.08) !important;
+        box-shadow:
+            inset -1px 0 0 rgb(255 255 255 / 0.04),
+            14px 0 42px rgb(0 0 0 / 0.1);
+    }
+
+    .backend-sidebar-header {
+        gap: 0.85rem;
+        padding: 0.85rem;
+    }
+
+    .backend-sidebar-brand {
+        height: 3.45rem !important;
+        border-radius: 1.1rem !important;
+        border: 1px solid rgb(255 255 255 / 0.1);
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.15),
+                transparent 36%
+            ),
+            rgb(255 255 255 / 0.05) !important;
+        color: #f7f2e8 !important;
+        box-shadow: 0 14px 34px rgb(0 0 0 / 0.14);
+    }
+
+    .backend-sidebar-brand:hover {
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.2),
+                transparent 36%
+            ),
+            rgb(255 255 255 / 0.08) !important;
+    }
+
+    .backend-sidebar-logo {
+        display: flex;
+        height: 2.35rem;
+        width: 2.35rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.95rem;
+        border: 1px solid rgb(201 169 106 / 0.35);
+        background:
+            radial-gradient(
+                circle at 30% 20%,
+                rgb(255 255 255 / 0.12),
+                transparent 42%
+            ),
+            rgb(201 169 106 / 0.16);
+        color: #e8d8b5;
+        box-shadow: 0 10px 26px rgb(0 0 0 / 0.16);
+    }
+
+    .backend-sidebar-role-card {
+        border-radius: 1.1rem;
+        border: 1px solid rgb(255 255 255 / 0.1);
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.1),
+                transparent 36%
+            ),
+            rgb(255 255 255 / 0.055);
+        padding: 0.9rem;
+        box-shadow:
+            inset 0 1px 0 rgb(255 255 255 / 0.05),
+            0 10px 30px rgb(0 0 0 / 0.1);
+    }
+
+    .backend-sidebar-content {
+        gap: 0.4rem;
+        padding-inline: 0.45rem;
+    }
+
+    .backend-sidebar-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: rgb(201 169 106 / 0.3) transparent;
+    }
+
+    .backend-sidebar-scroll::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .backend-sidebar-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .backend-sidebar-scroll::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: rgb(201 169 106 / 0.28);
+    }
+
+    .backend-sidebar-footer {
+        padding: 0.75rem;
+        border-top: 1px solid rgb(255 255 255 / 0.07);
+        background: linear-gradient(to top, rgb(0 0 0 / 0.12), transparent);
+    }
+
+    .backend-sidebar-separator {
+        margin-block: 0.35rem;
+        background: rgb(255 255 255 / 0.08) !important;
+    }
+
+    .backend-sidebar-group {
+        padding-inline: 0.35rem;
+        padding-block: 0.3rem;
+    }
+
+    .backend-sidebar-group-label {
+        color: rgb(247 242 232 / 0.46) !important;
+        font-size: 0.66rem !important;
+        font-weight: 900 !important;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .backend-sidebar-menu-button {
+        height: 2.5rem !important;
+        border-radius: 0.95rem !important;
+        color: rgb(247 242 232 / 0.72) !important;
+        font-weight: 800 !important;
+        transition:
+            background 0.22s ease,
+            color 0.22s ease,
+            transform 0.22s ease,
+            box-shadow 0.22s ease;
+    }
+
+    .backend-sidebar-menu-button:hover {
+        transform: translateX(2px);
+        background: rgb(255 255 255 / 0.08) !important;
+        color: rgb(247 242 232) !important;
+    }
+
+    .backend-sidebar-menu-button[data-active='true'] {
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.18),
+                transparent 40%
+            ),
+            rgb(201 169 106 / 0.15) !important;
+        color: #f7f2e8 !important;
+        box-shadow:
+            inset 0 0 0 1px rgb(201 169 106 / 0.28),
+            0 10px 28px rgb(0 0 0 / 0.15);
+    }
+
+    .backend-sidebar-menu-button[data-active='true'] svg {
+        color: #e8d8b5 !important;
+    }
+
+    .backend-user-menu-button {
+        height: 4.25rem !important;
+        border-radius: 1.15rem !important;
+        border: 1px solid rgb(255 255 255 / 0.1);
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.12),
+                transparent 36%
+            ),
+            rgb(255 255 255 / 0.05) !important;
+        color: #f7f2e8 !important;
+        box-shadow: 0 10px 26px rgb(0 0 0 / 0.14);
+    }
+
+    .backend-user-menu-button:hover {
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.18),
+                transparent 36%
+            ),
+            rgb(255 255 255 / 0.08) !important;
+    }
+
+    .backend-user-avatar {
+        display: flex;
+        height: 2.35rem;
+        width: 2.35rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+        background: #f8f6f1;
+        color: #2e261b;
+        font-size: 0.85rem;
+        font-weight: 900;
+        box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+    }
+
+    /* =========================================================
+       TOPBAR
+       ========================================================= */
+
+    .backend-topbar {
+        background: linear-gradient(
+            to bottom,
+            hsl(var(--background) / 0.96),
+            hsl(var(--background) / 0.86)
+        ) !important;
+        box-shadow:
+            0 10px 26px rgb(15 23 42 / 0.03),
+            inset 0 -1px 0 hsl(var(--border) / 0.55);
+    }
+
+    .dark .backend-topbar {
+        background: linear-gradient(
+            to bottom,
+            rgb(16 14 11 / 0.96),
+            rgb(16 14 11 / 0.84)
+        ) !important;
+        box-shadow:
+            0 10px 26px rgb(0 0 0 / 0.16),
+            inset 0 -1px 0 rgb(255 255 255 / 0.06);
+    }
+
+    .backend-sidebar-trigger {
+        height: 2.3rem !important;
+        width: 2.3rem !important;
+        border-radius: 9999px !important;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--background) / 0.7);
+        transition:
+            transform 0.2s ease,
+            background 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .backend-sidebar-trigger:hover {
+        transform: scale(1.03);
+        border-color: rgb(201 169 106 / 0.45);
+        background: hsl(var(--muted));
+    }
+
+    /* =========================================================
+       LOADING
+       ========================================================= */
+
+    .backend-route-progress {
+        position: fixed;
+        inset-inline: 0;
+        top: 0;
+        z-index: 9999;
+        height: 3px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.18s ease;
+    }
+
+    .backend-route-progress.is-active {
+        opacity: 1;
+    }
+
+    .backend-route-progress-bar {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #c9a96a, #e8d8b5, #c9a96a);
+        box-shadow:
+            0 0 18px rgb(201 169 106 / 0.6),
+            0 0 28px rgb(201 169 106 / 0.25);
+        transition: width 0.22s ease;
+    }
+
+    .backend-route-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9998;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 5rem;
+        background: rgb(0 0 0 / 0.08);
+        opacity: 0;
+        pointer-events: none;
+        backdrop-filter: blur(0px);
+        transition:
+            opacity 0.2s ease,
+            backdrop-filter 0.2s ease;
+    }
+
+    .backend-route-overlay.is-visible {
+        opacity: 1;
+        backdrop-filter: blur(3px);
+    }
+
+    .backend-route-loader-card {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        border-radius: 1.25rem;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--background) / 0.94);
+        padding: 0.95rem 1rem;
+        box-shadow: 0 18px 60px rgb(15 23 42 / 0.14);
+        animation: backend-loader-enter 0.22s ease both;
+    }
+
+    .dark .backend-route-loader-card {
+        border-color: rgb(255 255 255 / 0.1);
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.1),
+                transparent 38%
+            ),
+            rgb(20 18 14 / 0.94);
+        box-shadow: 0 18px 60px rgb(0 0 0 / 0.34);
+    }
+
+    .backend-route-loader-orb {
+        display: flex;
+        height: 2.7rem;
+        width: 2.7rem;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1rem;
+        border: 1px solid rgb(201 169 106 / 0.32);
+        background: rgb(201 169 106 / 0.12);
+        color: #8a6b2e;
+    }
+
+    .dark .backend-route-loader-orb {
+        color: #e8d8b5;
+    }
+
+    @keyframes backend-loader-enter {
+        from {
+            transform: translateY(-8px) scale(0.98);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    .backend-admin-card,
+    .backend-booking-card,
+    .backend-dashboard-section,
+    .backend-kpi-card,
+    .backend-action-card,
+    .backend-page-hero {
+        overflow-wrap: anywhere;
+    }
+
+    .backend-admin-page table,
+    .backend-booking-page table {
+        min-width: 760px;
+    }
+
+    @media (max-width: 1279px) {
+        .backend-admin-page .sticky,
+        .backend-booking-page .sticky {
+            position: static;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .backend-page-container {
+            padding: 1.25rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .backend-page-container {
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .backend-page-hero,
+        .backend-admin-card,
+        .backend-booking-card,
+        .backend-dashboard-section,
+        .backend-kpi-card,
+        .backend-action-card,
+        .backend-venue-card {
+            border-radius: 1.2rem !important;
+        }
+
+        .backend-topbar .h-9.w-9 {
+            height: 2.15rem;
+            width: 2.15rem;
+        }
+
+        .backend-route-overlay {
+            align-items: flex-start;
+            padding: 4.5rem 1rem 0;
+        }
+
+        .backend-route-loader-card {
+            width: 100%;
+            max-width: 24rem;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .backend-page-container {
+            padding: 0.75rem;
+        }
+
+        .backend-admin-page table,
+        .backend-booking-page table {
+            min-width: 680px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .backend-smooth-scroll-active,
+        .backend-smooth-scroll-active body,
+        .backend-app-content {
+            scroll-behavior: auto;
+        }
+
+        .backend-sidebar-menu-button,
+        .backend-sidebar-trigger,
+        .backend-route-progress-bar,
+        .backend-route-overlay,
+        .backend-route-loader-card {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+}

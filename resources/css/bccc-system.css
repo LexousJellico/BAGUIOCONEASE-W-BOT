@@ -1,0 +1,38 @@
+/* =========================================================
+   BCCC EASE — CSS entrypoint
+   ---------------------------------------------------------
+   Keep app.tsx clean by importing one system stylesheet after
+   Tailwind/app.css. The order below preserves the previous
+   working cascade while making future cleanup safer.
+   ========================================================= */
+
+@import './bccc-final-unified.css';
+@import './backend-shadcn.css';
+@import './backend-dashboard.css';
+@import './backend-bookings.css';
+@import './backend-admin-pages.css';
+@import './backend-final-polish.css';
+@import './backend-responsive-motion.css';
+@import './backend-booking-wizard.css';
+@import './backend-booking-preview-print.css';
+@import './backend-sidebar-theme-fix.css';
+@import './backend-booking-laptop-polish.css';
+@import './backend-booking-hotel-flow.css';
+@import './backend-booking-universal-responsive.css';
+@import './backend-booking-motion-responsive-final.css';
+@import './backend-booking-responsive-complete.css';
+@import './backend-admin-responsive-complete.css';
+@import './auth-notifications-calendar-responsive-complete.css';
+@import './bccc-batch5-responsive-sticky.css';
+@import './bccc-batch6-shell-consolidation.css';
+@import './bccc-batch5-public-responsive-final.css';
+@import './bccc-batch12-full-page-responsive-polish.css';
+@import './bccc-batch13-final-ux-polish.css';
+@import './bccc-calendar-analytics-complete.css';
+@import './backend-responsive-bento-final.css';
+@import './backend-baguio-theme-harmony.css';
+@import './backend-complete-polish-final.css';
+@import './backend-print-complete-fix.css';
+@import './bccc-request-completion-polish.css';
+
+@import './account-security-client-bot.css';

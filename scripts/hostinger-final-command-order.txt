@@ -1,0 +1,19 @@
+# BCCC EASE final local commands
+composer install --no-dev --optimize-autoloader
+npm install
+php artisan bccc:fix-asset-case --write
+npm run build
+php artisan optimize:clear
+php artisan route:list
+php artisan bccc:final-check
+php artisan bccc:make-hostinger-release
+
+# BCCC EASE final Hostinger terminal commands
+php artisan optimize:clear
+php artisan migrate --force
+php artisan db:seed --class=VenuePackageTemplateSeeder --force
+php artisan storage:link
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan bccc:final-check

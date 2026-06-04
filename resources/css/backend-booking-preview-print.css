@@ -1,0 +1,488 @@
+@layer components {
+    .booking-wizard-toolbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .booking-digital-form-button {
+        height: 2.65rem;
+        white-space: nowrap;
+    }
+
+    .booking-summary-toggle {
+        display: inline-flex;
+        height: 2.2rem;
+        width: 2.2rem;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--background) / 0.85);
+        color: hsl(var(--foreground));
+        transition:
+            transform 0.18s ease,
+            border-color 0.18s ease,
+            background 0.18s ease;
+    }
+
+    .booking-summary-toggle:hover {
+        transform: translateY(-1px);
+        border-color: rgb(201 169 106 / 0.45);
+        background: hsl(var(--muted));
+    }
+
+    .booking-digital-form-panel {
+        position: absolute;
+        inset: 3.55rem 0 4.6rem 0;
+        z-index: 30;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        overflow: hidden;
+        border-radius: 1.6rem;
+        border: 1px solid rgb(201 169 106 / 0.28);
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.12),
+                transparent 38%
+            ),
+            hsl(var(--background) / 0.96);
+        box-shadow: 0 24px 90px rgb(15 23 42 / 0.18);
+        backdrop-filter: blur(20px);
+    }
+
+    .dark .booking-digital-form-panel {
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.14),
+                transparent 38%
+            ),
+            rgb(19 17 13 / 0.96);
+        box-shadow: 0 24px 90px rgb(0 0 0 / 0.42);
+    }
+
+    .booking-digital-form-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        border-bottom: 1px solid hsl(var(--border));
+        padding: 0.85rem 1rem;
+    }
+
+    .booking-digital-form-scroll {
+        min-height: 0;
+        overflow-y: auto;
+        padding: 1rem;
+        scroll-behavior: smooth;
+    }
+
+    .booking-digital-form-scroll::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .booking-digital-form-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .booking-digital-form-scroll::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: rgb(201 169 106 / 0.35);
+    }
+
+    .bccc-preview-shell {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .bccc-preview-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .bccc-print-root {
+        display: flex;
+        justify-content: center;
+    }
+
+    .bccc-form-paper {
+        width: min(100%, 920px);
+        min-height: 1180px;
+        border-radius: 1.25rem;
+        border: 1px solid hsl(var(--border));
+        background: #fbfaf6;
+        color: #171511;
+        padding: 2rem;
+        box-shadow: 0 24px 70px rgb(15 23 42 / 0.12);
+    }
+
+    .bccc-form-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .bccc-form-logo-mark {
+        position: relative;
+        display: grid;
+        height: 4.5rem;
+        width: 5.5rem;
+        place-items: center;
+        flex-shrink: 0;
+    }
+
+    .bccc-form-roof {
+        width: 4.5rem;
+        height: 2rem;
+        background: #151515;
+        clip-path: polygon(
+            50% 0,
+            100% 70%,
+            86% 70%,
+            86% 100%,
+            14% 100%,
+            14% 70%,
+            0 70%
+        );
+    }
+
+    .bccc-form-base {
+        position: absolute;
+        bottom: 0.5rem;
+        width: 3rem;
+        height: 0.45rem;
+        background: #151515;
+    }
+
+    .bccc-form-small {
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #7a6a4f;
+    }
+
+    .bccc-form-header h1 {
+        margin: 0.1rem 0 0;
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        font-weight: 900;
+        letter-spacing: -0.07em;
+        line-height: 0.95;
+        text-transform: uppercase;
+    }
+
+    .bccc-form-office {
+        margin-top: 0.45rem;
+        font-size: 0.82rem;
+        color: #6d6659;
+    }
+
+    .bccc-form-section {
+        margin-top: 1rem;
+    }
+
+    .bccc-form-section-title {
+        margin-bottom: 0.55rem;
+        border-radius: 999px;
+        background: #24211a;
+        color: #f8f2e4;
+        padding: 0.45rem 0.8rem;
+        font-size: 0.76rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .bccc-form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.55rem 1rem;
+    }
+
+    .bccc-form-line {
+        display: grid;
+        grid-template-columns: 10rem minmax(0, 1fr);
+        align-items: end;
+        gap: 0.75rem;
+        border-bottom: 1px solid #bbb5aa;
+        padding: 0.35rem 0;
+        min-height: 2.1rem;
+    }
+
+    .bccc-form-line span {
+        font-size: 0.75rem;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #686052;
+    }
+
+    .bccc-form-line strong {
+        font-size: 0.95rem;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .bccc-form-charge-stack {
+        display: grid;
+        gap: 0.85rem;
+    }
+
+    .bccc-form-charge-block {
+        overflow: hidden;
+        border-radius: 0.75rem;
+        border: 1px solid #d1c8b8;
+        background: #fffdf7;
+    }
+
+    .bccc-form-charge-block.is-active {
+        border-color: #9b7a35;
+        box-shadow: 0 0 0 2px rgb(155 122 53 / 0.13);
+    }
+
+    .bccc-form-charge-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        background: #d8d0c2;
+        padding: 0.45rem 0.7rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+
+    .bccc-form-charge-title span {
+        color: #7a5c21;
+        font-weight: 900;
+    }
+
+    .bccc-form-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.78rem;
+    }
+
+    .bccc-form-table th {
+        background: #efebe2;
+        color: #4f493e;
+        padding: 0.4rem;
+        text-align: left;
+        font-weight: 900;
+    }
+
+    .bccc-form-table td {
+        border-top: 1px solid #e1dbd0;
+        padding: 0.4rem;
+    }
+
+    .bccc-form-usage {
+        min-width: 10rem;
+    }
+
+    .bccc-form-center {
+        text-align: center;
+    }
+
+    .bccc-form-money {
+        text-align: right;
+        font-weight: 900;
+    }
+
+    .bccc-form-subtotal-row td {
+        background: #f4f0e8;
+        font-weight: 900;
+    }
+
+    .bccc-form-totals {
+        display: grid;
+        gap: 0.45rem;
+        margin-top: 1rem;
+    }
+
+    .bccc-form-totals > div {
+        display: grid;
+        grid-template-columns: 12rem minmax(0, 1fr);
+        gap: 1rem;
+        border-bottom: 1px solid #c6bdae;
+        padding: 0.35rem 0;
+    }
+
+    .bccc-form-totals span {
+        font-size: 0.75rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #686052;
+    }
+
+    .bccc-form-grand-total strong {
+        font-size: 1.2rem;
+        color: #171511;
+    }
+
+    .bccc-form-compact-rules ul {
+        margin: 0;
+        padding-left: 1.1rem;
+        font-size: 0.82rem;
+        line-height: 1.55;
+        color: #3b372f;
+    }
+
+    .bccc-form-signatures {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 2rem 4rem;
+        margin-top: 2rem;
+    }
+
+    .bccc-form-signatures p {
+        margin: 0 0 2.2rem;
+        font-size: 0.8rem;
+        color: #5e574b;
+    }
+
+    .bccc-signature-line {
+        border-bottom: 1.5px solid #171511;
+        margin-bottom: 0.35rem;
+    }
+
+    .bccc-form-signatures strong,
+    .bccc-form-signatures span {
+        display: block;
+        font-size: 0.9rem;
+    }
+
+    .bccc-form-signatures span {
+        color: #6d6659;
+    }
+
+    .bccc-form-footer {
+        display: grid;
+        gap: 0.2rem;
+        margin-top: 2rem;
+        border-top: 4px solid #3d3a34;
+        padding-top: 0.75rem;
+        font-size: 0.75rem;
+        color: #4e473b;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .booking-wizard-toolbar {
+            grid-template-columns: 1fr;
+        }
+
+        .booking-digital-form-button {
+            width: 100%;
+        }
+
+        .booking-digital-form-panel {
+            inset: 6.6rem 0 4.3rem 0;
+            border-radius: 1.25rem;
+        }
+
+        .booking-digital-form-scroll {
+            padding: 0.65rem;
+        }
+
+        .bccc-form-paper {
+            min-height: auto;
+            padding: 1rem;
+            border-radius: 1rem;
+        }
+
+        .bccc-form-header {
+            align-items: flex-start;
+        }
+
+        .bccc-form-logo-mark {
+            width: 3.8rem;
+            height: 3.8rem;
+        }
+
+        .bccc-form-header h1 {
+            font-size: 1.4rem;
+            letter-spacing: -0.05em;
+        }
+
+        .bccc-form-grid,
+        .bccc-form-signatures {
+            grid-template-columns: 1fr;
+        }
+
+        .bccc-form-line,
+        .bccc-form-totals > div {
+            grid-template-columns: 1fr;
+            gap: 0.1rem;
+        }
+
+        .bccc-form-table {
+            min-width: 620px;
+        }
+
+        .bccc-form-charge-block {
+            overflow-x: auto;
+        }
+    }
+
+    @media print {
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+
+        body * {
+            visibility: visible !important;
+        }
+
+        .bccc-print-root,
+        .bccc-print-root * {
+            visibility: visible !important;
+        }
+
+        .bccc-print-root {
+            position: static !important;
+            inset: auto !important;
+            display: block !important;
+            background: white !important;
+        }
+
+        .bccc-form-paper {
+            width: 100% !important;
+            min-height: auto !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+            color: black !important;
+        }
+
+        .no-print {
+            display: none !important;
+        }
+
+        .bccc-form-header h1 {
+            font-size: 22pt !important;
+        }
+
+        .bccc-form-section-title {
+            background: #d6d6d6 !important;
+            color: black !important;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .bccc-form-table th,
+        .bccc-form-charge-title,
+        .bccc-form-subtotal-row td {
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+        }
+    }
+}

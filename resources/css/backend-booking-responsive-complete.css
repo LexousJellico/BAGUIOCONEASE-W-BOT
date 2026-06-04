@@ -1,0 +1,640 @@
+/* =========================================================
+   BCCC EASE — Booking workflow universal responsiveness
+   Covers booking form, booking list, booking details, and booking shell.
+   Designed for mobile phones, tablets, laptops, desktop, and ultra-wide screens.
+   ========================================================= */
+
+.bccc-booking-responsive-form,
+.bccc-booking-show-page,
+.booking-list-card,
+.booking-list-filter-panel,
+.role-workspace-header {
+    max-width: 100%;
+}
+
+.bccc-booking-responsive-form {
+    overflow-x: clip;
+    padding-bottom: max(
+        7.75rem,
+        calc(6.75rem + env(safe-area-inset-bottom))
+    ) !important;
+}
+
+.bccc-booking-step-root {
+    width: min(100%, 1700px);
+}
+
+.bccc-booking-step-progress {
+    position: sticky !important;
+    top: calc(var(--bccc-backend-topbar-height, 3.95rem) + 0.65rem) !important;
+    z-index: 9600 !important;
+    max-width: 1700px;
+    margin-inline: auto;
+    border-radius: 0.95rem;
+    border: 1px solid rgb(226 232 240);
+    box-shadow: 0 18px 44px rgb(15 23 42 / 0.1);
+}
+
+.bccc-booking-step-progress-track {
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.1rem;
+}
+
+.bccc-booking-step-progress-track::-webkit-scrollbar,
+.bccc-booking-calendar-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.bccc-booking-step-button {
+    scroll-snap-align: start;
+    min-height: 4.15rem;
+    border-radius: 0.8rem;
+}
+
+.bccc-booking-step-number {
+    line-height: 1;
+}
+
+.bccc-booking-step-meter {
+    border: 1px solid rgb(226 232 240 / 0.7);
+}
+
+.bccc-booking-section-shell {
+    overflow: hidden;
+}
+
+.bccc-booking-section-head h2 {
+    line-height: 1.02;
+}
+
+.bccc-booking-step-layout {
+    align-items: start;
+}
+
+.bccc-booking-calendar-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    border-right: 1px solid rgb(226 232 240);
+}
+
+.bccc-booking-calendar-grid {
+    min-width: 760px;
+}
+
+.bccc-booking-calendar-grid > .bccc-booking-calendar-day-tile {
+    min-width: 0;
+}
+
+.bccc-booking-calendar-panel,
+.bccc-booking-calendar-toolbar,
+.bccc-booking-calendar-grid {
+    color-scheme: light;
+}
+
+.dark .bccc-booking-calendar-panel,
+.dark .bccc-booking-calendar-toolbar,
+.dark .bccc-booking-calendar-grid {
+    color-scheme: dark;
+}
+
+.dark .bccc-booking-calendar-panel {
+    border-color: rgb(255 255 255 / 0.12) !important;
+    background: rgb(15 23 42 / 0.42) !important;
+}
+
+.dark .bccc-booking-calendar-toolbar {
+    border-color: rgb(255 255 255 / 0.12) !important;
+    background: rgb(15 23 42 / 0.72) !important;
+}
+
+.dark .bccc-booking-calendar-toolbar h3 {
+    color: rgb(255 255 255 / 0.94) !important;
+}
+
+.dark .bccc-booking-calendar-toolbar button {
+    border-color: rgb(255 255 255 / 0.12) !important;
+    background: rgb(255 255 255 / 0.075) !important;
+    color: rgb(255 255 255 / 0.86) !important;
+}
+
+.dark .bccc-booking-calendar-toolbar button:hover {
+    border-color: rgb(241 216 155 / 0.55) !important;
+    color: #f1d89b !important;
+}
+
+.dark .bccc-booking-calendar-grid {
+    border-color: rgb(255 255 255 / 0.12) !important;
+    background: rgb(15 23 42 / 0.72) !important;
+}
+
+.dark .bccc-booking-calendar-grid > div,
+.dark .bccc-booking-calendar-grid > .bccc-booking-calendar-day-tile {
+    border-color: rgb(255 255 255 / 0.12) !important;
+}
+
+.bccc-booking-side-panel,
+.bccc-booking-computation-aside {
+    min-width: 0;
+}
+
+.bccc-booking-package-card,
+.bccc-booking-manual-card {
+    width: 100%;
+    touch-action: manipulation;
+}
+
+.bccc-booking-package-title,
+.bccc-booking-manual-title,
+.booking-list-title,
+.bccc-booking-show-page h1,
+.bccc-booking-show-page h2,
+.bccc-booking-show-page h3 {
+    overflow-wrap: anywhere;
+}
+
+.bccc-booking-action-footer {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+.bccc-booking-action-footer-inner {
+    width: min(100%, 1700px);
+}
+
+.bccc-booking-action-buttons > button,
+.bccc-booking-action-buttons > a {
+    min-height: 3rem;
+}
+
+.bccc-booking-final-modal {
+    padding: max(0.75rem, env(safe-area-inset-top)) 0.75rem
+        max(0.75rem, env(safe-area-inset-bottom));
+}
+
+.bccc-booking-final-modal-card {
+    width: min(100%, 48rem);
+}
+
+/* Laptops and smaller desktops */
+@media (max-width: 1023px) {
+    .bccc-booking-step-layout,
+    .bccc-booking-schedule-layout {
+        grid-template-columns: 1fr !important;
+        min-height: auto !important;
+    }
+
+    .bccc-booking-side-panel,
+    .bccc-booking-computation-aside {
+        position: static !important;
+        top: auto !important;
+    }
+
+    .bccc-booking-selected-dates,
+    .bccc-booking-computation-aside > div:nth-child(2) {
+        max-height: none !important;
+    }
+
+    .bccc-booking-show-main-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+    .role-workspace-header {
+        margin-bottom: 0.875rem !important;
+    }
+
+    .role-workspace-header h1 {
+        font-size: clamp(2rem, 6vw, 3rem) !important;
+        line-height: 0.98 !important;
+    }
+
+    .role-workspace-header p {
+        line-height: 1.65 !important;
+    }
+
+    .bccc-booking-step-root {
+        padding-inline: 0.75rem !important;
+    }
+
+    .bccc-booking-step-progress {
+        padding-inline: 0.75rem !important;
+    }
+
+    .bccc-booking-step-button {
+        flex: 0 0 13.5rem !important;
+    }
+
+    .bccc-booking-section-head {
+        padding: 1rem !important;
+    }
+
+    .bccc-booking-section-head h2 {
+        font-size: clamp(1.45rem, 4vw, 2rem) !important;
+    }
+
+    .bccc-booking-step-layout {
+        padding: 1rem !important;
+    }
+
+    .bccc-booking-calendar-grid {
+        min-width: 720px;
+    }
+
+    .bccc-booking-calendar-grid > .bccc-booking-calendar-day-tile {
+        min-height: 112px !important;
+    }
+
+    .bccc-booking-show-actions {
+        width: 100%;
+    }
+
+    .bccc-booking-show-actions > a,
+    .bccc-booking-show-actions > button {
+        flex: 1 1 11rem;
+    }
+}
+
+/* Large phones and small tablets */
+@media (max-width: 768px) {
+    .bccc-booking-responsive-form {
+        padding-bottom: max(
+            10.25rem,
+            calc(9.25rem + env(safe-area-inset-bottom))
+        ) !important;
+    }
+
+    .bccc-booking-step-progress {
+        position: sticky !important;
+        top: calc(
+            var(--bccc-backend-topbar-height, 3.95rem) + 0.45rem
+        ) !important;
+        padding-block: 0.55rem !important;
+        border-radius: 0.75rem !important;
+    }
+
+    .bccc-booking-step-button {
+        flex: 0 0 13.35rem !important;
+        min-width: 13.35rem !important;
+        gap: 0.65rem !important;
+        padding: 0.55rem 0.65rem !important;
+    }
+
+    .bccc-booking-step-button > span:first-child {
+        height: 2rem !important;
+        width: 2rem !important;
+    }
+
+    .bccc-booking-step-button small {
+        display: none !important;
+    }
+
+    .bccc-booking-step-number {
+        height: 1.85rem !important;
+        min-width: 1.85rem !important;
+        padding-inline: 0.45rem !important;
+    }
+
+    .bccc-booking-section-shell {
+        border-left: 0 !important;
+        border-right: 0 !important;
+    }
+
+    .bccc-booking-section-head,
+    .bccc-booking-step-layout {
+        padding: 0.875rem !important;
+    }
+
+    .bccc-booking-section-head p:first-child {
+        letter-spacing: 0.16em !important;
+    }
+
+    .bccc-booking-calendar-panel {
+        padding: 0.65rem !important;
+    }
+
+    .bccc-booking-calendar-toolbar {
+        gap: 0.75rem;
+        padding: 0.65rem !important;
+    }
+
+    .bccc-booking-calendar-toolbar button {
+        height: 2.4rem !important;
+        width: 2.4rem !important;
+    }
+
+    .bccc-booking-calendar-toolbar h3 {
+        font-size: 1.05rem !important;
+    }
+
+    .bccc-booking-calendar-toolbar p {
+        letter-spacing: 0.16em !important;
+    }
+
+    .bccc-booking-calendar-grid {
+        min-width: 660px;
+    }
+
+    .bccc-booking-calendar-grid > .bccc-booking-calendar-day-tile {
+        min-height: 104px !important;
+        padding: 0.45rem !important;
+    }
+
+    .bccc-booking-calendar-grid > div:first-child,
+    .bccc-booking-calendar-grid > div:nth-child(2),
+    .bccc-booking-calendar-grid > div:nth-child(3),
+    .bccc-booking-calendar-grid > div:nth-child(4),
+    .bccc-booking-calendar-grid > div:nth-child(5),
+    .bccc-booking-calendar-grid > div:nth-child(6),
+    .bccc-booking-calendar-grid > div:nth-child(7) {
+        letter-spacing: 0.08em !important;
+        padding-inline: 0.2rem !important;
+    }
+
+    .bccc-booking-date-control-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-booking-mode-toggle {
+        display: grid !important;
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .bccc-booking-mode-button {
+        padding-inline: 0.75rem !important;
+        letter-spacing: 0.1em !important;
+    }
+
+    .bccc-booking-package-card-content,
+    .bccc-booking-manual-card-content {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        gap: 0.85rem !important;
+    }
+
+    .bccc-booking-package-main,
+    .bccc-booking-manual-card-content > span:first-child {
+        width: 100%;
+        align-items: flex-start !important;
+    }
+
+    .bccc-booking-package-title,
+    .bccc-booking-manual-title {
+        white-space: normal !important;
+        font-size: clamp(1.3rem, 6vw, 2rem) !important;
+        line-height: 1.03 !important;
+        letter-spacing: 0.045em !important;
+    }
+
+    .bccc-booking-manual-card-content > span:last-child {
+        min-width: 0 !important;
+        width: 100%;
+        text-align: left !important;
+    }
+
+    .bccc-booking-floating-notice {
+        left: 0.75rem !important;
+        right: 0.75rem !important;
+        top: 4.75rem !important;
+        max-width: none !important;
+    }
+
+    .bccc-booking-action-footer {
+        padding: 0.75rem !important;
+        padding-bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+    }
+
+    .bccc-booking-action-footer-inner {
+        gap: 0.65rem !important;
+    }
+
+    .bccc-booking-action-footer-inner > div:first-child p:last-child {
+        white-space: normal !important;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .bccc-booking-action-buttons {
+        width: 100%;
+    }
+
+    .bccc-booking-action-buttons button {
+        flex: 1 1 0;
+        padding-inline: 0.8rem !important;
+        letter-spacing: 0.1em !important;
+    }
+
+    .bccc-booking-submitted {
+        min-height: 480px !important;
+        padding: 2rem 1rem !important;
+    }
+
+    .bccc-booking-submitted h2 {
+        font-size: clamp(2rem, 9vw, 3rem) !important;
+    }
+
+    .booking-list-filter-panel,
+    .booking-list-detail-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .booking-list-card {
+        padding: 0.85rem !important;
+    }
+
+    .booking-list-card .xl\:flex-row {
+        flex-direction: column !important;
+    }
+
+    .booking-list-card-side {
+        border-top: 1px solid var(--bccc-backend-line);
+        padding-top: 0.75rem;
+    }
+
+    .booking-list-toolbar,
+    .booking-list-client-help {
+        align-items: stretch !important;
+        flex-direction: column !important;
+    }
+
+    .booking-list-requirement-chip {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .bccc-booking-show-page > section:first-child {
+        border-radius: 1.1rem !important;
+        padding: 1rem !important;
+    }
+
+    .bccc-booking-show-page h1 {
+        font-size: clamp(2rem, 9vw, 3rem) !important;
+        line-height: 1 !important;
+    }
+
+    .bccc-booking-show-summary-grid,
+    .bccc-booking-show-main-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .role-workspace-header {
+        padding: 1rem !important;
+    }
+
+    .role-workspace-header h1 {
+        font-size: clamp(1.85rem, 10vw, 2.45rem) !important;
+    }
+
+    .role-workspace-header .relative.grid,
+    .role-workspace-header .flex.flex-wrap {
+        gap: 0.65rem !important;
+    }
+
+    .role-workspace-header span {
+        letter-spacing: 0.14em !important;
+    }
+
+    .bccc-booking-step-root {
+        padding-inline: 0 !important;
+    }
+
+    .bccc-booking-step-progress {
+        padding-inline: 0.5rem !important;
+    }
+
+    .bccc-booking-step-button {
+        flex-basis: 11.85rem !important;
+        min-width: 11.85rem !important;
+    }
+
+    .bccc-booking-section-head,
+    .bccc-booking-step-layout {
+        padding: 0.7rem !important;
+    }
+
+    .bccc-booking-calendar-grid {
+        min-width: 610px;
+    }
+
+    .bccc-booking-calendar-grid > .bccc-booking-calendar-day-tile {
+        min-height: 96px !important;
+    }
+
+    .bccc-booking-calendar-grid span[title],
+    .bccc-booking-calendar-grid > .bccc-booking-calendar-day-tile span {
+        letter-spacing: 0.06em !important;
+    }
+
+    .bccc-booking-side-panel .border-b,
+    .bccc-booking-computation-aside .border-b {
+        padding: 0.85rem !important;
+    }
+
+    .bccc-booking-selected-dates,
+    .bccc-booking-computation-aside > div:nth-child(2) {
+        padding: 0.75rem !important;
+    }
+
+    .bccc-booking-package-card,
+    .bccc-booking-manual-card {
+        min-height: 150px !important;
+    }
+
+    .bccc-booking-package-card-content,
+    .bccc-booking-manual-card-content {
+        min-height: 150px !important;
+        padding: 0.85rem !important;
+    }
+
+    .bccc-booking-package-main > span:first-child,
+    .bccc-booking-manual-card-content > span:first-child > span:first-child {
+        height: 2.6rem !important;
+        width: 2.6rem !important;
+    }
+
+    .bccc-booking-final-modal-card {
+        max-height: calc(100svh - 1.25rem) !important;
+    }
+
+    .bccc-booking-final-modal-card h3 {
+        font-size: 1.55rem !important;
+    }
+
+    .bccc-booking-final-modal-card .flex.flex-col.gap-2 {
+        display: grid !important;
+    }
+
+    .bccc-booking-final-modal-card button {
+        width: 100%;
+    }
+
+    .booking-list-stat-card,
+    .booking-list-filter-panel,
+    .booking-list-toolbar,
+    .booking-list-card,
+    .booking-list-empty,
+    .booking-list-client-help {
+        border-left: 0 !important;
+        border-right: 0 !important;
+    }
+
+    .booking-list-title {
+        font-size: clamp(1.4rem, 8vw, 2rem) !important;
+    }
+
+    .booking-list-money-box strong {
+        font-size: 1.35rem !important;
+    }
+
+    .booking-list-primary-action,
+    .booking-list-secondary-action {
+        padding-inline: 0.75rem !important;
+        letter-spacing: 0.12em !important;
+    }
+
+    .bccc-booking-show-actions > a,
+    .bccc-booking-show-actions > button {
+        width: 100%;
+    }
+}
+
+/* Wide desktop and ultra-wide polish */
+@media (min-width: 1536px) {
+    .bccc-booking-step-root,
+    .bccc-booking-action-footer-inner {
+        max-width: 1760px !important;
+    }
+
+    .bccc-booking-calendar-grid > .bccc-booking-calendar-day-tile {
+        min-height: 132px !important;
+    }
+}
+
+/* Final booking show UX polish: keep the action rail visible without forcing the whole page to scroll too deeply. */
+.bccc-booking-show-sidecar {
+    scrollbar-width: none;
+}
+
+.bccc-booking-show-sidecar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+@media (max-width: 1023px) {
+    .bccc-booking-show-sidecar {
+        max-height: none;
+        overflow: visible;
+    }
+}

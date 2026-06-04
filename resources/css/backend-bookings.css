@@ -1,0 +1,366 @@
+@layer components {
+    .backend-booking-page {
+        min-width: 0;
+    }
+
+    .backend-booking-card {
+        position: relative;
+        isolation: isolate;
+        border-radius: 1.5rem;
+        border-color: hsl(var(--border));
+        background: hsl(var(--card));
+        box-shadow: 0 16px 44px rgb(15 23 42 / 0.055);
+    }
+
+    .dark .backend-booking-card {
+        border-color: rgb(255 255 255 / 0.1);
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(255 255 255 / 0.045),
+                transparent 36%
+            ),
+            rgb(255 255 255 / 0.055);
+        box-shadow: 0 18px 50px rgb(0 0 0 / 0.18);
+    }
+
+    .backend-booking-input {
+        height: 2.75rem;
+        width: 100%;
+        border-radius: 1rem;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--background));
+        padding-inline: 1rem;
+        color: hsl(var(--foreground));
+        font-size: 0.9rem;
+        outline: none;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .backend-booking-input:hover {
+        border-color: rgb(201 169 106 / 0.45);
+    }
+
+    .backend-booking-input:focus {
+        border-color: rgb(201 169 106 / 0.6);
+        box-shadow: 0 0 0 4px rgb(201 169 106 / 0.12);
+    }
+
+    .backend-booking-input:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+    }
+
+    .backend-booking-input::placeholder {
+        color: hsl(var(--muted-foreground));
+    }
+
+    .backend-booking-input option {
+        background: hsl(var(--background));
+        color: hsl(var(--foreground));
+    }
+
+    .backend-booking-file {
+        display: block;
+        height: 2.75rem;
+        width: 100%;
+        cursor: pointer;
+        border-radius: 1rem;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--background));
+        color: hsl(var(--foreground));
+        font-size: 0.9rem;
+    }
+
+    .backend-booking-file::file-selector-button {
+        height: 100%;
+        border: 0;
+        border-right: 1px solid hsl(var(--border));
+        background: hsl(var(--muted));
+        color: hsl(var(--foreground));
+        font-weight: 800;
+        padding-inline: 1rem;
+        margin-right: 1rem;
+    }
+
+    .backend-booking-label {
+        color: hsl(var(--muted-foreground));
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .backend-booking-icon {
+        display: inline-flex;
+        height: 2.75rem;
+        width: 2.75rem;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1rem;
+        border: 1px solid rgb(201 169 106 / 0.25);
+        background: rgb(201 169 106 / 0.1);
+        color: #8a6b2e;
+    }
+
+    .dark .backend-booking-icon {
+        color: #e8d8b5;
+    }
+
+    .backend-booking-chip {
+        display: inline-flex;
+        border-radius: 9999px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--background));
+        padding: 0.28rem 0.6rem;
+        color: hsl(var(--foreground));
+        font-size: 0.65rem;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .backend-booking-detail {
+        border-radius: 1.25rem;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--muted) / 0.35);
+        padding: 1rem;
+    }
+
+    .backend-booking-summary-card {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        border-radius: 1.25rem;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--muted) / 0.35);
+        padding: 1rem;
+    }
+
+    .backend-booking-row {
+        transition: background 0.18s ease;
+    }
+
+    .backend-booking-row:hover {
+        background: hsl(var(--muted) / 0.45);
+    }
+
+    .dark .backend-booking-row:hover {
+        background: rgb(255 255 255 / 0.045);
+    }
+
+    .backend-booking-stepper-card {
+        position: sticky;
+        top: 5.75rem;
+    }
+
+    .backend-booking-step {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        gap: 0.75rem;
+        border-radius: 1rem;
+        border: 1px solid transparent;
+        padding: 0.75rem;
+        color: hsl(var(--muted-foreground));
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            transform 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .backend-booking-step:hover:not(:disabled) {
+        transform: translateX(2px);
+        border-color: rgb(201 169 106 / 0.25);
+        background: hsl(var(--muted) / 0.5);
+        color: hsl(var(--foreground));
+    }
+
+    .backend-booking-step:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+    }
+
+    .backend-booking-step.is-current {
+        border-color: rgb(201 169 106 / 0.35);
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.12),
+                transparent 36%
+            ),
+            hsl(var(--muted) / 0.5);
+        color: hsl(var(--foreground));
+    }
+
+    .backend-booking-step.is-done {
+        color: hsl(var(--foreground));
+    }
+
+    .backend-booking-step-icon {
+        display: inline-flex;
+        height: 2rem;
+        width: 2rem;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.8rem;
+        border: 1px solid rgb(201 169 106 / 0.25);
+        background: rgb(201 169 106 / 0.1);
+        color: #8a6b2e;
+    }
+
+    .dark .backend-booking-step-icon {
+        color: #e8d8b5;
+    }
+
+    .backend-package-card {
+        width: 100%;
+        overflow: hidden;
+        border-radius: 1.5rem;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--card));
+        text-align: left;
+        transition:
+            transform 0.22s ease,
+            border-color 0.22s ease,
+            background 0.22s ease,
+            box-shadow 0.22s ease,
+            opacity 0.22s ease;
+    }
+
+    .backend-package-card:hover:not(:disabled) {
+        transform: translateY(-3px);
+        border-color: rgb(201 169 106 / 0.45);
+        box-shadow: 0 18px 48px rgb(15 23 42 / 0.08);
+    }
+
+    .backend-package-card.is-selected {
+        border-color: rgb(201 169 106 / 0.65);
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.11),
+                transparent 34%
+            ),
+            hsl(var(--card));
+        box-shadow: 0 18px 50px rgb(201 169 106 / 0.12);
+    }
+
+    .backend-package-card.is-disabled {
+        cursor: not-allowed;
+        opacity: 0.58;
+    }
+
+    .dark .backend-package-card {
+        background: rgb(255 255 255 / 0.055);
+        border-color: rgb(255 255 255 / 0.1);
+    }
+
+    .dark .backend-package-card:hover:not(:disabled),
+    .dark .backend-package-card.is-selected {
+        border-color: rgb(201 169 106 / 0.45);
+    }
+
+    .backend-package-image {
+        position: relative;
+        height: 20rem;
+        overflow: hidden;
+        border-radius: 1.25rem;
+        margin: 0.75rem;
+    }
+
+    .backend-package-card:not(:first-child) .backend-package-image {
+        height: 13rem;
+    }
+
+    .backend-package-showcase {
+        position: sticky;
+        top: 5.75rem;
+    }
+
+    .backend-usage-card {
+        min-height: 8rem;
+        border-radius: 1.25rem;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--background));
+        padding: 1rem;
+        text-align: left;
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            background 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .backend-usage-card:hover {
+        transform: translateY(-2px);
+        border-color: rgb(201 169 106 / 0.45);
+        background: hsl(var(--muted) / 0.35);
+    }
+
+    .backend-usage-card.is-selected {
+        border-color: rgb(201 169 106 / 0.65);
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(201 169 106 / 0.12),
+                transparent 34%
+            ),
+            hsl(var(--muted) / 0.35);
+        box-shadow: 0 16px 40px rgb(201 169 106 / 0.1);
+    }
+
+    @media (max-width: 1279px) {
+        .backend-booking-stepper-card,
+        .backend-package-showcase {
+            position: static;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .backend-booking-card,
+        .backend-package-card {
+            border-radius: 1.25rem;
+        }
+
+        .backend-package-image {
+            height: 15rem;
+            border-radius: 1rem;
+        }
+
+        .backend-package-card:not(:first-child) .backend-package-image {
+            height: 12rem;
+        }
+
+        .backend-booking-step {
+            padding: 0.65rem;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .backend-package-image {
+            height: 13rem;
+            margin: 0.5rem;
+        }
+
+        .backend-package-card:not(:first-child) .backend-package-image {
+            height: 10.5rem;
+        }
+
+        .backend-booking-input,
+        .backend-booking-file {
+            height: 2.6rem;
+            border-radius: 0.85rem;
+        }
+
+        .backend-usage-card {
+            min-height: 7rem;
+        }
+    }
+}

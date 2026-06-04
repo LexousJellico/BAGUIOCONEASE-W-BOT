@@ -1,0 +1,533 @@
+/* =========================================================
+   BCCC EASE — Batch 11 Auth / Notifications / Calendar / Account Responsiveness
+   ---------------------------------------------------------
+   This layer finishes the client-facing screens connected to booking:
+   authentication, notifications, my calendar, and account settings.
+   It is intentionally appended late through bccc-system.css so it can
+   correct older desktop-first spacing without rewriting components.
+   ========================================================= */
+
+@layer components {
+    .bccc-auth-access-page,
+    .notifications-responsive-page,
+    .user-calendar-responsive-card,
+    .settings-responsive-layout {
+        font-family: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    .bccc-auth-access-page {
+        min-width: 0;
+    }
+
+    .bccc-auth-access-shell,
+    .bccc-auth-stage,
+    .bccc-auth-card,
+    .bccc-auth-form-grid,
+    .bccc-auth-pane,
+    .bccc-auth-pane-inner,
+    .notifications-responsive-page,
+    .notification-panel,
+    .notification-conversation-shell,
+    .user-calendar-responsive-card,
+    .settings-responsive-layout,
+    .settings-responsive-content {
+        min-width: 0;
+    }
+
+    .bccc-auth-topbar a,
+    .bccc-auth-topbar button,
+    .bccc-auth-card button,
+    .notification-panel a,
+    .notification-panel button,
+    .notification-conversation-shell a,
+    .notification-conversation-shell button,
+    .user-calendar-responsive-card a,
+    .user-calendar-responsive-card button,
+    .settings-responsive-layout a,
+    .settings-responsive-layout button {
+        touch-action: manipulation;
+    }
+
+    .bccc-auth-card input,
+    .notification-panel input,
+    .notification-panel select,
+    .settings-responsive-layout input,
+    .settings-responsive-layout select,
+    .settings-responsive-layout textarea {
+        font-size: 16px;
+    }
+
+    .notification-conversation-thread,
+    .notification-panel,
+    .notification-monitoring-layout,
+    .notification-filter-grid,
+    .notification-stat-grid {
+        min-width: 0;
+    }
+
+    .notification-row,
+    .notification-chat-message,
+    .notification-chat-bubble,
+    .notification-side-card {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .notification-row h3,
+    .notification-chat-bubble h3,
+    .notification-row p,
+    .notification-chat-bubble p,
+    .notification-side-card strong,
+    .notification-side-card small {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .user-calendar-grid-scroll {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        scrollbar-width: thin;
+    }
+
+    .user-calendar-grid-inner {
+        width: 100%;
+    }
+
+    .user-calendar-day {
+        border-radius: 1rem;
+    }
+
+    .user-calendar-block-row {
+        border-radius: 1rem;
+        min-width: 0;
+    }
+
+    .settings-responsive-sidebar {
+        align-self: start;
+    }
+
+    .settings-responsive-content,
+    .settings-responsive-content form,
+    .settings-responsive-content .grid,
+    .settings-responsive-content [class*='grid-cols'] {
+        min-width: 0;
+    }
+}
+
+@layer utilities {
+    @media (max-width: 1279px) {
+        .notification-monitoring-layout {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+
+        .notification-monitoring-layout > aside {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .user-calendar-detail-panel {
+            position: relative;
+        }
+    }
+
+    @media (max-width: 1023px) {
+        .bccc-auth-center {
+            align-items: flex-start;
+            padding-top: clamp(1rem, 4vw, 2rem) !important;
+            padding-bottom: clamp(1rem, 4vw, 2rem) !important;
+        }
+
+        .bccc-auth-stage {
+            max-width: 44rem !important;
+        }
+
+        .bccc-auth-card {
+            border-radius: 1.7rem !important;
+            overflow: hidden;
+        }
+
+        .bccc-auth-form-grid {
+            display: block !important;
+            height: auto !important;
+        }
+
+        .bccc-auth-pane {
+            min-height: auto !important;
+            padding: clamp(1rem, 4vw, 1.75rem) !important;
+        }
+
+        .bccc-auth-pane-inner {
+            max-width: 34rem !important;
+            margin-inline: auto;
+        }
+
+        .settings-responsive-layout {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+
+        .settings-responsive-sidebar {
+            border-radius: 1.5rem !important;
+            padding: 1rem !important;
+        }
+
+        .settings-responsive-nav {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: max-content;
+            gap: 0.6rem !important;
+            overflow-x: auto;
+            padding-bottom: 0.2rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+
+        .settings-responsive-nav a {
+            white-space: nowrap;
+            min-height: 2.75rem;
+            display: inline-flex !important;
+            align-items: center;
+        }
+
+        .user-calendar-layout {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .bccc-auth-access-page {
+            overflow-y: auto !important;
+        }
+
+        .bccc-auth-access-shell {
+            min-height: 100svh !important;
+            padding-inline: 0.85rem !important;
+            padding-block: 0.85rem !important;
+        }
+
+        .bccc-auth-topbar {
+            gap: 0.6rem !important;
+        }
+
+        .bccc-auth-topbar a {
+            min-height: 2.65rem !important;
+            max-width: calc(100vw - 5.2rem);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-inline: 0.85rem !important;
+            font-size: 0.78rem !important;
+        }
+
+        .bccc-auth-topbar button {
+            width: 2.65rem !important;
+            height: 2.65rem !important;
+            min-width: 2.65rem !important;
+        }
+
+        .bccc-auth-card {
+            border-radius: 1.35rem !important;
+            box-shadow: 0 22px 70px rgba(47, 37, 23, 0.22) !important;
+        }
+
+        .bccc-auth-pane {
+            padding: 1rem !important;
+        }
+
+        .bccc-auth-pane-inner h2 {
+            font-size: clamp(2rem, 10vw, 2.55rem) !important;
+            line-height: 0.98 !important;
+            letter-spacing: -0.06em !important;
+        }
+
+        .bccc-auth-pane-inner p {
+            max-width: 100%;
+        }
+
+        .bccc-auth-pane-inner form {
+            gap: 0.8rem !important;
+            margin-top: 1rem !important;
+        }
+
+        .bccc-auth-pane-inner label span[class*='rounded-full'] {
+            border-radius: 1.05rem !important;
+            padding-inline: 0.9rem !important;
+        }
+
+        .bccc-auth-pane-inner input {
+            min-width: 0;
+        }
+
+        .bccc-auth-card [role='tab'] {
+            border-radius: 0.95rem !important;
+        }
+
+        .notification-hero,
+        .notification-hero-client {
+            border-radius: 1.25rem !important;
+            padding: 1rem !important;
+        }
+
+        .notification-hero h1 {
+            font-size: clamp(1.65rem, 8vw, 2.25rem) !important;
+            line-height: 1 !important;
+            letter-spacing: -0.055em !important;
+        }
+
+        .notification-hero > button,
+        .notification-hero .alh-primary-button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .notification-stat-grid {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+
+        .notification-filter-grid {
+            grid-template-columns: minmax(0, 1fr) !important;
+            padding: 0.8rem !important;
+        }
+
+        .notification-filter-grid button,
+        .notification-filter-grid .alh-primary-button,
+        .notification-filter-grid .alh-secondary-button {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .notification-conversation-shell,
+        .notification-panel {
+            border-radius: 1.25rem !important;
+            overflow: hidden;
+        }
+
+        .notification-conversation-header,
+        .notification-panel-header {
+            padding: 1rem !important;
+            gap: 0.8rem !important;
+            align-items: flex-start !important;
+        }
+
+        .notification-conversation-header h2,
+        .notification-panel-header h2 {
+            font-size: clamp(1.15rem, 5vw, 1.55rem) !important;
+            line-height: 1.05 !important;
+        }
+
+        .notification-conversation-thread {
+            padding: 1rem !important;
+        }
+
+        .notification-chat-message {
+            grid-template-columns: 2.25rem minmax(0, 1fr) !important;
+            gap: 0.65rem !important;
+        }
+
+        .notification-chat-avatar {
+            width: 2.25rem !important;
+            height: 2.25rem !important;
+        }
+
+        .notification-chat-bubble {
+            border-radius: 1rem !important;
+            padding: 0.9rem !important;
+        }
+
+        .notification-chat-bubble .alh-primary-button,
+        .notification-row .alh-primary-button,
+        .notification-row .alh-secondary-button {
+            min-height: 2.55rem !important;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .notification-row {
+            grid-template-columns: minmax(0, 1fr) !important;
+            padding: 1rem !important;
+            gap: 0.8rem !important;
+        }
+
+        .notification-row-icon {
+            width: 2.55rem !important;
+            height: 2.55rem !important;
+        }
+
+        .notification-monitoring-layout > aside {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+
+        .user-calendar-responsive-card {
+            border-radius: 1.25rem !important;
+            margin-inline: -0.2rem;
+        }
+
+        .user-calendar-responsive-card > div:first-child {
+            padding: 1rem !important;
+        }
+
+        .user-calendar-responsive-card > div:first-child > button {
+            top: 1rem !important;
+            width: 2.55rem !important;
+            height: 2.55rem !important;
+            min-width: 2.55rem !important;
+        }
+
+        .user-calendar-responsive-card > div:first-child > button:first-of-type {
+            left: 0.75rem !important;
+        }
+
+        .user-calendar-responsive-card > div:first-child > button:last-of-type {
+            right: 0.75rem !important;
+        }
+
+        .user-calendar-responsive-card h2 {
+            font-size: clamp(1.55rem, 8vw, 2.2rem) !important;
+            letter-spacing: -0.05em !important;
+        }
+
+        .user-calendar-grid-scroll {
+            padding: 0.75rem !important;
+            margin-inline: -0.15rem;
+        }
+
+        .user-calendar-grid-inner {
+            min-width: 37rem !important;
+        }
+
+        .user-calendar-grid {
+            gap: 0.45rem !important;
+        }
+
+        .user-calendar-grid > div {
+            padding-block: 0.6rem !important;
+            font-size: 0.58rem !important;
+            letter-spacing: 0.16em !important;
+        }
+
+        .user-calendar-day {
+            min-height: 4.7rem !important;
+            padding: 0.7rem !important;
+            border-radius: 0.85rem !important;
+        }
+
+        .user-calendar-day strong {
+            font-size: 1rem !important;
+        }
+
+        .user-calendar-detail-panel {
+            padding: 0.85rem !important;
+        }
+
+        .user-calendar-detail-panel > div {
+            border-radius: 1.1rem !important;
+            padding: 1rem !important;
+        }
+
+        .user-calendar-block-row {
+            align-items: flex-start !important;
+            flex-direction: column !important;
+            gap: 0.55rem !important;
+        }
+
+        .user-calendar-block-row strong {
+            width: 100%;
+        }
+
+        .settings-responsive-layout {
+            gap: 1rem !important;
+        }
+
+        .settings-responsive-sidebar,
+        .settings-responsive-content > div,
+        .settings-responsive-content form,
+        .settings-responsive-content [class*='rounded-[2rem]'] {
+            border-radius: 1.25rem !important;
+        }
+
+        .settings-responsive-content [class*='p-6'] {
+            padding: 1rem !important;
+        }
+
+        .settings-responsive-content [class*='grid-cols'] {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+
+        .settings-responsive-content button,
+        .settings-responsive-content a[class*='button'],
+        .settings-responsive-content [role='button'] {
+            min-height: 2.75rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .bccc-auth-access-shell {
+            padding-inline: 0.65rem !important;
+        }
+
+        .bccc-auth-center {
+            padding-block: 0.75rem !important;
+        }
+
+        .bccc-auth-card {
+            border-radius: 1.1rem !important;
+        }
+
+        .bccc-auth-pane {
+            padding: 0.85rem !important;
+        }
+
+        .bccc-auth-pane-inner h2 {
+            font-size: clamp(1.85rem, 11vw, 2.25rem) !important;
+        }
+
+        .bccc-auth-pane-inner label > span:first-child,
+        .bccc-auth-pane-inner p[class*='tracking'] {
+            letter-spacing: 0.13em !important;
+        }
+
+        .notification-chat-message {
+            display: block !important;
+        }
+
+        .notification-chat-avatar {
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-row-icon {
+            margin-bottom: 0.2rem;
+        }
+
+        .user-calendar-grid-inner {
+            min-width: 34.5rem !important;
+        }
+
+        .user-calendar-day {
+            min-height: 4.35rem !important;
+        }
+    }
+
+    @media (min-width: 1536px) {
+        .notifications-responsive-page,
+        .settings-responsive-layout {
+            max-width: 1500px;
+            margin-inline: auto;
+        }
+
+        .user-calendar-responsive-card {
+            max-width: 1540px;
+            margin-inline: auto;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .bccc-auth-access-page *,
+        .notifications-responsive-page *,
+        .user-calendar-responsive-card *,
+        .settings-responsive-layout * {
+            scroll-behavior: auto !important;
+            transition-duration: 0.001ms !important;
+            animation-duration: 0.001ms !important;
+        }
+    }
+}

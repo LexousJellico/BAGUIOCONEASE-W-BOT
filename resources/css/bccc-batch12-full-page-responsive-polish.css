@@ -1,0 +1,646 @@
+/* =========================================================
+   BCCC EASE — Batch 12 Full Page Responsiveness Polish
+   ---------------------------------------------------------
+   This layer is intentionally additive. It fixes the pages
+   not fully covered by the booking/admin/public/auth batches:
+   role workspaces, role calendars, reports, print previews,
+   MICE/report forms, payment proof panels, operations pages,
+   settings-like cards, and legacy service/setup pages.
+   ========================================================= */
+
+:root {
+  --bccc-touch: 44px;
+  --bccc-page-gutter: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@supports not (overflow-x: clip) {
+  html,
+  body,
+  #app {
+    overflow-x: hidden;
+  }
+}
+
+.backend-app-content,
+.role-workspace-body,
+.resource-page-shell,
+.calendar-index-page,
+.mice-report-page,
+.payment-review-page,
+.operations-page,
+.mice-survey-page {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.role-workspace-body > *,
+.backend-app-content > *,
+.resource-page-shell > *,
+.calendar-index-page > *,
+.mice-report-page > *,
+.payment-review-page > *,
+.operations-page > * {
+  min-width: 0;
+}
+
+/* Shared responsive controls */
+.role-workspace-actions > *,
+.resource-toolbar a,
+.resource-toolbar button,
+.resource-toolbar [role='button'],
+.mice-report-primary-action,
+.mice-report-secondary-action,
+.payment-review-primary-action,
+.payment-review-secondary-action,
+.payment-review-danger-action,
+.operations-confirm-button,
+.booking-payment-submit,
+.official-preview-toolbar a,
+.official-preview-toolbar button,
+.print-report-toolbar a,
+.print-report-toolbar button {
+  min-height: var(--bccc-touch);
+}
+
+:is(input, select, textarea, button) {
+  max-width: 100%;
+}
+
+:is(.resource-page-shell, .role-workspace-body, .calendar-index-page, .mice-report-page, .payment-review-page, .operations-page) :is(table) {
+  width: 100%;
+}
+
+:is(.resource-page-shell, .role-workspace-body, .calendar-index-page, .mice-report-page, .payment-review-page, .operations-page) :is(.overflow-hidden):has(table),
+:is(.resource-page-shell, .role-workspace-body, .calendar-index-page, .mice-report-page, .payment-review-page, .operations-page) :is(.table-wrapper, .resource-table-wrap) {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+/* Role dashboards / manager / staff / user home */
+.role-workspace-header {
+  border-radius: 0 !important;
+}
+
+.role-workspace-header h1 {
+  overflow-wrap: anywhere;
+}
+
+.role-dashboard-kpi-grid,
+.role-action-grid,
+.role-calendar-stats {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)) !important;
+}
+
+.role-dashboard-main-grid,
+.role-calendar-layout {
+  align-items: start;
+}
+
+.role-kpi-card,
+.role-action-card,
+.calendar-index-kpi,
+.calendar-analytics-kpi,
+.payment-review-stat-card,
+.mice-report-stat-card,
+.operations-kpi-card,
+.setup-role-row,
+.resource-stat-card {
+  min-width: 0;
+  border-radius: 0 !important;
+}
+
+.role-kpi-card :is(p, strong, span),
+.role-action-card :is(h3, p, span),
+.resource-page-shell :is(h1, h2, h3, p, span),
+.mice-report-page :is(h1, h2, h3, p, span),
+.payment-review-page :is(h1, h2, h3, p, span),
+.calendar-index-page :is(h1, h2, h3, p, span) {
+  overflow-wrap: anywhere;
+}
+
+/* Role calendar pages */
+.role-calendar-month,
+.calendar-index-panel,
+.calendar-analytics-panel,
+.calendar-manage-scroll {
+  min-width: 0;
+  border-radius: 0 !important;
+}
+
+.role-calendar-scroll,
+.calendar-manage-scroll,
+.calendar-index-scroll,
+.calendar-analytics-scroll {
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.role-calendar-grid {
+  min-width: 52rem;
+}
+
+.role-calendar-selected-panel {
+  min-width: 0;
+}
+
+.calendar-index-grid,
+.calendar-index-weekdays {
+  min-width: 52rem;
+}
+
+.calendar-index-panel > .calendar-index-grid,
+.calendar-index-panel > .calendar-index-weekdays {
+  width: max-content;
+}
+
+.calendar-index-day,
+.role-calendar-grid article {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.calendar-index-mini-event,
+.calendar-index-day-events,
+.calendar-index-event-card,
+.calendar-highlight-card,
+.calendar-busy-date-card,
+.calendar-date-row,
+.calendar-area-row {
+  min-width: 0;
+}
+
+.calendar-index-toolbar,
+.calendar-analytics-filter-grid,
+.operations-filter-grid,
+.mice-report-filter-panel,
+.payment-review-filter-panel {
+  align-items: stretch;
+}
+
+/* Payment proof / review pages */
+.booking-payment-panel,
+.booking-payment-history,
+.booking-payment-row,
+.booking-payment-preview,
+.booking-payment-review-note,
+.payment-review-card,
+.payment-review-toolbar,
+.payment-review-filter-panel,
+.payment-review-snapshot-line,
+.payment-review-services,
+.payment-review-remarks {
+  min-width: 0;
+  border-radius: 0 !important;
+}
+
+.payment-review-filter-panel,
+.mice-report-filter-panel,
+.operations-filter-panel,
+.calendar-analytics-filter {
+  border-radius: 0 !important;
+}
+
+.payment-review-card-actions,
+.mice-report-card-actions,
+.booking-payment-submit-row,
+.official-preview-toolbar,
+.print-report-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.payment-review-card-actions > *,
+.mice-report-card-actions > *,
+.booking-payment-submit-row > *,
+.official-preview-toolbar > *,
+.print-report-toolbar > * {
+  min-width: min(100%, 10rem);
+}
+
+/* MICE/report registry */
+.mice-report-toolbar,
+.mice-report-section-header,
+.mice-report-card,
+.mice-report-panel,
+.mice-report-filter-panel,
+.mice-report-detail-grid,
+.mice-report-booking-link,
+.mice-survey-hero,
+.mice-survey-panel,
+.mice-survey-section-header,
+.mice-survey-field,
+.official-mice-header,
+.official-mice-print {
+  min-width: 0;
+  border-radius: 0 !important;
+}
+
+.mice-report-detail-grid,
+.mice-report-detail-grid.is-three {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)) !important;
+}
+
+.mice-report-filter-panel,
+.payment-review-filter-panel {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)) !important;
+}
+
+.mice-survey-page {
+  padding-inline: var(--bccc-page-gutter);
+}
+
+.mice-survey-panel :is(input, select, textarea),
+.mice-report-filter-panel :is(input, select),
+.payment-review-filter-panel :is(input, select),
+.calendar-analytics-filter :is(input, select),
+.operations-filter-panel :is(input, select) {
+  min-height: var(--bccc-touch);
+  font-size: 16px;
+}
+
+/* Operations / analytics / audit pages */
+.operations-hero,
+.operations-filter-panel,
+.operations-panel,
+.operations-booking-row,
+.operations-side-card,
+.operations-automation-row,
+.operations-pending-payment,
+.operations-latest-payment,
+.operations-services,
+.calendar-analytics-hero,
+.calendar-analytics-filter,
+.calendar-analytics-panel,
+.calendar-analytics-mini-bar,
+.calendar-analytics-empty {
+  min-width: 0;
+  border-radius: 0 !important;
+}
+
+.operations-filter-grid,
+.calendar-analytics-filter-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)) !important;
+}
+
+/* Admin setup / content / resource forms */
+.setup-role-row,
+.setup-role-options,
+.resource-toolbar,
+.resource-section,
+.resource-empty-state,
+.admin-polished-page,
+.admin-polished-panel,
+.admin-polished-toolbar,
+.admin-polished-grid {
+  min-width: 0;
+  border-radius: 0 !important;
+}
+
+.setup-role-options,
+.resource-toolbar,
+.admin-polished-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.setup-role-options > *,
+.resource-toolbar > *,
+.admin-polished-toolbar > * {
+  min-width: min(100%, 10rem);
+}
+
+/* Service / venue legacy pages */
+.service-type-card,
+.service-card,
+.service-type-form,
+.service-form,
+.alh-admin-mice-row,
+.alh-calendar-admin-hero,
+.alh-calendar-block-summary {
+  min-width: 0;
+  border-radius: 0 !important;
+}
+
+/* Print previews must be readable on screen and remain print-safe */
+.print-report-page,
+.print-report-paper,
+.print-report-section,
+.print-report-header,
+.print-report-footer,
+.official-preview-toolbar,
+.official-preview-footnotes {
+  min-width: 0;
+}
+
+.print-report-paper,
+.official-mice-print > div,
+.official-preview-paper {
+  max-width: min(100%, 14in);
+}
+
+.print-report-table {
+  min-width: 42rem;
+}
+
+.print-report-section:has(.print-report-table),
+.official-mice-print section:has(table) {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Tablet */
+@media (max-width: 1180px) {
+  .role-dashboard-main-grid,
+  .role-calendar-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .role-calendar-selected-panel {
+    position: static !important;
+  }
+
+  .calendar-analytics-hero,
+  .operations-hero,
+  .calendar-index-hero {
+    padding: clamp(1.25rem, 3vw, 2rem) !important;
+  }
+
+  .payment-review-card,
+  .mice-report-card,
+  .operations-booking-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Mobile and small tablets */
+@media (max-width: 768px) {
+  .backend-app-content {
+    padding-inline: 0.75rem !important;
+    padding-top: 4.75rem !important;
+  }
+
+  .backend-app-content > div {
+    gap: 0.875rem !important;
+  }
+
+  .role-workspace-header {
+    margin-bottom: 0.875rem !important;
+    padding: 1rem !important;
+  }
+
+  .role-workspace-header h1 {
+    margin-top: 0.875rem !important;
+    font-size: clamp(1.9rem, 10vw, 2.8rem) !important;
+    line-height: 0.95 !important;
+    letter-spacing: -0.065em !important;
+  }
+
+  .role-workspace-header p {
+    margin-top: 0.75rem !important;
+    font-size: 0.875rem !important;
+    line-height: 1.65 !important;
+  }
+
+  .role-workspace-actions {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: 1fr;
+  }
+
+  .role-workspace-actions > * {
+    width: 100%;
+  }
+
+  .role-kpi-card,
+  .role-action-card,
+  .calendar-index-kpi,
+  .calendar-analytics-kpi,
+  .payment-review-stat-card,
+  .mice-report-stat-card,
+  .operations-kpi-card {
+    padding: 1rem !important;
+  }
+
+  .role-kpi-card strong,
+  .role-kpi-card p:nth-child(2),
+  .payment-review-stat-card strong,
+  .mice-report-stat-card strong,
+  .calendar-analytics-kpi strong,
+  .operations-kpi-card strong {
+    font-size: clamp(2rem, 12vw, 3rem) !important;
+    line-height: 0.95 !important;
+  }
+
+  .role-action-card a {
+    padding: 1rem !important;
+  }
+
+  .role-action-card h3 {
+    font-size: 1.125rem !important;
+  }
+
+  .role-calendar-grid,
+  .calendar-index-grid,
+  .calendar-index-weekdays {
+    min-width: 43rem !important;
+  }
+
+  .role-calendar-grid article,
+  .calendar-index-day {
+    min-height: 7.25rem !important;
+    padding: 0.5rem !important;
+  }
+
+  .calendar-index-block,
+  .role-calendar-grid .inline-flex {
+    font-size: 0.52rem !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .calendar-index-panel-header,
+  .calendar-analytics-panel-header,
+  .operations-panel-header,
+  .mice-report-section-header,
+  .payment-review-toolbar,
+  .mice-survey-section-header {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.875rem !important;
+    align-items: start !important;
+  }
+
+  .calendar-index-toolbar,
+  .calendar-analytics-filter-grid,
+  .operations-filter-grid,
+  .mice-report-filter-panel,
+  .payment-review-filter-panel,
+  .resource-toolbar,
+  .setup-role-options,
+  .admin-polished-toolbar {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
+  }
+
+  .calendar-index-toolbar > *,
+  .calendar-analytics-filter-grid > *,
+  .operations-filter-grid > *,
+  .mice-report-filter-panel > *,
+  .payment-review-filter-panel > *,
+  .resource-toolbar > *,
+  .setup-role-options > *,
+  .admin-polished-toolbar > * {
+    width: 100% !important;
+  }
+
+  .mice-report-toolbar,
+  .payment-review-card-actions,
+  .mice-report-card-actions,
+  .booking-payment-submit-row,
+  .official-preview-toolbar,
+  .print-report-toolbar {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .mice-report-toolbar > *,
+  .payment-review-card-actions > *,
+  .mice-report-card-actions > *,
+  .booking-payment-submit-row > *,
+  .official-preview-toolbar > *,
+  .print-report-toolbar > * {
+    width: 100% !important;
+  }
+
+  .booking-payment-row,
+  .payment-review-card,
+  .mice-report-card,
+  .operations-booking-row,
+  .calendar-index-event-card,
+  .calendar-highlight-card,
+  .calendar-busy-date-card,
+  .calendar-date-row,
+  .calendar-area-row,
+  .setup-role-row,
+  .alh-calendar-block-summary {
+    padding: 1rem !important;
+  }
+
+  .mice-survey-hero,
+  .operations-hero,
+  .calendar-index-hero,
+  .calendar-analytics-hero {
+    padding: 1rem !important;
+  }
+
+  .mice-survey-hero h1,
+  .operations-hero h1,
+  .calendar-index-hero h1,
+  .calendar-analytics-hero h1 {
+    font-size: clamp(2rem, 12vw, 3rem) !important;
+    line-height: 0.95 !important;
+  }
+
+  .print-report-page {
+    padding: 0.75rem !important;
+  }
+
+  .print-report-paper,
+  .official-mice-print > div {
+    padding: 1rem !important;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 430px) {
+  .backend-app-content {
+    padding-inline: 0.625rem !important;
+  }
+
+  .role-workspace-header {
+    padding: 0.875rem !important;
+  }
+
+  .role-workspace-header h1 {
+    font-size: clamp(1.75rem, 12vw, 2.45rem) !important;
+  }
+
+  .role-workspace-header [class*='tracking-'],
+  .calendar-index-panel-header [class*='tracking-'],
+  .calendar-analytics-panel-header [class*='tracking-'],
+  .mice-report-section-header [class*='tracking-'],
+  .payment-review-toolbar [class*='tracking-'] {
+    letter-spacing: 0.14em !important;
+  }
+
+  .role-calendar-grid,
+  .calendar-index-grid,
+  .calendar-index-weekdays {
+    min-width: 39rem !important;
+  }
+
+  .role-calendar-grid article,
+  .calendar-index-day {
+    min-height: 6.75rem !important;
+  }
+
+  .calendar-index-day-events,
+  .role-calendar-grid article .grid {
+    display: none !important;
+  }
+
+  .calendar-index-number,
+  .role-calendar-grid article span:first-child {
+    width: 1.875rem !important;
+    height: 1.875rem !important;
+  }
+
+  .mice-report-filter-panel :is(input, select),
+  .payment-review-filter-panel :is(input, select),
+  .calendar-analytics-filter :is(input, select),
+  .operations-filter-panel :is(input, select),
+  .mice-survey-panel :is(input, select, textarea) {
+    font-size: 16px !important;
+  }
+}
+
+@media print {
+  html,
+  body,
+  #app {
+    overflow: visible !important;
+  }
+
+  .backend-app-content,
+  .role-workspace-body,
+  .print-report-page,
+  .print-report-paper,
+  .official-mice-print,
+  .official-preview-paper {
+    width: 100% !important;
+    max-width: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .print-report-table {
+    min-width: 0 !important;
+  }
+
+  .print-report-section:has(.print-report-table),
+  .official-mice-print section:has(table) {
+    overflow: visible !important;
+  }
+}

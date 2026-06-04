@@ -1,0 +1,3514 @@
+/* =========================================================
+   BCCC EASE — COMPLETE PUBLIC WEBSITE RESPONSIVE PATCH
+   Scope: public marketing website only.
+   Load this file LAST so it wins over older scattered patches.
+   ========================================================= */
+
+:root {
+    --bccc-public-header-h: 4rem;
+    --bccc-public-side: clamp(0.875rem, 2.6vw, 2rem);
+    --bccc-public-wide: 1800px;
+    --bccc-public-content: 1480px;
+    --bccc-public-radius: clamp(1rem, 1.8vw, 1.75rem);
+    --bccc-public-availability-h: 9.25rem;
+}
+
+@media (min-width: 768px) {
+    :root {
+        --bccc-public-header-h: 4.5rem;
+        --bccc-public-side: clamp(1.25rem, 3vw, 2.5rem);
+    }
+}
+
+@media (min-width: 1280px) {
+    :root {
+        --bccc-public-header-h: 4.75rem;
+    }
+}
+
+html,
+body,
+#app {
+    width: 100%;
+    min-width: 320px;
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+body {
+    overscroll-behavior-x: none;
+}
+
+img,
+video,
+canvas,
+svg,
+iframe {
+    max-width: 100%;
+}
+
+.bccc-public-shell,
+.bccc-public-main,
+.public-display-page,
+.bccc-public-page-stage {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+.bccc-public-main {
+    padding-top: var(--bccc-public-header-h) !important;
+}
+
+.bccc-public-main > main,
+.bccc-public-main > section,
+.bccc-public-main .public-display-page {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.bccc-public-main :where(section, article, aside, div, form, nav) {
+    min-width: 0;
+}
+
+.bccc-public-main :where(.public-container, .public-section-shell) {
+    width: min(
+        calc(100% - (var(--bccc-public-side) * 2)),
+        var(--bccc-public-content)
+    ) !important;
+    max-width: var(--bccc-public-content) !important;
+    margin-inline: auto !important;
+}
+
+.bccc-public-main :where(.public-section) {
+    padding-block: clamp(2.75rem, 6vw, 6.25rem) !important;
+}
+
+.bccc-public-main :where(section[id], article[id]) {
+    scroll-margin-top: calc(var(--bccc-public-header-h) + 1.25rem);
+}
+
+.bccc-public-main
+    :where(h1, h2, h3, p, span, a, button, label, input, textarea, select) {
+    overflow-wrap: anywhere;
+}
+
+.bccc-public-main :where(button, a, input, select, textarea) {
+    touch-action: manipulation;
+}
+
+.bccc-public-main :where(input, select, textarea) {
+    min-height: 2.75rem;
+    font-size: 16px;
+}
+
+/* ---------- Header ---------- */
+.bccc-public-header-portal {
+    position: relative;
+    z-index: 99980;
+}
+
+.bccc-public-header {
+    height: var(--bccc-public-header-h) !important;
+    min-height: var(--bccc-public-header-h) !important;
+    max-height: var(--bccc-public-header-h) !important;
+    overflow: visible !important;
+    contain: layout style;
+}
+
+.bccc-public-header-inner {
+    height: var(--bccc-public-header-h) !important;
+    min-height: var(--bccc-public-header-h) !important;
+    max-height: var(--bccc-public-header-h) !important;
+    width: min(100%, var(--bccc-public-wide));
+    margin-inline: auto;
+    padding-inline: var(--bccc-public-side) !important;
+}
+
+.bccc-public-brand,
+.bccc-public-actions,
+.bccc-public-nav,
+.bccc-public-caption {
+    min-width: 0 !important;
+}
+
+.bccc-public-seal {
+    height: clamp(2.45rem, 5vw, 3.35rem) !important;
+    width: clamp(2.45rem, 5vw, 3.35rem) !important;
+    flex: 0 0 auto;
+}
+
+.bccc-public-caption {
+    max-width: min(40vw, 34rem) !important;
+}
+
+.bccc-public-caption-title,
+.bccc-public-caption-subtitle {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bccc-public-caption-title {
+    font-size: clamp(0.72rem, 0.95vw, 1rem) !important;
+    line-height: 1.1 !important;
+    letter-spacing: clamp(0.035em, 0.45vw, 0.12em) !important;
+}
+
+.bccc-public-caption-subtitle {
+    margin-top: 0.22rem !important;
+    font-size: clamp(0.64rem, 0.82vw, 0.92rem) !important;
+    line-height: 1.1 !important;
+    letter-spacing: clamp(0.035em, 0.35vw, 0.11em) !important;
+}
+
+.bccc-public-nav {
+    overflow: visible !important;
+}
+
+.bccc-public-nav a,
+.bccc-public-nav button,
+.bccc-public-actions a,
+.bccc-public-actions button {
+    flex: 0 0 auto;
+}
+
+.bccc-public-breathe-logo {
+    width: clamp(5.2rem, 8vw, 9.5rem) !important;
+    height: clamp(2.2rem, 4.4vw, 3.65rem) !important;
+    overflow: visible !important;
+}
+
+.bccc-public-breathe-logo img {
+    max-height: 100% !important;
+    object-fit: contain !important;
+}
+
+.bccc-mobile-public-menu {
+    padding: max(0.65rem, env(safe-area-inset-top))
+        max(0.65rem, env(safe-area-inset-right))
+        max(0.65rem, env(safe-area-inset-bottom))
+        max(0.65rem, env(safe-area-inset-left));
+}
+
+@media (max-width: 639px) {
+    .bccc-public-caption {
+        display: none !important;
+    }
+
+    .bccc-public-actions {
+        gap: 0.45rem !important;
+    }
+
+    .bccc-public-actions :where(button, a) {
+        min-width: 2.55rem;
+    }
+}
+
+@media (max-width: 430px) {
+    :root {
+        --bccc-public-side: 0.75rem;
+    }
+
+    .bccc-public-seal {
+        height: 2.35rem !important;
+        width: 2.35rem !important;
+    }
+
+    .bccc-public-breathe-logo {
+        display: none !important;
+    }
+}
+
+/* ---------- Hero ---------- */
+.bccc-public-main .bccc-hero-banner,
+.bccc-public-main section:has(.bccc-hero-main-image) {
+    min-height: calc(100svh - var(--bccc-public-header-h));
+}
+
+.bccc-public-main .bccc-hero-main-image,
+.bccc-public-main img[alt='Baguio Convention and Cultural Center'] {
+    width: 100% !important;
+    max-width: none !important;
+}
+
+@media (max-width: 1024px) {
+    .bccc-public-main .bccc-hero-banner,
+    .bccc-public-main section[class*='h-[142svh]'] {
+        height: 118svh !important;
+        min-height: 42rem !important;
+    }
+
+    .bccc-public-main section[class*='h-[142svh]'] > div[class*='sticky'] {
+        min-height: 36rem !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .bccc-public-main .bccc-hero-banner,
+    .bccc-public-main section[class*='h-[142svh]'] {
+        height: 108svh !important;
+        min-height: 34rem !important;
+    }
+
+    .bccc-public-main section[class*='h-[142svh]'] > div[class*='sticky'] {
+        height: calc(100svh - 0px) !important;
+        min-height: 34rem !important;
+    }
+}
+
+/* ---------- Sticky public availability dock ---------- */
+.bccc-availability-dock {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: env(safe-area-inset-bottom) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    z-index: 8500 !important;
+    padding-inline: 0 !important;
+    pointer-events: none;
+}
+
+.bccc-availability-dock-panel {
+    pointer-events: auto;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: min(44svh, 17rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: 0 !important;
+    scrollbar-width: thin;
+    color-scheme: light;
+}
+
+.dark .bccc-availability-dock-panel {
+    color-scheme: dark;
+}
+
+.bccc-availability-dock-panel--calendar-open {
+    max-height: min(82svh, 38rem);
+}
+
+.bccc-availability-form {
+    width: min(calc(100% - 1rem), var(--bccc-public-wide)) !important;
+    max-width: var(--bccc-public-wide) !important;
+    margin-inline: auto !important;
+    align-items: stretch !important;
+}
+
+.bccc-availability-form > * {
+    min-width: 0 !important;
+}
+
+.bccc-availability-dock input,
+.bccc-availability-dock select,
+.bccc-availability-dock button {
+    max-width: 100% !important;
+}
+
+.bccc-availability-dock button[type='submit'] {
+    min-height: 3.4rem !important;
+    white-space: nowrap;
+}
+
+.bccc-availability-calendar-popover {
+    position: relative;
+    grid-column: 1 / -1;
+    width: min(100%, 48rem);
+    margin-top: 0.35rem;
+    border: 1px solid rgb(217 199 166 / 0.78);
+    border-radius: 1rem;
+    background: rgb(255 250 240 / 0.98);
+    padding: 0.85rem;
+    box-shadow: 0 22px 70px rgb(47 37 23 / 0.18);
+    color-scheme: light;
+}
+
+.dark .bccc-availability-calendar-popover {
+    border-color: rgb(255 255 255 / 0.1);
+    background: rgb(16 20 25 / 0.98);
+    color-scheme: dark;
+}
+
+.bccc-availability-calendar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.bccc-availability-calendar-months {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin-top: 0.85rem;
+}
+
+.bccc-availability-calendar-month {
+    min-width: 0;
+}
+
+.bccc-availability-calendar-month-title {
+    margin-bottom: 0.55rem;
+    text-align: center;
+    color: #21180d;
+    font-size: 0.95rem;
+    font-weight: 800;
+}
+
+.dark .bccc-availability-calendar-month-title {
+    color: #fff;
+}
+
+.bccc-availability-calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.25rem;
+    margin-bottom: 0.4rem;
+    text-align: center;
+    color: #9d7b3d;
+    font-size: 0.64rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.dark .bccc-availability-calendar-weekdays {
+    color: #f1d89b;
+}
+
+.bccc-availability-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.bccc-availability-date-button {
+    position: relative;
+    display: grid;
+    min-height: 2.45rem;
+    place-items: center;
+    border: 1px solid rgb(217 199 166 / 0.62);
+    border-radius: 0.72rem;
+    background: rgb(255 255 255 / 0.82);
+    color: #2f2517;
+    font-size: 0.82rem;
+    font-weight: 800;
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+.bccc-availability-date-button:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+.bccc-availability-date-button:disabled {
+    cursor: not-allowed;
+}
+
+.bccc-availability-date-button.is-open {
+    border-color: rgb(16 185 129 / 0.42);
+    background: rgb(236 253 245 / 0.92);
+    color: #065f46;
+}
+
+.bccc-availability-date-button.is-limited {
+    border-color: rgb(245 158 11 / 0.42);
+    background: rgb(255 251 235 / 0.94);
+    color: #92400e;
+}
+
+.bccc-availability-date-button.is-public {
+    border-color: rgb(14 165 233 / 0.38);
+    background: rgb(240 249 255 / 0.94);
+    color: #075985;
+}
+
+.bccc-availability-date-button.is-closed,
+.bccc-availability-date-button.is-past {
+    border-color: rgb(148 163 184 / 0.32);
+    background: rgb(248 250 252 / 0.82);
+    color: #94a3b8;
+}
+
+.bccc-availability-date-button.is-range {
+    box-shadow: inset 0 0 0 2px rgb(176 141 72 / 0.28);
+}
+
+.bccc-availability-date-button.is-start,
+.bccc-availability-date-button.is-end {
+    border-color: #164734;
+    background: #164734;
+    color: #fff;
+    box-shadow: 0 10px 28px rgb(22 71 52 / 0.24);
+}
+
+.bccc-availability-date-button.is-outside-month {
+    opacity: 0.38;
+}
+
+.dark .bccc-availability-date-button {
+    border-color: rgb(255 255 255 / 0.1);
+    background: rgb(255 255 255 / 0.065);
+    color: rgb(255 255 255 / 0.72);
+}
+
+.dark .bccc-availability-date-button.is-open {
+    border-color: rgb(52 211 153 / 0.3);
+    background: rgb(52 211 153 / 0.12);
+    color: #d1fae5;
+}
+
+.dark .bccc-availability-date-button.is-limited {
+    border-color: rgb(251 191 36 / 0.32);
+    background: rgb(251 191 36 / 0.13);
+    color: #fef3c7;
+}
+
+.dark .bccc-availability-date-button.is-public {
+    border-color: rgb(56 189 248 / 0.3);
+    background: rgb(56 189 248 / 0.12);
+    color: #e0f2fe;
+}
+
+.dark .bccc-availability-date-button.is-closed,
+.dark .bccc-availability-date-button.is-past {
+    border-color: rgb(255 255 255 / 0.08);
+    background: rgb(255 255 255 / 0.035);
+    color: rgb(255 255 255 / 0.34);
+}
+
+.dark .bccc-availability-date-button.is-start,
+.dark .bccc-availability-date-button.is-end {
+    border-color: #f1d89b;
+    background: #f1d89b;
+    color: #17120b;
+}
+
+.bccc-availability-date-dot {
+    position: absolute;
+    right: 0.35rem;
+    top: 0.35rem;
+    height: 0.36rem;
+    width: 0.36rem;
+    border-radius: 999px;
+}
+
+.bccc-availability-calendar-overlay {
+    position: absolute;
+    inset: 0.55rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.9rem;
+    background: rgb(255 250 240 / 0.74);
+    color: #164734;
+    backdrop-filter: blur(10px);
+}
+
+.dark .bccc-availability-calendar-overlay {
+    background: rgb(16 20 25 / 0.72);
+    color: #f1d89b;
+}
+
+body:has(.bccc-availability-dock)
+    .bccc-public-main:not(.client-booking-public-main) {
+    padding-bottom: calc(
+        var(--bccc-public-availability-h) + env(safe-area-inset-bottom) + 1rem
+    ) !important;
+}
+
+body:has(.bccc-availability-dock) .bccc-public-footer {
+    padding-bottom: calc(
+        var(--bccc-public-availability-h) + env(safe-area-inset-bottom) +
+            1.25rem
+    ) !important;
+}
+
+body:has(.bccc-availability-dock) .bccc-floating-quick-links {
+    bottom: calc(
+        var(--bccc-public-availability-h) + env(safe-area-inset-bottom) + 1rem
+    ) !important;
+}
+
+@media (max-width: 1279px) {
+    :root {
+        --bccc-public-availability-h: 13rem;
+    }
+
+    .bccc-availability-form {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 767px) {
+    :root {
+        --bccc-public-availability-h: 20rem;
+    }
+
+    .bccc-availability-dock-panel {
+        max-height: min(58svh, 27rem);
+        padding: 0.65rem !important;
+    }
+
+    .bccc-availability-form {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.55rem !important;
+        width: 100% !important;
+        padding-inline: 0 !important;
+    }
+
+    .bccc-availability-form
+        > :is(label, .bccc-availability-control-shell):nth-child(1),
+    .bccc-availability-form
+        > :is(label, .bccc-availability-control-shell):nth-child(2),
+    .bccc-availability-form
+        > :is(label, .bccc-availability-control-shell):nth-child(3),
+    .bccc-availability-form
+        > :is(label, .bccc-availability-control-shell):nth-child(4),
+    .bccc-availability-form > button[type='submit'] {
+        grid-column: 1 / -1;
+    }
+
+    .bccc-availability-dock button[type='submit'] {
+        min-height: 3.1rem !important;
+    }
+
+    body:has(.bccc-availability-dock)
+        .bccc-public-main:not(.client-booking-public-main) {
+        padding-bottom: calc(
+            var(--bccc-public-availability-h) + env(safe-area-inset-bottom) +
+                1rem
+        ) !important;
+    }
+
+    body:has(.bccc-availability-dock) .bccc-floating-quick-links {
+        right: 0.85rem !important;
+        bottom: calc(
+            var(--bccc-public-availability-h) + env(safe-area-inset-bottom) +
+                1rem
+        ) !important;
+    }
+}
+
+@media (max-width: 430px) {
+    :root {
+        --bccc-public-availability-h: 25rem;
+    }
+
+    .bccc-availability-form {
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-availability-dock-panel {
+        max-height: min(62svh, 30rem);
+    }
+
+    .bccc-availability-dock-panel--calendar-open {
+        max-height: min(86svh, 42rem);
+    }
+
+    .bccc-availability-calendar-popover {
+        width: 100%;
+        padding: 0.7rem;
+    }
+
+    .bccc-availability-calendar-months {
+        grid-template-columns: 1fr;
+    }
+
+    body:has(.bccc-availability-dock)
+        .bccc-public-main:not(.client-booking-public-main) {
+        padding-bottom: calc(
+            var(--bccc-public-availability-h) + env(safe-area-inset-bottom) +
+                1rem
+        ) !important;
+    }
+
+    body:has(.bccc-availability-dock) .bccc-floating-quick-links {
+        bottom: calc(
+            var(--bccc-public-availability-h) + env(safe-area-inset-bottom) +
+                1rem
+        ) !important;
+    }
+}
+
+/* ---------- Public sections and cards ---------- */
+.bccc-public-main
+    :where(
+        .bccc-public-card,
+        .bccc-public-panel,
+        .public-hover-card,
+        .public-smooth-card
+    ) {
+    max-width: 100%;
+}
+
+.bccc-public-main
+    :where(
+        .bccc-section-title-sm,
+        .bccc-public-heading,
+        .public-display-heading,
+        .public-section-title
+    ) {
+    text-wrap: balance;
+}
+
+.bccc-public-main
+    :where(.bccc-section-copy, .public-display-subheading, .public-readable p) {
+    text-wrap: pretty;
+}
+
+@media (max-width: 768px) {
+    .bccc-public-main
+        :where(
+            .bccc-section-kicker,
+            .public-display-kicker,
+            .bccc-public-eyebrow
+        ) {
+        max-width: 100%;
+        letter-spacing: 0.14em !important;
+    }
+
+    .bccc-public-main
+        :where(
+            .bccc-section-title-sm,
+            .bccc-public-heading,
+            .public-display-heading,
+            .public-section-title
+        ) {
+        font-size: clamp(2rem, 12vw, 3.45rem) !important;
+        line-height: 0.95 !important;
+        letter-spacing: -0.07em !important;
+    }
+}
+
+/* ---------- Facility showcase ---------- */
+.bccc-facility-stage {
+    width: 100% !important;
+    min-height: clamp(28rem, 56vw, 42rem) !important;
+    border-radius: var(--bccc-public-radius) !important;
+}
+
+.bccc-facility-card-strip {
+    max-width: min(72vw, 58rem);
+}
+
+@media (max-width: 1024px) {
+    .bccc-facility-stage {
+        min-height: 34rem !important;
+    }
+
+    .bccc-facility-card-strip {
+        left: var(--bccc-public-side) !important;
+        right: var(--bccc-public-side) !important;
+        top: auto !important;
+        bottom: 1rem !important;
+        transform: none !important;
+        max-width: none !important;
+        overflow-x: auto;
+        padding: 0.35rem 0.25rem 0.65rem;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+    }
+
+    .bccc-facility-card-strip::-webkit-scrollbar {
+        display: none;
+    }
+
+    .bccc-facility-mini-card {
+        flex: 0 0 clamp(8.6rem, 28vw, 13rem) !important;
+        height: clamp(12rem, 36vw, 17rem) !important;
+        scroll-snap-align: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .bccc-facility-stage {
+        min-height: 31rem !important;
+        border-radius: 1.1rem !important;
+    }
+
+    .bccc-facility-stage::after {
+        background:
+            linear-gradient(
+                180deg,
+                rgba(0, 0, 0, 0.3),
+                rgba(0, 0, 0, 0.12) 36%,
+                rgba(0, 0, 0, 0.74)
+            ),
+            radial-gradient(
+                circle at 50% 88%,
+                rgba(255, 255, 255, 0.16),
+                transparent 15rem
+            ) !important;
+    }
+
+    .bccc-facility-mini-card {
+        flex-basis: 9.25rem !important;
+        height: 13rem !important;
+        border-radius: 0.85rem !important;
+    }
+}
+
+/* ---------- Event carousel ---------- */
+.bccc-event-stage {
+    width: 100% !important;
+    min-height: clamp(29rem, 58vw, 42rem) !important;
+    border-radius: var(--bccc-public-radius) !important;
+}
+
+.bccc-event-carousel {
+    max-width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .bccc-event-stage {
+        min-height: 34rem !important;
+    }
+
+    .bccc-event-carousel {
+        height: 24rem !important;
+        perspective: 1000px !important;
+    }
+
+    .bccc-event-panel {
+        width: clamp(9rem, 25vw, 13rem) !important;
+        height: clamp(16rem, 42vw, 21rem) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .bccc-event-stage {
+        min-height: 31rem !important;
+        border-radius: 1.1rem !important;
+    }
+
+    .bccc-event-carousel {
+        height: 21rem !important;
+        perspective: 760px !important;
+    }
+
+    .bccc-event-panel {
+        width: 9.25rem !important;
+        height: 16rem !important;
+    }
+}
+
+/* ---------- Package / offers / horizontal rails ---------- */
+.bccc-public-main
+    :where(.public-no-scrollbar, .bccc-hidden-scrollbar, .scrollbar-hide) {
+    overscroll-behavior-inline: contain;
+    scroll-padding-inline: var(--bccc-public-side);
+}
+
+.bccc-public-main :where([class*='snap-x'], [class*='overflow-x-auto']) {
+    -webkit-overflow-scrolling: touch;
+}
+
+.bccc-public-main
+    :where(
+        [class*='w-[16.25rem]'],
+        [class*='w-[17rem]'],
+        [class*='w-[18rem]'],
+        [class*='w-[20rem]']
+    ) {
+    max-width: calc(100vw - (var(--bccc-public-side) * 2));
+}
+
+@media (max-width: 640px) {
+    .bccc-public-main
+        :where([class*='grid-cols-[0.'], [class*='lg:grid-cols']) {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ---------- Tourism team / circular carousel fallback ---------- */
+@media (max-width: 900px) {
+    .bccc-public-main .bccc-tourism-orbit,
+    .bccc-public-main [class*='min-h-[32rem]'][class*='overflow-hidden'] {
+        min-height: auto !important;
+    }
+}
+
+/* ---------- Contact, calendar, detail pages ---------- */
+.bccc-public-main .bccc-inner-input,
+.bccc-public-main textarea.bccc-inner-input,
+.bccc-public-main select.bccc-inner-input {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.bccc-public-main iframe {
+    border: 0;
+}
+
+@media (max-width: 767px) {
+    .bccc-public-main form :where(.grid.md\:grid-cols-2, .md\:grid-cols-2) {
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-public-main aside[class*='sticky'] {
+        position: static !important;
+    }
+}
+
+/* ---------- Footer ---------- */
+.bccc-public-footer {
+    padding-inline: clamp(0.65rem, 2vw, 1.25rem) !important;
+    padding-bottom: max(0.9rem, env(safe-area-inset-bottom)) !important;
+}
+
+.bccc-public-footer > div {
+    width: min(100%, var(--bccc-public-wide)) !important;
+    border-radius: clamp(0.75rem, 1.5vw, 1.15rem) !important;
+}
+
+@media (max-width: 1279px) {
+    .bccc-public-footer [class*='lg:grid-cols'] {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 680px) {
+    .bccc-public-footer [class*='lg:grid-cols'] {
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-public-footer {
+        font-size: 0.95rem;
+    }
+}
+
+/* ---------- Floating VISITA / Arts quick links ---------- */
+.bccc-floating-quick-links {
+    right: max(0.85rem, env(safe-area-inset-right)) !important;
+    bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+}
+
+.bccc-floating-quick-links-panel a {
+    max-width: calc(100vw - 2rem) !important;
+}
+
+@media (max-width: 430px) {
+    .bccc-floating-quick-links-panel a {
+        width: min(16.5rem, calc(100vw - 1.5rem)) !important;
+    }
+
+    .bccc-floating-quick-links button {
+        height: 3.1rem !important;
+        width: 3.1rem !important;
+    }
+}
+
+/* ---------- Reduced motion / low power devices ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .bccc-public-main *,
+    .bccc-floating-quick-links *,
+    .bccc-availability-dock * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+/* ---------- Final public header mobile/tablet interaction fix ----------
+   Older portal rules style every direct child like a header. Keep the real
+   header fixed, but let the mobile menu occupy the full viewport above it. */
+.bccc-public-header-portal {
+    position: static !important;
+    z-index: auto !important;
+    width: auto !important;
+    min-height: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    contain: none !important;
+    isolation: auto !important;
+    pointer-events: none !important;
+}
+
+.bccc-public-header-portal > :not(.bccc-public-mobile-menu) {
+    pointer-events: auto !important;
+}
+
+.bccc-public-header-portal .bccc-public-header,
+body > .bccc-public-header-portal header.bccc-public-header,
+header.bccc-public-header {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    z-index: 2147483600 !important;
+    width: 100% !important;
+    height: var(--bccc-public-header-h) !important;
+    min-height: var(--bccc-public-header-h) !important;
+    max-height: var(--bccc-public-header-h) !important;
+    overflow: visible !important;
+    contain: none !important;
+    pointer-events: auto !important;
+}
+
+.bccc-public-header-inner {
+    height: var(--bccc-public-header-h) !important;
+    min-height: var(--bccc-public-header-h) !important;
+    max-height: var(--bccc-public-header-h) !important;
+    overflow: visible !important;
+}
+
+.bccc-public-menu-toggle {
+    position: relative !important;
+    z-index: 3 !important;
+    touch-action: manipulation;
+}
+
+.bccc-public-header-portal > .bccc-public-mobile-menu,
+.bccc-public-mobile-menu {
+    position: fixed !important;
+    top: var(--bccc-public-header-h) !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 2147483400 !important;
+    display: block !important;
+    width: 100vw !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - var(--bccc-public-header-h)) !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    contain: none !important;
+    pointer-events: auto !important;
+}
+
+.bccc-public-mobile-menu > button {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: rgba(0, 31, 27, 0.56) !important;
+    backdrop-filter: blur(18px);
+}
+
+.bccc-public-mobile-panel {
+    position: absolute !important;
+    z-index: 1 !important;
+    top: 0.85rem !important;
+    right: max(0.85rem, env(safe-area-inset-right, 0px)) !important;
+    bottom: max(0.85rem, env(safe-area-inset-bottom, 0px)) !important;
+    left: auto !important;
+    width: min(31rem, calc(100vw - 1.7rem)) !important;
+    max-height: none !important;
+    border-radius: 1rem !important;
+    overflow: hidden !important;
+}
+
+.bccc-public-mobile-panel > .min-h-0 {
+    min-height: 0 !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+.bccc-public-mobile-panel .mt-3 {
+    display: grid !important;
+    gap: 0.55rem !important;
+}
+
+.bccc-public-mobile-panel .mt-3 > a {
+    min-width: 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.045) !important;
+}
+
+.bccc-public-mobile-panel .mt-3 > a:hover,
+.bccc-public-mobile-panel .mt-3 > a:focus-visible {
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+
+@media (max-width: 1279px) and (min-width: 640px) {
+    .bccc-public-mobile-panel {
+        width: min(38rem, calc(100vw - 2rem)) !important;
+    }
+
+    .bccc-public-mobile-panel .mt-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .bccc-public-mobile-panel .mt-3 > a {
+        min-height: 4.8rem !important;
+        align-items: flex-start !important;
+        padding: 0.95rem !important;
+    }
+}
+
+@media (max-width: 639px) {
+    .bccc-public-mobile-panel {
+        inset: 0.65rem max(0.65rem, env(safe-area-inset-right, 0px))
+            max(0.65rem, env(safe-area-inset-bottom, 0px))
+            max(0.65rem, env(safe-area-inset-left, 0px)) !important;
+        width: auto !important;
+        border-radius: 0.9rem !important;
+    }
+
+    .bccc-public-mobile-panel .mt-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.45rem !important;
+    }
+
+    .bccc-public-mobile-panel .mt-3 > a {
+        min-height: 4rem !important;
+        align-items: flex-start !important;
+        padding: 0.75rem !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .bccc-public-actions {
+        gap: 0.35rem !important;
+    }
+
+    .bccc-public-actions > :where(button, a),
+    .bccc-public-menu-toggle {
+        height: 2.35rem !important;
+        width: 2.35rem !important;
+        min-height: 2.35rem !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .bccc-availability-calendar-popover {
+        width: 100%;
+    }
+
+    .bccc-availability-calendar-months {
+        grid-template-columns: 1fr;
+    }
+
+    .bccc-availability-date-button {
+        min-height: 2.25rem;
+        border-radius: 0.62rem;
+        font-size: 0.78rem;
+    }
+}
+
+/* ---------- Final availability dock, header, and floating action refinements ---------- */
+.bccc-public-header {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+}
+
+.bccc-public-header-inner {
+    gap: clamp(0.45rem, 1.1vw, 1rem) !important;
+}
+
+.bccc-public-actions {
+    flex-shrink: 0;
+}
+
+.bccc-public-actions :where(button, a),
+.bccc-public-menu-toggle {
+    touch-action: manipulation;
+}
+
+.bccc-availability-dock-panel,
+.bccc-availability-dock-panel--calendar-open {
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+.bccc-availability-form {
+    position: relative;
+    z-index: 2;
+}
+
+.bccc-availability-schedule-picker {
+    position: relative;
+    min-width: 0;
+}
+
+.bccc-availability-schedule-picker > .bccc-availability-control-shell {
+    height: 100%;
+}
+
+.bccc-availability-calendar-popover {
+    position: absolute !important;
+    right: auto;
+    bottom: calc(100% + 0.55rem);
+    left: 0;
+    z-index: 99970;
+    grid-column: auto !important;
+    width: min(23rem, calc(100vw - 1.5rem)) !important;
+    max-height: min(63svh, 24rem);
+    margin: 0 !important;
+    overflow-y: auto;
+    padding: 0.7rem !important;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+}
+
+.bccc-availability-calendar-head {
+    gap: 0.55rem !important;
+}
+
+.bccc-availability-calendar-head button {
+    height: 2rem !important;
+    width: 2rem !important;
+}
+
+.bccc-availability-calendar-months {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    margin-top: 0.55rem !important;
+}
+
+.bccc-availability-calendar-month-title {
+    margin-bottom: 0.4rem !important;
+    font-size: 0.86rem !important;
+}
+
+.bccc-availability-calendar-weekdays {
+    gap: 0.18rem !important;
+    margin-bottom: 0.25rem !important;
+    font-size: 0.58rem !important;
+}
+
+.bccc-availability-calendar-grid {
+    gap: 0.18rem !important;
+}
+
+.bccc-availability-date-button {
+    min-height: 1.95rem !important;
+    border-radius: 0.55rem !important;
+    font-size: 0.74rem !important;
+}
+
+.bccc-availability-date-dot {
+    top: 0.24rem !important;
+    right: 0.24rem !important;
+    height: 0.27rem !important;
+    width: 0.27rem !important;
+}
+
+.bccc-availability-calendar-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.55rem;
+    margin-top: 0.6rem;
+    border-top: 1px solid rgb(234 220 194 / 0.8);
+    padding-top: 0.55rem;
+}
+
+.dark .bccc-availability-calendar-foot {
+    border-color: rgb(255 255 255 / 0.1);
+}
+
+body:has(.bccc-availability-dock)
+    .bccc-public-main:not(.client-booking-public-main),
+body:has(.bccc-availability-dock) .bccc-public-footer {
+    padding-bottom: 0 !important;
+}
+
+.bccc-availability-collapsed-toggle {
+    right: max(1rem, env(safe-area-inset-right)) !important;
+    bottom: calc(1.25rem + env(safe-area-inset-bottom)) !important;
+    height: 3.5rem !important;
+    width: 3.5rem !important;
+}
+
+.bccc-floating-quick-links {
+    right: calc(max(1rem, env(safe-area-inset-right)) + 4.25rem) !important;
+    bottom: calc(1.25rem + env(safe-area-inset-bottom)) !important;
+}
+
+body:has(.bccc-availability-dock) .bccc-floating-quick-links {
+    right: max(1rem, env(safe-area-inset-right)) !important;
+    bottom: calc(6.65rem + env(safe-area-inset-bottom)) !important;
+}
+
+body:has(.bccc-availability-dock-panel--calendar-open)
+    .bccc-floating-quick-links {
+    bottom: calc(
+        clamp(12.5rem, 42svh, 24rem) + env(safe-area-inset-bottom)
+    ) !important;
+}
+
+@media (max-width: 1180px) {
+    .bccc-public-caption {
+        max-width: min(48vw, 30rem) !important;
+    }
+
+    .bccc-public-breathe-logo {
+        width: 6.4rem !important;
+        height: 2.55rem !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .bccc-public-header-inner {
+        padding-inline: max(0.8rem, env(safe-area-inset-left)) !important;
+    }
+
+    .bccc-public-seal {
+        height: 2.45rem !important;
+        width: 2.45rem !important;
+    }
+
+    .bccc-public-actions {
+        gap: 0.4rem !important;
+    }
+
+    .bccc-public-actions :where(button, a),
+    .bccc-public-menu-toggle {
+        height: 2.45rem !important;
+        width: 2.45rem !important;
+        min-height: 2.45rem !important;
+        min-width: 2.45rem !important;
+        border-radius: 0.8rem !important;
+    }
+}
+
+@media (max-width: 767px) {
+    :root {
+        --bccc-public-availability-h: 10.75rem;
+    }
+
+    .bccc-availability-dock-panel {
+        padding: 0.5rem !important;
+    }
+
+    .bccc-availability-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.42rem !important;
+    }
+
+    .bccc-availability-form > .bccc-availability-schedule-picker {
+        grid-column: 1 / -1 !important;
+    }
+
+    .bccc-availability-form
+        > :is(label, .bccc-availability-control-shell):nth-child(2),
+    .bccc-availability-form
+        > :is(label, .bccc-availability-control-shell):nth-child(3),
+    .bccc-availability-form
+        > :is(label, .bccc-availability-control-shell):nth-child(4),
+    .bccc-availability-form > button[type='submit'] {
+        grid-column: auto !important;
+    }
+
+    .bccc-availability-control-shell {
+        border-radius: 0.75rem !important;
+        padding: 0.42rem 0.55rem !important;
+    }
+
+    .bccc-availability-control-shell span:first-child {
+        font-size: 0.55rem !important;
+        letter-spacing: 0.12em !important;
+    }
+
+    .bccc-availability-dock select,
+    .bccc-availability-dock input,
+    .bccc-availability-dock .bccc-availability-schedule-picker button {
+        height: 1.95rem !important;
+        font-size: 0.82rem !important;
+    }
+
+    .bccc-availability-dock button[type='submit'] {
+        min-height: 2.95rem !important;
+        border-radius: 0.75rem !important;
+        font-size: 0.74rem !important;
+    }
+
+    .bccc-availability-calendar-popover {
+        left: 50%;
+        width: min(21rem, calc(100vw - 1rem)) !important;
+        max-height: min(58svh, 22rem);
+        transform: translateX(-50%);
+    }
+
+    .bccc-floating-quick-links {
+        right: calc(
+            max(0.75rem, env(safe-area-inset-right)) + 3.85rem
+        ) !important;
+    }
+
+    body:has(.bccc-availability-dock) .bccc-floating-quick-links {
+        right: max(0.75rem, env(safe-area-inset-right)) !important;
+        bottom: calc(10.25rem + env(safe-area-inset-bottom)) !important;
+    }
+
+    body:has(.bccc-availability-dock-panel--calendar-open)
+        .bccc-floating-quick-links {
+        bottom: calc(
+            clamp(16rem, 50svh, 23rem) + env(safe-area-inset-bottom)
+        ) !important;
+    }
+}
+
+@media (max-width: 430px) {
+    :root {
+        --bccc-public-availability-h: 12rem;
+        --bccc-public-header-h: 3.75rem;
+    }
+
+    .bccc-public-header-inner {
+        padding-inline: 0.65rem !important;
+    }
+
+    .bccc-public-seal {
+        height: 2.2rem !important;
+        width: 2.2rem !important;
+    }
+
+    .bccc-public-actions :where(button, a),
+    .bccc-public-menu-toggle {
+        height: 2.28rem !important;
+        width: 2.28rem !important;
+        min-height: 2.28rem !important;
+        min-width: 2.28rem !important;
+    }
+
+    .bccc-availability-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        padding-right: 2.55rem !important;
+    }
+
+    .bccc-availability-form > button[type='submit'] {
+        grid-column: 1 / -1 !important;
+    }
+
+    .bccc-availability-calendar-popover {
+        width: min(19.75rem, calc(100vw - 0.75rem)) !important;
+        max-height: min(56svh, 20rem);
+        padding: 0.55rem !important;
+    }
+
+    .bccc-availability-date-button {
+        min-height: 1.72rem !important;
+        font-size: 0.68rem !important;
+    }
+
+    .bccc-availability-calendar-foot {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+
+    .bccc-floating-quick-links {
+        right: calc(
+            max(0.65rem, env(safe-area-inset-right)) + 3.55rem
+        ) !important;
+        bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+    }
+
+    .bccc-availability-collapsed-toggle,
+    .bccc-floating-quick-links button {
+        height: 3.15rem !important;
+        width: 3.15rem !important;
+    }
+}
+
+/* Final public calendar fit pass: keep the dock selector usable on phones,
+   tablets, and short screens without pushing outside the viewport. */
+.bccc-availability-calendar-popover,
+.bccc-availability-calendar-month,
+.bccc-availability-calendar-weekdays,
+.bccc-availability-calendar-grid {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.bccc-availability-calendar-popover {
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+}
+
+.bccc-availability-calendar-months {
+    min-width: 0;
+}
+
+.bccc-availability-date-button {
+    min-width: 0;
+    aspect-ratio: 1 / 0.86;
+}
+
+@media (max-width: 900px) {
+    .bccc-availability-calendar-popover {
+        width: min(22rem, calc(100vw - 1rem)) !important;
+        max-height: min(60svh, 22rem) !important;
+        border-radius: 0.9rem !important;
+    }
+
+    .bccc-availability-calendar-head {
+        display: grid !important;
+        grid-template-columns: 2rem minmax(0, 1fr) 2rem;
+        align-items: center;
+    }
+
+    .bccc-availability-calendar-head strong {
+        min-width: 0;
+        text-align: center;
+        font-size: 0.85rem !important;
+        line-height: 1.15;
+    }
+
+    .bccc-availability-calendar-weekdays,
+    .bccc-availability-calendar-grid {
+        gap: 0.14rem !important;
+    }
+
+    .bccc-availability-date-button {
+        min-height: 1.82rem !important;
+        border-radius: 0.5rem !important;
+        font-size: 0.68rem !important;
+    }
+}
+
+@media (max-width: 520px) {
+    .bccc-availability-calendar-popover {
+        left: 50% !important;
+        width: min(20.25rem, calc(100vw - 0.7rem)) !important;
+        max-height: min(54svh, 19rem) !important;
+        padding: 0.5rem !important;
+        transform: translateX(-50%) !important;
+    }
+
+    .bccc-availability-calendar-month-title {
+        margin-bottom: 0.3rem !important;
+        font-size: 0.76rem !important;
+    }
+
+    .bccc-availability-calendar-weekdays {
+        margin-bottom: 0.2rem !important;
+        font-size: 0.5rem !important;
+        letter-spacing: 0.03em !important;
+    }
+
+    .bccc-availability-date-button {
+        min-height: 1.55rem !important;
+        border-radius: 0.42rem !important;
+        font-size: 0.6rem !important;
+    }
+
+    .bccc-availability-date-dot {
+        top: 0.18rem !important;
+        right: 0.18rem !important;
+        height: 0.22rem !important;
+        width: 0.22rem !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .bccc-availability-calendar-popover {
+        width: min(18.1rem, calc(100vw - 0.5rem)) !important;
+        max-height: min(52svh, 17.5rem) !important;
+        padding: 0.42rem !important;
+    }
+
+    .bccc-availability-date-button {
+        min-height: 1.38rem !important;
+        font-size: 0.54rem !important;
+    }
+}
+
+/* =========================================================
+   Final public frontend polish pass
+   ========================================================= */
+.bccc-public-shell {
+    background: linear-gradient(180deg, #f8f5ef 0%, #edf2f1 42%, #f5efe3 100%);
+}
+
+.dark .bccc-public-shell {
+    background: linear-gradient(180deg, #07110f 0%, #0b1518 48%, #080b10 100%);
+}
+
+.bccc-public-main :where(h1, h2, h3) {
+    letter-spacing: 0 !important;
+}
+
+.bccc-public-main :where(p, li, dd, span) {
+    word-break: normal;
+}
+
+.bccc-public-main :where(a, button) {
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+}
+
+.bccc-public-hero-copy {
+    bottom: 8.6rem;
+    left: max(1rem, calc((100vw - 1680px) / 2 + 2rem));
+    width: min(44rem, calc(100vw - 2rem));
+    pointer-events: auto;
+    text-shadow: 0 18px 44px rgba(0, 0, 0, 0.42);
+}
+
+body:has(.bccc-availability-dock) .bccc-public-hero-copy {
+    bottom: 10.4rem;
+}
+
+.bccc-public-hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(244, 223, 173, 0.72);
+    padding-bottom: 0.45rem;
+    color: #f4dfad;
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    line-height: 1.1;
+    text-transform: uppercase;
+}
+
+.bccc-public-hero-copy h1 {
+    max-width: 11ch;
+    margin-top: 1rem;
+    color: #fff;
+    font-size: 4.65rem;
+    font-weight: 850;
+    line-height: 0.92;
+}
+
+.bccc-public-hero-summary {
+    max-width: 39rem;
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.75;
+}
+
+.bccc-public-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1.35rem;
+}
+
+.bccc-public-hero-action {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    border-radius: 999px;
+    padding-inline: 1.2rem;
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    text-transform: uppercase;
+    transition:
+        background 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease,
+        transform 180ms ease;
+    white-space: nowrap;
+}
+
+.bccc-public-hero-action:hover {
+    transform: translateY(-1px);
+}
+
+.bccc-public-hero-action-primary {
+    border: 1px solid rgba(244, 223, 173, 0.9);
+    background: #f4dfad;
+    color: #153f37;
+}
+
+.bccc-public-hero-action-primary:hover {
+    background: #fff3cf;
+}
+
+.bccc-public-hero-action-secondary {
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(0, 0, 0, 0.24);
+    color: #fff;
+    backdrop-filter: blur(14px);
+}
+
+.bccc-public-hero-action-secondary:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.bccc-public-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.bccc-public-hero-meta span {
+    display: inline-flex;
+    min-height: 1.8rem;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.18);
+    padding-inline: 0.75rem;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 0.72rem;
+    font-weight: 800;
+    backdrop-filter: blur(12px);
+}
+
+.bccc-public-welcome {
+    padding-bottom: 2.5rem;
+}
+
+.bccc-public-welcome-panel {
+    border: 1px solid rgba(23, 100, 86, 0.16) !important;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.dark .bccc-public-welcome-panel {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.bccc-public-welcome-copy h2 {
+    font-size: 4rem !important;
+    line-height: 0.98 !important;
+}
+
+.bccc-public-welcome-media {
+    min-height: 25rem !important;
+}
+
+.bccc-public-welcome-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.62)),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.42), transparent 42%);
+    pointer-events: none;
+}
+
+.bccc-public-main
+    :where(
+        .official-page-hero,
+        .public-page-hero,
+        .facility-detail-hero,
+        .event-detail-hero
+    ) {
+    min-height: 34rem;
+}
+
+.bccc-public-main
+    :where(
+        .public-page-hero-frame,
+        .bccc-facility-stage,
+        .bccc-event-stage,
+        .notification-panel,
+        .ops-empty-state
+    ) {
+    border-radius: 0.75rem !important;
+}
+
+.bccc-public-main #venue-packages,
+.bccc-public-main :where(.bccc-event-stage, .bccc-facility-stage) {
+    width: 100%;
+    margin-inline: auto;
+}
+
+.bccc-public-main #venue-packages button span span {
+    letter-spacing: 0 !important;
+}
+
+.bccc-public-main #venue-packages :where(h2, h3, p) {
+    overflow-wrap: normal;
+}
+
+.bccc-public-main :where(.bccc-inner-input, input, select, textarea) {
+    border-radius: 0.6rem !important;
+}
+
+.bccc-public-main iframe {
+    display: block;
+    min-height: 18rem;
+    background: #dfe7e4;
+}
+
+@media (max-width: 1180px) {
+    .bccc-public-hero-copy {
+        bottom: 8rem;
+        width: min(39rem, calc(100vw - 2rem));
+    }
+
+    .bccc-public-hero-copy h1 {
+        font-size: 3.55rem;
+    }
+
+    .bccc-public-hero-summary {
+        font-size: 0.96rem;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        font-size: 3.15rem !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .bccc-public-main {
+        padding-top: var(--bccc-public-header-h) !important;
+    }
+
+    .bccc-public-hero-copy {
+        right: 0.85rem;
+        bottom: 6.6rem;
+        left: 0.85rem;
+        width: auto;
+    }
+
+    body:has(.bccc-availability-dock) .bccc-public-hero-copy {
+        bottom: 9.25rem;
+    }
+
+    .bccc-public-hero-kicker {
+        font-size: 0.62rem;
+        letter-spacing: 0.11em;
+    }
+
+    .bccc-public-hero-copy h1 {
+        max-width: 12ch;
+        margin-top: 0.75rem;
+        font-size: 2.55rem;
+        line-height: 0.96;
+    }
+
+    .bccc-public-hero-summary {
+        max-width: 31rem;
+        margin-top: 0.75rem;
+        font-size: 0.86rem;
+        line-height: 1.58;
+    }
+
+    .bccc-public-hero-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.55rem;
+        margin-top: 0.9rem;
+    }
+
+    .bccc-public-hero-action {
+        min-height: 2.72rem;
+        padding-inline: 0.75rem;
+        font-size: 0.64rem;
+        letter-spacing: 0.07em;
+    }
+
+    .bccc-public-hero-meta {
+        display: none;
+    }
+
+    .bccc-public-welcome {
+        padding-inline: 0.75rem;
+        padding-top: 1.5rem;
+    }
+
+    .bccc-public-welcome-panel {
+        gap: 0 !important;
+        padding: 0 !important;
+    }
+
+    .bccc-public-welcome-copy {
+        padding: 1rem;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        font-size: 2.25rem !important;
+        line-height: 1 !important;
+    }
+
+    .bccc-public-welcome-media {
+        min-height: 18rem !important;
+    }
+
+    .bccc-public-main
+        :where(
+            .official-page-hero,
+            .public-page-hero,
+            .facility-detail-hero,
+            .event-detail-hero
+        ) {
+        min-height: 25rem;
+    }
+
+    .bccc-public-main #venue-packages button {
+        min-height: 4.6rem !important;
+    }
+
+    .bccc-public-main #venue-packages button span span {
+        max-width: 14ch !important;
+        font-size: 2rem !important;
+        line-height: 0.88 !important;
+    }
+}
+
+@media (max-width: 430px) {
+    .bccc-public-hero-copy {
+        bottom: 6rem;
+    }
+
+    body:has(.bccc-availability-dock) .bccc-public-hero-copy {
+        bottom: 8.2rem;
+    }
+
+    .bccc-public-hero-copy h1 {
+        font-size: 2.1rem;
+    }
+
+    .bccc-public-hero-summary {
+        display: none;
+    }
+
+    .bccc-public-hero-actions {
+        grid-template-columns: 1fr;
+        max-width: 15.5rem;
+    }
+
+    .bccc-public-hero-action {
+        justify-content: center;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        font-size: 1.9rem !important;
+    }
+}
+
+/* =========================================================
+   Public section completion pass: responsive + theme sync
+   ========================================================= */
+.bccc-public-shell {
+    --bccc-public-soft-bg: #edf2f1;
+    --bccc-public-warm-bg: #f8f5ef;
+    --bccc-public-surface: rgba(255, 255, 255, 0.88);
+    --bccc-public-surface-strong: #ffffff;
+    --bccc-public-surface-muted: rgba(247, 240, 227, 0.86);
+    --bccc-public-text: #153f37;
+    --bccc-public-text-strong: #122f2a;
+    --bccc-public-muted: #53645f;
+    --bccc-public-border-color: rgba(23, 100, 86, 0.16);
+    --bccc-public-accent-color: #176456;
+    --bccc-public-gold-color: #9d7432;
+}
+
+.dark .bccc-public-shell {
+    --bccc-public-soft-bg: #081311;
+    --bccc-public-warm-bg: #0a1214;
+    --bccc-public-surface: rgba(255, 255, 255, 0.055);
+    --bccc-public-surface-strong: rgba(255, 255, 255, 0.08);
+    --bccc-public-surface-muted: rgba(255, 255, 255, 0.07);
+    --bccc-public-text: #f4fbf8;
+    --bccc-public-text-strong: #ffffff;
+    --bccc-public-muted: rgba(255, 255, 255, 0.66);
+    --bccc-public-border-color: rgba(255, 255, 255, 0.12);
+    --bccc-public-accent-color: #9fe8dc;
+    --bccc-public-gold-color: #f1d89b;
+}
+
+.bccc-public-welcome,
+.bccc-public-amenities {
+    background: var(--bccc-public-soft-bg) !important;
+    color: var(--bccc-public-text) !important;
+}
+
+.bccc-public-welcome-panel,
+.bccc-location-panel,
+.bccc-location-map {
+    border-color: var(--bccc-public-border-color) !important;
+    background: var(--bccc-public-surface) !important;
+    color: var(--bccc-public-text) !important;
+}
+
+.bccc-location-assistance {
+    background: var(--bccc-public-soft-bg) !important;
+    color: var(--bccc-public-text) !important;
+}
+
+.bccc-location-contact-link {
+    border-color: var(--bccc-public-border-color) !important;
+    background: var(--bccc-public-surface-muted) !important;
+    color: var(--bccc-public-muted) !important;
+}
+
+.bccc-location-contact-link:hover {
+    background: var(--bccc-public-surface-strong) !important;
+    color: var(--bccc-public-text-strong) !important;
+}
+
+.dark .bccc-location-contact-link:hover {
+    border-color: rgba(159, 232, 220, 0.28) !important;
+    background: rgba(255, 255, 255, 0.11) !important;
+}
+
+.bccc-public-amenities-grid {
+    background: color-mix(
+        in srgb,
+        var(--bccc-public-surface-strong) 70%,
+        transparent
+    ) !important;
+    border-color: var(--bccc-public-border-color) !important;
+}
+
+.bccc-public-amenity-item {
+    border-color: var(--bccc-public-border-color) !important;
+}
+
+.bccc-public-hero-sticky,
+.bccc-public-hero-image,
+.bccc-public-hero-photo {
+    transform-style: preserve-3d;
+}
+
+.bccc-public-hero-copy h1,
+.bccc-public-welcome-copy h2,
+.bccc-package-heading h2,
+.bccc-events-copy h2,
+.bccc-facility-copy > h3:nth-of-type(2) {
+    text-wrap: balance;
+}
+
+.bccc-public-welcome-copy p,
+.bccc-location-panel p,
+.bccc-events-copy p,
+.bccc-facility-copy p {
+    overflow-wrap: anywhere;
+}
+
+.dark .bccc-facility-light-veil {
+    background: linear-gradient(
+        90deg,
+        rgba(5, 16, 15, 0.94) 0%,
+        rgba(5, 16, 15, 0.86) 22%,
+        rgba(5, 16, 15, 0.48) 41%,
+        rgba(3, 16, 16, 0.14) 58%,
+        rgba(3, 16, 16, 0.72) 100%
+    ) !important;
+}
+
+.dark .bccc-facility-copy,
+.dark .bccc-facility-copy :where(h3, p, span, a) {
+    color: rgba(255, 255, 255, 0.86) !important;
+}
+
+.dark .bccc-facility-copy > h3:nth-of-type(2),
+.dark .bccc-facility-copy :where(a:hover) {
+    color: #ffffff !important;
+}
+
+.dark .bccc-facility-copy :where(svg),
+.dark .bccc-events-copy :where(svg),
+.dark .bccc-location-panel :where(svg) {
+    color: var(--bccc-public-gold-color) !important;
+}
+
+.bccc-package-toggle:hover,
+.bccc-package-toggle:focus-visible {
+    background: #0b1111 !important;
+}
+
+.dark .bccc-package-toggle:hover,
+.dark .bccc-package-toggle:focus-visible {
+    background: #111918 !important;
+}
+
+.bccc-package-service-tile p:first-of-type,
+.bccc-package-detail-tile h3,
+.bccc-package-toggle span span {
+    text-wrap: balance;
+}
+
+.bccc-event-mode-switch button {
+    white-space: nowrap;
+}
+
+@media (min-width: 1600px) {
+    .bccc-public-hero-copy {
+        bottom: 9.25rem;
+        width: 47rem;
+    }
+
+    .bccc-public-hero-copy h1 {
+        font-size: 5rem;
+        line-height: 0.94;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        font-size: 4.45rem !important;
+    }
+
+    .bccc-location-grid {
+        gap: 1.5rem !important;
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1599px) {
+    .bccc-public-hero {
+        min-height: 50rem !important;
+    }
+
+    .bccc-public-hero-copy {
+        bottom: 8.25rem;
+        width: 42rem;
+    }
+
+    body:has(.bccc-availability-dock) .bccc-public-hero-copy {
+        bottom: 10rem;
+    }
+
+    .bccc-public-hero-copy h1 {
+        font-size: 4.25rem;
+        line-height: 0.95;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        font-size: 3.7rem !important;
+    }
+
+    .bccc-public-facilities-showcase,
+    .bccc-public-events-showcase {
+        min-height: 54rem !important;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .bccc-public-hero {
+        height: 128svh !important;
+        min-height: 47rem !important;
+    }
+
+    .bccc-public-hero-sticky,
+    .bccc-public-hero-image {
+        min-height: 39rem !important;
+    }
+
+    .bccc-public-hero-copy {
+        bottom: 7.3rem;
+        width: 36rem;
+    }
+
+    body:has(.bccc-availability-dock) .bccc-public-hero-copy {
+        bottom: 9.4rem;
+    }
+
+    .bccc-public-hero-copy h1 {
+        font-size: 3.35rem;
+        line-height: 0.98;
+    }
+
+    .bccc-public-hero-summary {
+        max-width: 34rem;
+        font-size: 0.92rem;
+        line-height: 1.62;
+    }
+
+    .bccc-public-welcome-panel {
+        grid-template-columns: minmax(0, 1fr) minmax(22rem, 0.95fr) !important;
+        gap: 1.2rem !important;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        font-size: 2.85rem !important;
+        line-height: 1.02 !important;
+    }
+
+    .bccc-public-welcome-media {
+        min-height: 21rem !important;
+    }
+
+    .bccc-public-amenity-item {
+        padding: 0.95rem 0.75rem !important;
+    }
+
+    .bccc-location-grid {
+        grid-template-columns: minmax(0, 0.98fr) minmax(0, 1.02fr) !important;
+    }
+
+    .bccc-location-map {
+        min-height: 30rem !important;
+    }
+
+    .bccc-public-facilities-showcase,
+    .bccc-public-events-showcase {
+        min-height: 48rem !important;
+    }
+
+    .bccc-facility-active-content,
+    .bccc-events-feature-content {
+        min-height: 48rem !important;
+    }
+
+    .bccc-facility-copy {
+        max-width: 28rem !important;
+    }
+
+    .bccc-facility-copy > h3:nth-of-type(2),
+    .bccc-events-copy h2 {
+        font-size: 3.1rem !important;
+        line-height: 1 !important;
+    }
+
+    .bccc-package-heading h2 {
+        font-size: 4rem !important;
+        line-height: 0.9 !important;
+    }
+
+    .bccc-package-toggle {
+        min-height: 6.6rem !important;
+    }
+
+    .bccc-package-toggle span span {
+        font-size: 5rem !important;
+        line-height: 0.86 !important;
+    }
+
+    .bccc-package-image-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .bccc-package-detail-tile {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .bccc-public-hero {
+        height: 118svh !important;
+        min-height: 44rem !important;
+    }
+
+    .bccc-public-hero-sticky,
+    .bccc-public-hero-image {
+        height: 92svh !important;
+        min-height: 38rem !important;
+    }
+
+    .bccc-public-hero-photo {
+        object-position: 52% 100% !important;
+    }
+
+    .bccc-public-hero-copy {
+        bottom: 6.75rem;
+        width: min(33rem, calc(100vw - 2.5rem));
+    }
+
+    body:has(.bccc-availability-dock) .bccc-public-hero-copy {
+        bottom: 8.85rem;
+    }
+
+    .bccc-public-hero-copy h1 {
+        font-size: 3rem;
+        line-height: 1;
+    }
+
+    .bccc-public-hero-summary {
+        max-width: 30rem;
+        font-size: 0.9rem;
+        line-height: 1.55;
+    }
+
+    .bccc-public-hero-action {
+        min-height: 2.75rem;
+        padding-inline: 0.95rem;
+        font-size: 0.68rem;
+    }
+
+    .bccc-public-welcome {
+        padding-inline: 1rem !important;
+        padding-top: 2rem !important;
+    }
+
+    .bccc-public-welcome-panel {
+        gap: 1rem !important;
+        padding: 1rem !important;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        font-size: 2.8rem !important;
+        line-height: 1.02 !important;
+    }
+
+    .bccc-public-welcome-media {
+        min-height: 22rem !important;
+    }
+
+    .bccc-public-amenities-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        overflow: visible !important;
+    }
+
+    .bccc-public-amenity-item {
+        min-width: 0 !important;
+        border-bottom: 1px solid var(--bccc-public-border-color) !important;
+        padding: 0.9rem 0.55rem !important;
+    }
+
+    .bccc-public-amenity-item span:last-child {
+        min-width: 0;
+    }
+
+    .bccc-public-facilities-showcase,
+    .bccc-public-events-showcase {
+        min-height: 43rem !important;
+    }
+
+    .bccc-facility-active-content,
+    .bccc-events-feature-content {
+        min-height: 43rem !important;
+        padding: 5.25rem 1.25rem 7.2rem !important;
+    }
+
+    .bccc-facility-copy,
+    .bccc-events-copy {
+        max-width: 27rem !important;
+    }
+
+    .bccc-facility-copy > h3:nth-of-type(2),
+    .bccc-events-copy h2 {
+        font-size: 2.7rem !important;
+        line-height: 1 !important;
+        max-width: 12ch !important;
+    }
+
+    .bccc-facility-copy > p,
+    .bccc-events-copy > p {
+        font-size: 0.82rem !important;
+        line-height: 1.6 !important;
+    }
+
+    .bccc-facility-meta,
+    .bccc-events-meta {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 0.65rem !important;
+    }
+
+    .bccc-event-mode-switch button {
+        min-height: 2.35rem !important;
+        padding-inline: 0.75rem !important;
+        font-size: 0.62rem !important;
+        letter-spacing: 0.07em !important;
+    }
+
+    .bccc-package-heading {
+        padding-block: 2.75rem !important;
+    }
+
+    .bccc-package-heading h2 {
+        font-size: 3.25rem !important;
+        line-height: 0.92 !important;
+    }
+
+    .bccc-package-toggle {
+        min-height: 5.4rem !important;
+    }
+
+    .bccc-package-toggle span span {
+        max-width: 15ch !important;
+        font-size: 3.35rem !important;
+        line-height: 0.88 !important;
+    }
+
+    .bccc-package-image-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .bccc-package-service-tile {
+        min-height: 11rem !important;
+    }
+
+    .bccc-package-service-tile p:first-of-type {
+        font-size: 2.15rem !important;
+        line-height: 0.88 !important;
+    }
+
+    .bccc-package-detail-tile {
+        grid-column: 1 / -1;
+        min-height: 18rem !important;
+    }
+
+    .bccc-package-detail-tile h3 {
+        max-width: 13ch !important;
+        font-size: 3rem !important;
+        line-height: 0.9 !important;
+    }
+
+    .bccc-location-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-location-panel,
+    .bccc-location-map {
+        border-radius: 0.75rem !important;
+    }
+
+    .bccc-location-map {
+        min-height: 24rem !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .bccc-public-hero {
+        height: 108svh !important;
+        min-height: 38.5rem !important;
+    }
+
+    .bccc-public-hero-sticky,
+    .bccc-public-hero-image {
+        height: 92svh !important;
+        min-height: 34rem !important;
+    }
+
+    .bccc-public-hero-text span:first-child {
+        font-size: 5.3rem !important;
+    }
+
+    .bccc-public-hero-text span:last-child {
+        font-size: 3.3rem !important;
+    }
+
+    .bccc-public-hero-photo {
+        object-position: 54% 100% !important;
+    }
+
+    .bccc-public-hero-copy {
+        bottom: 5.85rem;
+        left: 0.75rem;
+        right: 0.75rem;
+    }
+
+    body:has(.bccc-availability-dock) .bccc-public-hero-copy {
+        bottom: 8.45rem;
+    }
+
+    .bccc-public-hero-kicker {
+        padding-bottom: 0.35rem;
+        font-size: 0.58rem;
+        letter-spacing: 0.08em;
+    }
+
+    .bccc-public-hero-copy h1 {
+        max-width: 12ch;
+        font-size: 2.15rem;
+        line-height: 1.02;
+    }
+
+    .bccc-public-hero-summary {
+        max-width: 22rem;
+        font-size: 0.78rem;
+        line-height: 1.45;
+    }
+
+    .bccc-public-hero-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-width: 22rem;
+    }
+
+    .bccc-public-hero-action {
+        min-height: 2.5rem;
+        padding-inline: 0.55rem;
+        font-size: 0.56rem;
+        letter-spacing: 0.05em;
+    }
+
+    .bccc-public-welcome {
+        padding-bottom: 1.4rem !important;
+    }
+
+    .bccc-public-welcome-copy {
+        padding: 0.9rem !important;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        font-size: 2rem !important;
+        line-height: 1.05 !important;
+    }
+
+    .bccc-public-welcome-copy p {
+        font-size: 0.82rem !important;
+        line-height: 1.65 !important;
+    }
+
+    .bccc-public-welcome-copy a {
+        min-height: 2.65rem;
+        flex: 1 1 10rem;
+        justify-content: center;
+        padding-inline: 0.9rem !important;
+        font-size: 0.64rem !important;
+    }
+
+    .bccc-public-welcome-media {
+        min-height: 16.5rem !important;
+    }
+
+    .bccc-public-welcome-media > div:last-child {
+        grid-template-columns: 1fr !important;
+        gap: 0.65rem !important;
+        padding: 0.9rem !important;
+    }
+
+    .bccc-public-amenities-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        overflow: visible !important;
+    }
+
+    .bccc-public-amenity-item {
+        min-width: 0 !important;
+        justify-content: flex-start !important;
+        border-bottom: 1px solid var(--bccc-public-border-color) !important;
+        padding: 0.72rem 0.65rem !important;
+    }
+
+    .bccc-public-amenity-item > span:first-child {
+        height: 2rem !important;
+        width: 2rem !important;
+    }
+
+    .bccc-public-amenity-item svg {
+        height: 0.9rem !important;
+        width: 0.9rem !important;
+    }
+
+    .bccc-public-amenity-item span:last-child span:first-child {
+        font-size: 0.92rem !important;
+    }
+
+    .bccc-public-amenity-item span:last-child span:last-child {
+        white-space: normal !important;
+        font-size: 0.58rem !important;
+        letter-spacing: 0.08em !important;
+    }
+
+    .bccc-public-facilities-showcase,
+    .bccc-public-events-showcase {
+        min-height: 40rem !important;
+    }
+
+    .bccc-facility-active-content,
+    .bccc-events-feature-content {
+        min-height: 40rem !important;
+        padding: 4.5rem 0.85rem 6.9rem !important;
+    }
+
+    .bccc-facility-copy,
+    .bccc-events-copy {
+        max-width: 100% !important;
+    }
+
+    .bccc-facility-copy > h3:first-child,
+    .bccc-events-copy + h3,
+    .bccc-events-copy p:first-child {
+        letter-spacing: 0.1em !important;
+    }
+
+    .bccc-facility-copy > h3:nth-of-type(2),
+    .bccc-events-copy h2 {
+        max-width: 12ch !important;
+        font-size: 2.05rem !important;
+        line-height: 1.02 !important;
+    }
+
+    .bccc-facility-copy > p,
+    .bccc-events-copy > p {
+        font-size: 0.76rem !important;
+        line-height: 1.55 !important;
+    }
+
+    .bccc-facility-copy > p:last-of-type {
+        display: none !important;
+    }
+
+    .bccc-facility-meta,
+    .bccc-events-meta {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 0.45rem !important;
+        font-size: 0.62rem !important;
+    }
+
+    .bccc-facility-meta > div,
+    .bccc-events-meta > div {
+        gap: 0.35rem !important;
+    }
+
+    .bccc-facility-meta svg,
+    .bccc-events-meta svg {
+        height: 0.9rem !important;
+        width: 0.9rem !important;
+    }
+
+    .bccc-facility-meta span span:first-child,
+    .bccc-events-meta span span:first-child {
+        font-size: 0.48rem !important;
+        letter-spacing: 0.06em !important;
+    }
+
+    .bccc-event-mode-switch {
+        max-width: calc(100vw - 1rem);
+    }
+
+    .bccc-event-mode-switch button {
+        min-height: 2.25rem !important;
+        padding-inline: 0.5rem !important;
+        font-size: 0.54rem !important;
+        letter-spacing: 0.03em !important;
+    }
+
+    .bccc-event-mode-switch button span {
+        margin-left: 0.25rem !important;
+    }
+
+    .bccc-events-mobile-strip,
+    .bccc-public-facilities-showcase .absolute.inset-x-0.bottom-4 {
+        bottom: 0.75rem !important;
+        padding-inline: 0.75rem !important;
+    }
+
+    .bccc-events-mobile-strip > div,
+    .bccc-public-facilities-showcase .absolute.inset-x-0.bottom-4 > div {
+        max-width: 23rem !important;
+        border-radius: 0.75rem !important;
+    }
+
+    .bccc-package-heading {
+        padding-block: 2.2rem !important;
+    }
+
+    .bccc-package-heading h2 {
+        font-size: 2.45rem !important;
+        line-height: 0.94 !important;
+    }
+
+    .bccc-package-heading p {
+        max-width: 20rem !important;
+        font-size: 0.78rem !important;
+        line-height: 1.55 !important;
+    }
+
+    .bccc-package-toggle {
+        min-height: 4.35rem !important;
+        padding-inline: 0.6rem !important;
+    }
+
+    .bccc-package-toggle span span {
+        max-width: 14ch !important;
+        font-size: 1.9rem !important;
+        line-height: 0.94 !important;
+    }
+
+    .bccc-package-image-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-package-service-tile {
+        min-height: 8.5rem !important;
+    }
+
+    .bccc-package-service-tile p:first-of-type {
+        font-size: 1.7rem !important;
+        line-height: 0.92 !important;
+    }
+
+    .bccc-package-detail-tile {
+        min-height: 15.5rem !important;
+    }
+
+    .bccc-package-detail-tile h3 {
+        max-width: 13ch !important;
+        font-size: 2.1rem !important;
+        line-height: 0.95 !important;
+    }
+
+    .bccc-package-detail-tile p {
+        font-size: 0.78rem !important;
+        line-height: 1.55 !important;
+    }
+
+    .bccc-package-detail-tile a {
+        min-height: 2.65rem !important;
+        padding-inline: 0.95rem !important;
+        font-size: 0.62rem !important;
+    }
+
+    .bccc-location-assistance {
+        padding: 1rem 0.75rem 1.25rem !important;
+    }
+
+    .bccc-location-grid {
+        gap: 0.9rem !important;
+    }
+
+    .bccc-location-panel {
+        border-radius: 0.75rem !important;
+        padding: 0.9rem !important;
+    }
+
+    .bccc-location-panel h2 {
+        font-size: 2rem !important;
+        line-height: 1.05 !important;
+    }
+
+    .bccc-location-contact-link {
+        gap: 0.65rem !important;
+        border-radius: 0.65rem !important;
+        padding: 0.78rem !important;
+    }
+
+    .bccc-location-contact-link > span:first-child {
+        height: 2.35rem !important;
+        width: 2.35rem !important;
+    }
+
+    .bccc-location-actions {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-location-actions :where(a, button) {
+        min-height: 2.75rem !important;
+        border-radius: 0.65rem !important;
+        font-size: 0.78rem !important;
+    }
+
+    .bccc-location-map {
+        min-height: 20rem !important;
+        border-radius: 0.75rem !important;
+    }
+}
+
+@media (max-width: 430px) {
+    .bccc-public-hero {
+        min-height: 35.5rem !important;
+    }
+
+    .bccc-public-hero-sticky,
+    .bccc-public-hero-image {
+        min-height: 31rem !important;
+    }
+
+    .bccc-public-hero-copy {
+        bottom: 5.25rem;
+    }
+
+    body:has(.bccc-availability-dock) .bccc-public-hero-copy {
+        bottom: 7.65rem;
+    }
+
+    .bccc-public-hero-copy h1 {
+        font-size: 1.82rem;
+        line-height: 1.04;
+    }
+
+    .bccc-public-hero-actions {
+        max-width: 15rem;
+    }
+
+    .bccc-public-hero-action {
+        min-height: 2.34rem;
+        font-size: 0.52rem;
+    }
+
+    .bccc-public-welcome-copy h2,
+    .bccc-location-panel h2 {
+        font-size: 1.72rem !important;
+    }
+
+    .bccc-public-amenities-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bccc-public-facilities-showcase,
+    .bccc-public-events-showcase {
+        min-height: 37.5rem !important;
+    }
+
+    .bccc-facility-active-content,
+    .bccc-events-feature-content {
+        min-height: 37.5rem !important;
+        padding: 4.15rem 0.7rem 6.35rem !important;
+    }
+
+    .bccc-facility-copy > h3:nth-of-type(2),
+    .bccc-events-copy h2 {
+        font-size: 1.72rem !important;
+        max-width: 13ch !important;
+    }
+
+    .bccc-facility-copy > p,
+    .bccc-events-copy > p {
+        font-size: 0.7rem !important;
+        line-height: 1.45 !important;
+    }
+
+    .bccc-facility-meta,
+    .bccc-events-meta {
+        grid-template-columns: 1fr !important;
+        gap: 0.35rem !important;
+    }
+
+    .bccc-event-mode-switch button {
+        padding-inline: 0.42rem !important;
+        font-size: 0.48rem !important;
+    }
+
+    .bccc-package-heading h2 {
+        font-size: 2.05rem !important;
+    }
+
+    .bccc-package-toggle span span {
+        font-size: 1.55rem !important;
+    }
+
+    .bccc-package-service-tile {
+        min-height: 7.4rem !important;
+    }
+
+    .bccc-package-detail-tile {
+        min-height: 14rem !important;
+    }
+
+    .bccc-location-map {
+        min-height: 17.5rem !important;
+    }
+}
+
+/* =========================================================
+   Welcome section redesign: full-width public band
+   ========================================================= */
+.bccc-public-welcome {
+    width: 100% !important;
+    padding: 0 !important;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(237, 242, 241, 0.98),
+            rgba(247, 240, 227, 0.72)
+        ),
+        var(--bccc-public-soft-bg) !important;
+}
+
+.dark .bccc-public-welcome {
+    background:
+        linear-gradient(90deg, rgba(8, 19, 17, 0.98), rgba(13, 22, 24, 0.9)),
+        var(--bccc-public-soft-bg) !important;
+}
+
+.bccc-public-welcome-panel {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    border-inline: 0 !important;
+    border-radius: 0 !important;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.82),
+            rgba(255, 255, 255, 0.46)
+        ),
+        transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+
+.dark .bccc-public-welcome-panel {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.055),
+            rgba(255, 255, 255, 0.025)
+        ),
+        transparent !important;
+}
+
+.bccc-public-welcome-copy {
+    isolation: isolate;
+}
+
+.bccc-public-welcome-copy::before {
+    content: '';
+    position: absolute;
+    inset: 12% auto 12% -18%;
+    z-index: -1;
+    width: min(34rem, 70vw);
+    border-radius: 999px;
+    background: radial-gradient(
+        circle,
+        rgba(23, 100, 86, 0.12),
+        transparent 68%
+    );
+    pointer-events: none;
+}
+
+.dark .bccc-public-welcome-copy::before {
+    background: radial-gradient(
+        circle,
+        rgba(159, 232, 220, 0.1),
+        transparent 68%
+    );
+}
+
+.bccc-public-welcome-copy h2 {
+    max-width: 11.5ch !important;
+    color: var(--bccc-public-text-strong) !important;
+    font-size: 4.45rem !important;
+    letter-spacing: 0 !important;
+    line-height: 0.98 !important;
+}
+
+.bccc-public-welcome-copy p {
+    color: var(--bccc-public-muted) !important;
+}
+
+.bccc-public-welcome-actions :where(a) {
+    min-height: 3rem;
+    border-radius: 0.65rem !important;
+}
+
+.bccc-public-welcome-actions :where(a:first-child) {
+    border-color: rgba(23, 100, 86, 0.85) !important;
+    background: #176456 !important;
+    color: #ffffff !important;
+}
+
+.bccc-public-welcome-actions :where(a:first-child:hover) {
+    background: #0f4d44 !important;
+}
+
+.dark .bccc-public-welcome-actions :where(a:first-child) {
+    border-color: rgba(159, 232, 220, 0.42) !important;
+    background: rgba(159, 232, 220, 0.16) !important;
+    color: #dffdf7 !important;
+}
+
+.bccc-public-welcome-highlights {
+    max-width: 43rem;
+}
+
+.bccc-public-welcome-highlight {
+    display: flex;
+    min-height: 5.5rem;
+    align-items: flex-start;
+    gap: 0.75rem;
+    border: 1px solid var(--bccc-public-border-color);
+    background: color-mix(
+        in srgb,
+        var(--bccc-public-surface-strong) 78%,
+        transparent
+    );
+    padding: 0.95rem;
+    color: var(--bccc-public-text);
+}
+
+.bccc-public-welcome-highlight svg {
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+    color: var(--bccc-public-accent-color);
+}
+
+.bccc-public-welcome-highlight strong,
+.bccc-public-welcome-highlight small {
+    display: block;
+}
+
+.bccc-public-welcome-highlight strong {
+    color: var(--bccc-public-text-strong);
+    font-size: 0.86rem;
+    font-weight: 850;
+    line-height: 1.2;
+}
+
+.bccc-public-welcome-highlight small {
+    margin-top: 0.25rem;
+    color: var(--bccc-public-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.bccc-public-welcome-media {
+    min-height: 42rem !important;
+    border-radius: 0 !important;
+    background: #123f37;
+}
+
+.bccc-public-welcome-media::after {
+    background:
+        linear-gradient(90deg, rgba(8, 20, 18, 0.28), transparent 32%),
+        linear-gradient(180deg, transparent 38%, rgba(0, 0, 0, 0.78)) !important;
+}
+
+.bccc-public-welcome-media-links {
+    z-index: 2;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.22));
+}
+
+.bccc-public-welcome-media-links :where(a) {
+    min-height: 5rem;
+    border-top-color: rgba(244, 223, 173, 0.35) !important;
+}
+
+@media (min-width: 1440px) {
+    .bccc-public-welcome-panel {
+        grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr) !important;
+    }
+
+    .bccc-public-welcome-copy {
+        padding-left: max(3rem, calc((100vw - 1680px) / 2 + 2rem)) !important;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        font-size: 4.75rem !important;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .bccc-public-welcome-panel {
+        grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr) !important;
+    }
+
+    .bccc-public-welcome-copy {
+        min-height: 38rem !important;
+        padding-block: 3.5rem !important;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        font-size: 3.25rem !important;
+    }
+
+    .bccc-public-welcome-media {
+        min-height: 38rem !important;
+    }
+
+    .bccc-public-welcome-highlight {
+        min-height: 5rem;
+        padding: 0.8rem;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .bccc-public-welcome-panel {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-public-welcome-copy {
+        min-height: auto !important;
+        max-width: 48rem !important;
+        margin-inline: auto !important;
+        padding: 3.25rem 1.5rem !important;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        max-width: 13ch !important;
+        font-size: 3rem !important;
+    }
+
+    .bccc-public-welcome-media {
+        min-height: 26rem !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .bccc-public-welcome-panel {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-public-welcome-copy {
+        min-height: auto !important;
+        padding: 2rem 0.9rem !important;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        max-width: 13ch !important;
+        font-size: 2.15rem !important;
+        line-height: 1.04 !important;
+    }
+
+    .bccc-public-welcome-copy p {
+        font-size: 0.82rem !important;
+        line-height: 1.62 !important;
+    }
+
+    .bccc-public-welcome-actions {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-public-welcome-actions :where(a) {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .bccc-public-welcome-highlights {
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-public-welcome-highlight {
+        min-height: 0;
+        padding: 0.82rem;
+    }
+
+    .bccc-public-welcome-media {
+        min-height: 21rem !important;
+    }
+
+    .bccc-public-welcome-media-links {
+        grid-template-columns: 1fr !important;
+        gap: 0.6rem !important;
+        padding: 1rem !important;
+    }
+
+    .bccc-public-welcome-media-links :where(a) {
+        min-height: 0;
+        padding-top: 0.75rem !important;
+    }
+}
+
+@media (max-width: 430px) {
+    .bccc-public-welcome-copy {
+        padding-inline: 0.75rem !important;
+        padding-block: 1.65rem !important;
+    }
+
+    .bccc-public-welcome-copy h2 {
+        font-size: 1.82rem !important;
+    }
+
+    .bccc-public-welcome-media {
+        min-height: 18.5rem !important;
+    }
+}
+
+/* =========================================================
+   Public 3D tour coming-soon page
+   ========================================================= */
+.bccc-luxury-preview-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 18%),
+        radial-gradient(
+            circle at 18% 18%,
+            rgba(244, 223, 173, 0.14),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 82% 70%,
+            rgba(159, 232, 220, 0.1),
+            transparent 32%
+        );
+}
+
+.bccc-luxury-preview-page::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 6rem 6rem;
+    mask-image: linear-gradient(
+        180deg,
+        transparent,
+        black 20%,
+        black 72%,
+        transparent
+    );
+}
+
+.bccc-luxury-preview-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(244, 223, 173, 0.28);
+    border-radius: 999px;
+    background: rgba(244, 223, 173, 0.12);
+    padding: 0.5rem 1rem;
+    color: #f4dfad;
+    font-size: 0.625rem;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    backdrop-filter: blur(18px);
+}
+
+.bccc-luxury-preview-stats > div {
+    min-height: 5.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.75rem;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.11),
+            rgba(255, 255, 255, 0.045)
+        ),
+        rgba(0, 0, 0, 0.18);
+    padding: 0.9rem;
+    box-shadow: 0 20px 56px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(18px);
+}
+
+.bccc-luxury-preview-stats strong,
+.bccc-luxury-preview-stats span {
+    display: block;
+}
+
+.bccc-luxury-preview-stats strong {
+    color: #ffffff;
+    font-size: 1.55rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.bccc-luxury-preview-stats span {
+    margin-top: 0.4rem;
+    color: rgba(255, 255, 255, 0.56);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    line-height: 1.35;
+    text-transform: uppercase;
+}
+
+.bccc-luxury-preview-panel {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.12),
+            rgba(255, 255, 255, 0.045)
+        ),
+        rgba(0, 0, 0, 0.26) !important;
+}
+
+.bccc-virtual-tour-page {
+    isolation: isolate;
+}
+
+.bccc-windowed-tour-shell,
+.bccc-windowed-layout-shell {
+    height: clamp(28rem, 62svh, 50rem);
+    min-height: 28rem;
+    isolation: isolate;
+}
+
+html.bccc-viewer-is-expanded,
+body.bccc-viewer-is-expanded {
+    overflow: hidden !important;
+    overscroll-behavior: none;
+}
+
+.bccc-windowed-tour-shell::before,
+.bccc-windowed-layout-shell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(244, 223, 173, 0.08);
+}
+
+.bccc-windowed-tour-shell:fullscreen,
+.bccc-windowed-layout-shell:fullscreen,
+.bccc-windowed-tour-shell.is-viewer-expanded,
+.bccc-windowed-layout-shell.is-viewer-expanded {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 1400 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #061514;
+    box-shadow: none !important;
+    transform: none !important;
+    touch-action: none;
+}
+
+.bccc-windowed-tour-shell:fullscreen::before,
+.bccc-windowed-layout-shell:fullscreen::before,
+.bccc-windowed-tour-shell.is-viewer-expanded::before,
+.bccc-windowed-layout-shell.is-viewer-expanded::before {
+    border-radius: 0;
+}
+
+.bccc-viewer-fullscreen-button {
+    box-shadow: 0 18px 54px rgba(0, 0, 0, 0.28);
+}
+
+.bccc-tour-scene-toolbar {
+    margin-right: 3.65rem;
+}
+
+.bccc-windowed-tour-shell:fullscreen .bccc-viewer-fullscreen-button,
+.bccc-windowed-layout-shell:fullscreen .bccc-viewer-fullscreen-button,
+.bccc-windowed-tour-shell.is-viewer-expanded .bccc-viewer-fullscreen-button,
+.bccc-windowed-layout-shell.is-viewer-expanded .bccc-viewer-fullscreen-button {
+    top: max(1rem, env(safe-area-inset-top)) !important;
+    right: max(1rem, env(safe-area-inset-right)) !important;
+}
+
+.bccc-windowed-tour-shell:fullscreen .bccc-street-view-route-controls,
+.bccc-windowed-tour-shell.is-viewer-expanded .bccc-street-view-route-controls {
+    bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+}
+
+.bccc-windowed-tour-shell:fullscreen .bccc-tour-scene-toolbar,
+.bccc-windowed-tour-shell.is-viewer-expanded .bccc-tour-scene-toolbar {
+    margin-right: 3.75rem;
+}
+
+.bccc-windowed-layout-shell:fullscreen .bccc-scene-orbit-controls,
+.bccc-windowed-layout-shell.is-viewer-expanded .bccc-scene-orbit-controls {
+    top: max(4.5rem, calc(env(safe-area-inset-top) + 4.5rem)) !important;
+    left: max(1rem, env(safe-area-inset-left)) !important;
+}
+
+.bccc-virtual-tour-viewport canvas,
+.bccc-convention-layout-scene canvas {
+    display: block;
+    min-height: 100%;
+    cursor: grab;
+}
+
+.bccc-virtual-tour-viewport canvas:active,
+.bccc-convention-layout-scene canvas:active {
+    cursor: grabbing;
+}
+
+.bccc-scene-orbit-controls {
+    box-shadow: 0 18px 54px rgba(0, 0, 0, 0.28);
+}
+
+.bccc-scene-orbit-controls button {
+    backdrop-filter: blur(14px);
+}
+
+.bccc-street-view-route-controls {
+    max-width: min(42rem, calc(100% - 1.5rem));
+    margin-inline: auto;
+    box-shadow: 0 18px 54px rgba(0, 0, 0, 0.3);
+}
+
+.bccc-street-view-route-controls button {
+    white-space: nowrap;
+}
+
+.bccc-virtual-tour-viewport [data-webgl-unavailable='true']::after,
+.bccc-convention-layout-scene [data-webgl-unavailable='true']::after {
+    content: '3D preview will appear here when WebGL is available.';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(28rem, calc(100vw - 2rem));
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(244, 223, 173, 0.25);
+    border-radius: 0.75rem;
+    background: rgba(0, 0, 0, 0.34);
+    padding: 1rem;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-align: center;
+    backdrop-filter: blur(16px);
+}
+
+.bccc-convention-layout-page {
+    isolation: isolate;
+}
+
+.bccc-convention-layout-scene [data-webgl-unavailable='true']::after {
+    content: '3D convention layout will appear here when WebGL is available.';
+}
+
+@media (min-width: 1536px) {
+    .bccc-windowed-tour-shell,
+    .bccc-windowed-layout-shell {
+        height: min(68svh, 56rem);
+    }
+}
+
+@media (max-width: 1023px) {
+    .bccc-virtual-tour-page,
+    .bccc-convention-layout-page {
+        min-height: auto !important;
+    }
+
+    .bccc-luxury-preview-stage {
+        min-height: auto !important;
+        padding-top: clamp(7.25rem, 13vw, 9rem) !important;
+        padding-bottom: 2rem !important;
+    }
+
+    .bccc-virtual-tour-viewport,
+    .bccc-convention-layout-scene {
+        min-height: 100%;
+    }
+
+    .bccc-windowed-tour-shell,
+    .bccc-windowed-layout-shell {
+        height: clamp(26rem, 58svh, 40rem);
+        min-height: 26rem;
+    }
+
+    .bccc-luxury-preview-panel {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 767px) {
+    .bccc-luxury-preview-stage {
+        gap: 1.25rem !important;
+        padding-top: 6.9rem !important;
+    }
+
+    .bccc-windowed-tour-shell,
+    .bccc-windowed-layout-shell {
+        height: clamp(24rem, 62svh, 34rem);
+        min-height: 24rem;
+        border-radius: 0.8rem !important;
+    }
+
+    .bccc-scene-orbit-controls {
+        left: auto !important;
+        right: 1rem !important;
+        top: 4.85rem !important;
+        transform: scale(0.86);
+        transform-origin: top right;
+    }
+
+    .bccc-scene-orbit-controls button {
+        height: 2.35rem;
+        width: 2.35rem;
+    }
+
+    .bccc-tour-scene-toolbar {
+        margin-right: 0;
+        transform: scale(0.86);
+        transform-origin: top right;
+    }
+
+    .bccc-windowed-tour-shell:fullscreen .bccc-tour-scene-toolbar,
+    .bccc-windowed-tour-shell.is-viewer-expanded .bccc-tour-scene-toolbar {
+        margin-right: 0;
+        transform: scale(0.82);
+    }
+
+    .bccc-virtual-tour-page h1,
+    .bccc-convention-layout-page h1 {
+        font-size: 2.55rem !important;
+        line-height: 1 !important;
+    }
+
+    .bccc-virtual-tour-page aside,
+    .bccc-convention-layout-page aside {
+        border-radius: 0.75rem !important;
+    }
+
+    .bccc-luxury-preview-stats {
+        grid-template-columns: 1fr !important;
+    }
+
+    .bccc-luxury-preview-stats > div {
+        min-height: 4.35rem;
+    }
+
+    .bccc-street-view-route-controls {
+        right: 0.75rem !important;
+        bottom: 0.75rem !important;
+        left: 0.75rem !important;
+        max-width: none;
+        gap: 0.35rem;
+        padding: 0.35rem;
+    }
+
+    .bccc-street-view-route-controls button {
+        min-height: 2.45rem;
+        padding-inline: 0.85rem;
+        font-size: 0.58rem;
+        letter-spacing: 0.08em;
+    }
+}
+
+@media (max-width: 430px) {
+    .bccc-luxury-preview-stage {
+        padding-top: 6.4rem !important;
+    }
+
+    .bccc-scene-orbit-controls {
+        right: 0.65rem !important;
+        top: 4.55rem !important;
+        transform: scale(0.78);
+    }
+
+    .bccc-tour-scene-toolbar {
+        transform: scale(0.76);
+    }
+
+    .bccc-windowed-tour-shell:fullscreen .bccc-tour-scene-toolbar,
+    .bccc-windowed-tour-shell.is-viewer-expanded .bccc-tour-scene-toolbar {
+        transform: scale(0.72);
+    }
+
+    .bccc-windowed-tour-shell,
+    .bccc-windowed-layout-shell {
+        height: clamp(22rem, 60svh, 29rem);
+        min-height: 22rem;
+    }
+
+    .bccc-street-view-route-controls {
+        right: 0.5rem !important;
+        bottom: 0.5rem !important;
+        left: 0.5rem !important;
+        gap: 0.25rem;
+        padding: 0.25rem;
+    }
+
+    .bccc-street-view-route-controls button {
+        min-height: 2.25rem;
+        padding-inline: 0.55rem;
+        font-size: 0.52rem;
+    }
+
+    .bccc-virtual-tour-page h1,
+    .bccc-convention-layout-page h1 {
+        font-size: 2.1rem !important;
+    }
+
+    .bccc-luxury-preview-kicker {
+        border-radius: 0.6rem;
+        font-size: 0.55rem;
+        letter-spacing: 0.1em;
+    }
+}

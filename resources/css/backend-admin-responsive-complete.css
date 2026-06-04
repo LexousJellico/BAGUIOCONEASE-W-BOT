@@ -1,0 +1,575 @@
+/* =========================================================
+   BCCC EASE — Batch 9 Admin universal responsiveness
+   Scope: admin/backend pages, dashboard, payments review,
+   MICE registry, users, venue areas, rental options,
+   inquiries, content, analytics, and shared shells.
+   Designed to inherit the booking form's compact editorial style.
+   ========================================================= */
+
+.backend-boneyard-root,
+.backend-shell,
+.backend-main,
+.backend-app-content,
+.bccc-admin-responsive-content,
+.bccc-resource-page,
+.bccc-admin-polished-page,
+.bccc-admin-command-center {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.backend-app-content,
+.bccc-admin-responsive-content {
+  overflow-x: clip;
+}
+
+.backend-app-content > div,
+.bccc-admin-responsive-content > div {
+  min-width: 0;
+}
+
+.bccc-resource-page,
+.bccc-admin-polished-page,
+.bccc-admin-command-center {
+  --bccc-admin-border: rgba(217, 199, 166, 0.72);
+  --bccc-admin-card: rgba(255, 255, 255, 0.88);
+  --bccc-admin-muted: rgba(255, 250, 240, 0.72);
+}
+
+.bccc-resource-hero,
+.bccc-resource-section,
+.bccc-admin-command-panel,
+.bccc-admin-command-metric,
+.backend-app-content article,
+.backend-app-content section {
+  min-width: 0;
+}
+
+.bccc-resource-hero,
+.bccc-resource-section,
+.bccc-admin-command-panel {
+  border-radius: 0.95rem !important;
+}
+
+.bccc-admin-command-metric {
+  border-radius: 1rem !important;
+}
+
+.bccc-resource-toolbar,
+.backend-app-content form,
+.backend-app-content [role='search'] {
+  max-width: 100%;
+}
+
+.backend-app-content input,
+.backend-app-content select,
+.backend-app-content textarea,
+.backend-app-content button,
+.backend-app-content a {
+  max-width: 100%;
+}
+
+.backend-app-content input,
+.backend-app-content select,
+.backend-app-content textarea {
+  min-width: 0;
+}
+
+.backend-app-content img,
+.backend-app-content video,
+.backend-app-content canvas,
+.backend-app-content svg {
+  max-width: 100%;
+}
+
+.backend-app-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.backend-app-content [class*='overflow-hidden']:has(table),
+.backend-app-content [class*='border']:has(table) {
+  max-width: 100%;
+}
+
+.backend-app-content .recharts-responsive-container,
+.backend-app-content .recharts-wrapper,
+.backend-app-content [class*='chart'],
+.backend-app-content [class*='Chart'] {
+  max-width: 100% !important;
+}
+
+.backend-app-content [class*='rounded-[1.65rem]'],
+.backend-app-content [class*='rounded-[1.75rem]'],
+.backend-app-content [class*='rounded-[1.5rem]'] {
+  border-radius: 1rem;
+}
+
+.bccc-admin-trend-bars {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  padding-bottom: 0.35rem;
+  scrollbar-width: thin;
+}
+
+.bccc-admin-trend-bars > * {
+  min-width: 3.25rem;
+  scroll-snap-align: start;
+}
+
+.bccc-admin-command-center .line-clamp-2 {
+  overflow-wrap: anywhere;
+}
+
+/* Resource lists that fake tables with CSS grids should become cards on smaller devices. */
+@media (max-width: 1279px) {
+  .backend-app-content [class*='xl:grid-cols-['],
+  .backend-app-content [class*='xl:grid-cols-'] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+
+  .bccc-admin-command-center > section,
+  .bccc-resource-page > section,
+  .bccc-admin-polished-page > section {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  .backend-app-content,
+  .bccc-admin-responsive-content {
+    padding-top: 5rem !important;
+    padding-inline: 0.95rem !important;
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom)) !important;
+  }
+
+  .backend-main-topbar-inner {
+    min-height: 4rem;
+  }
+
+  .backend-app-content [class*='lg:grid-cols-['],
+  .backend-app-content [class*='lg:grid-cols-'] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .bccc-resource-hero,
+  .bccc-resource-section,
+  .bccc-admin-command-panel {
+    padding: 1rem !important;
+  }
+
+  .bccc-resource-hero h1,
+  .bccc-admin-polished-page h1,
+  .bccc-admin-command-center h1 {
+    font-size: clamp(2rem, 8vw, 3rem) !important;
+    letter-spacing: -0.055em !important;
+    line-height: 0.95 !important;
+  }
+
+  .bccc-resource-section h2,
+  .bccc-admin-command-panel h2 {
+    font-size: clamp(1.45rem, 5.2vw, 2rem) !important;
+    line-height: 1.02 !important;
+  }
+
+  .backend-app-content .sticky,
+  .backend-app-content [class*='sticky'] {
+    position: static !important;
+  }
+
+  .backend-app-content [class*='top-'] {
+    top: auto;
+  }
+}
+
+@media (max-width: 820px) {
+  .backend-app-content [class*='md:grid-cols-['],
+  .backend-app-content [class*='md:grid-cols-'] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .bccc-resource-toolbar,
+  .backend-app-content [class*='lg:grid-cols-[minmax(0,1fr)_'],
+  .backend-app-content [class*='grid-cols-[minmax(0,1fr)_'] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .backend-app-content .md\:grid-cols-2,
+  .backend-app-content .md\:grid-cols-3,
+  .backend-app-content .md\:grid-cols-4 {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .backend-app-content .md\:flex-row {
+    flex-direction: column !important;
+  }
+
+  .backend-app-content .md\:items-end,
+  .backend-app-content .lg\:items-end,
+  .backend-app-content .xl\:items-end {
+    align-items: stretch !important;
+  }
+
+  .backend-app-content .md\:justify-between,
+  .backend-app-content .lg\:justify-between,
+  .backend-app-content .xl\:justify-between {
+    justify-content: flex-start !important;
+  }
+
+  .backend-app-content table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .backend-app-content thead,
+  .backend-app-content tbody,
+  .backend-app-content tr {
+    min-width: max-content;
+  }
+
+  .backend-app-content td,
+  .backend-app-content th {
+    white-space: nowrap;
+  }
+
+  .backend-app-content .print\:block,
+  .backend-app-content .print\:grid {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .backend-app-content,
+  .bccc-admin-responsive-content {
+    padding-inline: 0.75rem !important;
+  }
+
+  .backend-main-topbar-inner {
+    gap: 0.45rem !important;
+    padding-inline: 0.65rem !important;
+  }
+
+  .backend-main-topbar h1 {
+    max-width: 100%;
+    font-size: 0.98rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .backend-main-topbar [class*='tracking-[0.18em]'] {
+    letter-spacing: 0.11em !important;
+  }
+
+  .backend-notification-button,
+  .backend-theme-toggle,
+  .backend-account-button,
+  .backend-main-topbar button[aria-label='Open workspace menu'] {
+    height: 2.35rem !important;
+    width: 2.35rem !important;
+    min-width: 2.35rem !important;
+    border-radius: 0.8rem !important;
+  }
+
+  .backend-account-button {
+    padding-inline: 0.35rem !important;
+  }
+
+  .backend-account-button > span:first-child {
+    width: 1.65rem !important;
+    height: 1.65rem !important;
+  }
+
+  .backend-account-button svg {
+    display: none !important;
+  }
+
+  .backend-notification-menu {
+    position: fixed !important;
+    inset-inline: 0.75rem !important;
+    right: 0.75rem !important;
+    left: 0.75rem !important;
+    top: 4.25rem !important;
+    width: auto !important;
+    max-height: calc(100dvh - 5.25rem) !important;
+    overflow-y: auto !important;
+  }
+
+  .bccc-resource-hero,
+  .bccc-resource-section,
+  .bccc-admin-command-panel,
+  .bccc-admin-command-metric,
+  .backend-app-content article {
+    padding: 0.9rem !important;
+    border-radius: 0.85rem !important;
+  }
+
+  .bccc-resource-hero [class*='tracking-[0.22em]'],
+  .bccc-resource-section [class*='tracking-[0.22em]'],
+  .bccc-admin-command-panel [class*='tracking-[0.24em]'] {
+    letter-spacing: 0.14em !important;
+  }
+
+  .bccc-resource-hero h1,
+  .bccc-admin-polished-page h1 {
+    font-size: clamp(1.85rem, 12vw, 2.55rem) !important;
+  }
+
+  .bccc-admin-command-metric p[class*='text-4xl'],
+  .bccc-admin-command-metric p[class*='lg:text-5xl'],
+  .bccc-resource-section p[class*='text-3xl'],
+  .bccc-resource-page p[class*='text-3xl'] {
+    font-size: clamp(1.75rem, 10vw, 2.35rem) !important;
+  }
+
+  .backend-app-content .flex-wrap,
+  .backend-app-content [class*='flex-wrap'] {
+    row-gap: 0.5rem;
+  }
+
+  .backend-app-content a[href],
+  .backend-app-content button[type='button'],
+  .backend-app-content button[type='submit'] {
+    min-height: 2.5rem;
+  }
+
+  .backend-app-content [class*='uppercase'][class*='tracking'] {
+    overflow-wrap: anywhere;
+  }
+
+  .backend-app-content [class*='px-4'] {
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+  }
+
+  .backend-app-content [class*='p-5'] {
+    padding: 0.95rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .backend-theme-toggle {
+    display: none !important;
+  }
+
+  .backend-main-topbar .rounded-full[class*='tracking'] {
+    max-width: 7.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .backend-app-content,
+  .bccc-admin-responsive-content {
+    padding-inline: 0.55rem !important;
+  }
+
+  .backend-app-content > div {
+    gap: 0.75rem !important;
+  }
+
+  .bccc-resource-toolbar input[type='search'] {
+    font-size: 16px !important;
+  }
+
+  .backend-app-content input,
+  .backend-app-content select,
+  .backend-app-content textarea {
+    font-size: 16px !important;
+  }
+}
+
+@media (min-width: 1536px) {
+  .backend-app-content > div,
+  .bccc-admin-responsive-content > div {
+    max-width: 1880px;
+  }
+
+  .bccc-admin-command-center,
+  .bccc-resource-page,
+  .bccc-admin-polished-page {
+    gap: 1.35rem;
+  }
+}
+
+/* Final admin dashboard responsive polish */
+.bccc-admin-command-center {
+  container-type: inline-size;
+}
+
+.bccc-admin-command-hero,
+.bccc-admin-command-panel,
+.bccc-admin-command-metric {
+  overflow: hidden;
+}
+
+.bccc-admin-command-hero-grid,
+.bccc-admin-command-actions,
+.bccc-admin-command-metrics-grid {
+  min-width: 0;
+}
+
+.bccc-admin-command-actions > * {
+  flex: 1 1 10.5rem;
+  min-width: min(100%, 9.5rem);
+}
+
+.bccc-admin-command-actions :where(button, a) {
+  width: 100%;
+}
+
+.bccc-admin-command-metrics-grid {
+  align-items: stretch;
+}
+
+.bccc-admin-command-panel svg,
+.bccc-admin-command-panel canvas,
+.bccc-admin-command-metric svg {
+  max-width: 100%;
+}
+
+.bccc-admin-command-panel :where([class*='h-48'][class*='w-48']) {
+  flex-shrink: 0;
+}
+
+@media (max-width: 1279px) {
+  .bccc-admin-command-hero-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .bccc-admin-command-actions {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .bccc-admin-command-center {
+    gap: 1rem !important;
+  }
+
+  .bccc-admin-command-hero {
+    padding: 1rem !important;
+    border-radius: 1rem !important;
+  }
+
+  .bccc-admin-command-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.55rem !important;
+  }
+
+  .bccc-admin-command-metrics-grid {
+    gap: 0.75rem !important;
+  }
+
+  .bccc-admin-command-panel {
+    padding: 1rem !important;
+  }
+
+  .bccc-admin-command-panel :where([class*='h-48'][class*='w-48']) {
+    height: 10.5rem !important;
+    width: 10.5rem !important;
+  }
+
+  .bccc-admin-command-panel :where([class*='h-32'][class*='w-32']) {
+    height: 7rem !important;
+    width: 7rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .bccc-admin-command-center h1 {
+    font-size: clamp(2rem, 13vw, 2.7rem) !important;
+    letter-spacing: -0.055em !important;
+  }
+
+  .bccc-admin-command-hero p {
+    font-size: 0.86rem !important;
+    line-height: 1.65 !important;
+  }
+
+  .bccc-admin-command-actions {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .bccc-admin-command-actions > * {
+    min-width: 0;
+  }
+
+  .bccc-admin-command-metrics-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .bccc-admin-command-panel h2 {
+    font-size: clamp(1.35rem, 8vw, 1.75rem) !important;
+  }
+
+  .bccc-admin-command-panel :where([class*='h-48'][class*='w-48']) {
+    height: 9.25rem !important;
+    width: 9.25rem !important;
+  }
+
+  .bccc-admin-command-panel :where([class*='h-32'][class*='w-32']) {
+    height: 6rem !important;
+    width: 6rem !important;
+  }
+}
+
+@media print {
+  .backend-topbar,
+  .backend-sidebar,
+  .backend-notification-bell,
+  .backend-theme-toggle,
+  .backend-account-button {
+    display: none !important;
+  }
+
+  .backend-main {
+    padding-left: 0 !important;
+  }
+
+  .backend-app-content {
+    padding: 0 !important;
+  }
+}
+
+/* Batch 7: Admin command center print/export polish */
+@media print {
+  body {
+    background: #ffffff !important;
+  }
+
+  .app-sidebar,
+  .backend-sidebar,
+  .backend-app-sidebar,
+  .bccc-backend-sidebar,
+  .bccc-app-sidebar,
+  .backend-topbar,
+  .app-header,
+  .bccc-app-header,
+  .bccc-admin-command-center button,
+  .bccc-admin-command-center a[href='/admin/bookings/create'],
+  .bccc-admin-command-center a[href='/admin/content'] {
+    display: none !important;
+  }
+
+  .backend-app-content,
+  .bccc-admin-command-center {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .bccc-admin-command-panel,
+  .bccc-admin-command-metric {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border-color: #d9c7a6 !important;
+    background: #ffffff !important;
+    color: #21180d !important;
+  }
+}

@@ -1,0 +1,2274 @@
+/*
+  BCCC EASE — Backend Resort Redesign
+  Import this after resources/css/app.css.
+  It removes the old sidebar-heavy feel and gives all backend/booking pages
+  the same premium hospitality style used by the public-facing frontend.
+*/
+
+:root {
+    --bccc-resort-ink: #1f1a14;
+    --bccc-resort-muted: #766d5e;
+    --bccc-resort-line: rgba(75, 62, 45, 0.14);
+    --bccc-resort-panel: rgba(255, 252, 244, 0.84);
+    --bccc-resort-panel-solid: #fffaf0;
+    --bccc-resort-ivory: #f8f0df;
+    --bccc-resort-cream: #f5ead3;
+    --bccc-resort-gold: #b9924b;
+    --bccc-resort-gold-strong: #8f6423;
+    --bccc-resort-olive: #294b3d;
+    --bccc-resort-teal: #1c6670;
+    --bccc-resort-black: #11100d;
+    --bccc-resort-shadow: 0 26px 90px rgba(53, 39, 23, 0.12);
+    --bccc-resort-soft-shadow: 0 18px 55px rgba(53, 39, 23, 0.08);
+    --bccc-resort-radius: 1.75rem;
+}
+
+.dark {
+    --bccc-resort-ink: #fff7e8;
+    --bccc-resort-muted: rgba(248, 240, 223, 0.66);
+    --bccc-resort-line: rgba(255, 255, 255, 0.11);
+    --bccc-resort-panel: rgba(24, 22, 18, 0.78);
+    --bccc-resort-panel-solid: #171511;
+    --bccc-resort-ivory: #f8f0df;
+    --bccc-resort-cream: #271f16;
+    --bccc-resort-shadow: 0 28px 95px rgba(0, 0, 0, 0.42);
+    --bccc-resort-soft-shadow: 0 18px 60px rgba(0, 0, 0, 0.3);
+}
+
+html.backend-smooth-scroll-active,
+html.booking-wizard-screen-active {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+body::-webkit-scrollbar,
+.bccc-no-scrollbar::-webkit-scrollbar,
+.bccc-backend-mobile-scroll::-webkit-scrollbar,
+.booking-hotel-carousel::-webkit-scrollbar,
+.booking-field-carousel::-webkit-scrollbar,
+.booking-guideline-carousel::-webkit-scrollbar,
+.booking-review-carousel::-webkit-scrollbar,
+.booking-digital-form-scroll::-webkit-scrollbar,
+.booking-wizard-stage::-webkit-scrollbar {
+    display: none;
+}
+
+body,
+.bccc-no-scrollbar,
+.bccc-backend-mobile-scroll,
+.booking-hotel-carousel,
+.booking-field-carousel,
+.booking-guideline-carousel,
+.booking-review-carousel,
+.booking-digital-form-scroll,
+.booking-wizard-stage {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.bccc-backend-shell {
+    min-height: 100vh;
+    color: var(--bccc-resort-ink);
+    background:
+        radial-gradient(
+            circle at 12% 8%,
+            rgba(185, 146, 75, 0.15),
+            transparent 34rem
+        ),
+        radial-gradient(
+            circle at 92% 12%,
+            rgba(28, 102, 112, 0.14),
+            transparent 30rem
+        ),
+        linear-gradient(180deg, #f7eddb 0%, #f5ead3 42%, #eee0c7 100%);
+}
+
+.dark .bccc-backend-shell {
+    background:
+        radial-gradient(
+            circle at 16% 8%,
+            rgba(185, 146, 75, 0.12),
+            transparent 34rem
+        ),
+        radial-gradient(
+            circle at 84% 10%,
+            rgba(28, 102, 112, 0.16),
+            transparent 31rem
+        ),
+        linear-gradient(180deg, #12100d 0%, #191611 48%, #0f0e0c 100%);
+}
+
+.bccc-backend-shell::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), transparent 70%);
+}
+
+.dark .bccc-backend-shell::before {
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+}
+
+.bccc-backend-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    border-bottom: 1px solid var(--bccc-resort-line);
+    background: rgba(248, 240, 223, 0.82);
+    backdrop-filter: blur(22px);
+    box-shadow: 0 14px 50px rgba(53, 39, 23, 0.08);
+}
+
+.dark .bccc-backend-topbar {
+    background: rgba(17, 16, 13, 0.82);
+    box-shadow: 0 14px 50px rgba(0, 0, 0, 0.28);
+}
+
+.bccc-backend-topbar-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(210px, auto) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    width: min(100% - 2rem, 1680px);
+    min-height: 4.75rem;
+    margin-inline: auto;
+}
+
+.bccc-backend-brand {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    gap: 0.75rem;
+    color: inherit;
+    text-decoration: none;
+}
+
+.bccc-backend-brand-logo {
+    display: inline-flex;
+    width: 2.95rem;
+    height: 2.95rem;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.15rem;
+    border: 1px solid rgba(185, 146, 75, 0.34);
+    color: #fff9ec;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(143, 100, 35, 0.95),
+            rgba(41, 75, 61, 0.94)
+        ),
+        radial-gradient(
+            circle at top left,
+            rgba(255, 255, 255, 0.22),
+            transparent 44%
+        );
+    box-shadow: 0 16px 38px rgba(143, 100, 35, 0.24);
+}
+
+.bccc-backend-brand-title,
+.bccc-backend-brand-subtitle {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bccc-backend-brand-title {
+    font-size: 0.95rem;
+    font-weight: 950;
+    letter-spacing: -0.035em;
+}
+
+.bccc-backend-brand-subtitle {
+    margin-top: 0.1rem;
+    max-width: 13rem;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--bccc-resort-muted);
+}
+
+.bccc-backend-nav {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 0.28rem;
+}
+
+.bccc-backend-nav-link {
+    display: inline-flex;
+    min-height: 2.7rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    padding: 0.72rem 0.95rem;
+    color: var(--bccc-resort-muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    transition:
+        transform 0.22s ease,
+        border-color 0.22s ease,
+        background 0.22s ease,
+        color 0.22s ease;
+}
+
+.bccc-backend-nav-link:hover,
+.bccc-backend-nav-link.is-active {
+    transform: translateY(-1px);
+    border-color: rgba(185, 146, 75, 0.24);
+    color: var(--bccc-resort-ink);
+    background: rgba(255, 255, 255, 0.56);
+}
+
+.dark .bccc-backend-nav-link:hover,
+.dark .bccc-backend-nav-link.is-active {
+    background: rgba(255, 255, 255, 0.075);
+}
+
+.bccc-backend-config-menu {
+    position: absolute;
+    top: calc(100% + 0.65rem);
+    left: 50%;
+    z-index: 90;
+    display: grid;
+    min-width: 15.5rem;
+    transform: translateX(-50%);
+    gap: 0.25rem;
+    border-radius: 1.45rem;
+    border: 1px solid var(--bccc-resort-line);
+    background: var(--bccc-resort-panel-solid);
+    padding: 0.55rem;
+    box-shadow: var(--bccc-resort-shadow);
+}
+
+.dark .bccc-backend-config-menu {
+    background: rgba(23, 21, 17, 0.96);
+}
+
+.bccc-backend-config-menu .bccc-backend-nav-link {
+    justify-content: flex-start;
+}
+
+.bccc-backend-actions {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.45rem;
+}
+
+.bccc-backend-action-button,
+.bccc-backend-round-button,
+.bccc-backend-book-button,
+.bccc-workspace-primary-action,
+.bccc-workspace-secondary-action,
+.bccc-backend-logout {
+    min-height: 2.62rem;
+    border-radius: 999px !important;
+    font-weight: 900 !important;
+}
+
+.bccc-backend-action-button,
+.bccc-backend-round-button,
+.bccc-workspace-secondary-action {
+    border-color: var(--bccc-resort-line) !important;
+    color: var(--bccc-resort-ink) !important;
+    background: rgba(255, 255, 255, 0.48) !important;
+    backdrop-filter: blur(14px);
+}
+
+.dark .bccc-backend-action-button,
+.dark .bccc-backend-round-button,
+.dark .bccc-workspace-secondary-action {
+    background: rgba(255, 255, 255, 0.065) !important;
+}
+
+.bccc-backend-book-button,
+.bccc-workspace-primary-action {
+    border: 1px solid rgba(185, 146, 75, 0.36) !important;
+    color: #fff9ec !important;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(143, 100, 35, 0.97),
+            rgba(185, 146, 75, 0.92)
+        ),
+        radial-gradient(
+            circle at top left,
+            rgba(255, 255, 255, 0.28),
+            transparent 38%
+        ) !important;
+    box-shadow: 0 16px 38px rgba(143, 100, 35, 0.22) !important;
+}
+
+.bccc-backend-user-pill {
+    min-width: 9.5rem;
+    max-width: 13rem;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid var(--bccc-resort-line);
+    background: rgba(255, 255, 255, 0.46);
+    padding: 0.45rem 0.85rem;
+    backdrop-filter: blur(14px);
+}
+
+.dark .bccc-backend-user-pill {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.bccc-backend-user-pill span,
+.bccc-backend-user-pill small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bccc-backend-user-pill span {
+    font-size: 0.78rem;
+    font-weight: 950;
+}
+
+.bccc-backend-user-pill small {
+    margin-top: 0.05rem;
+    font-size: 0.62rem;
+    font-weight: 850;
+    color: var(--bccc-resort-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.bccc-backend-logout {
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid rgba(239, 68, 68, 0.18);
+    background: rgba(239, 68, 68, 0.075);
+    padding-inline: 0.85rem;
+    color: #b91c1c;
+    transition: 0.2s ease;
+}
+
+.dark .bccc-backend-logout {
+    color: #fecaca;
+}
+
+.bccc-backend-logout:hover {
+    transform: translateY(-1px);
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.bccc-backend-mobile-trigger,
+.bccc-backend-mobile-close {
+    display: none;
+    width: 2.72rem;
+    height: 2.72rem;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid var(--bccc-resort-line);
+    background: rgba(255, 255, 255, 0.48);
+    color: var(--bccc-resort-ink);
+}
+
+.dark .bccc-backend-mobile-trigger,
+.dark .bccc-backend-mobile-close {
+    background: rgba(255, 255, 255, 0.075);
+}
+
+.bccc-backend-crumbbar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: min(100% - 2rem, 1680px);
+    min-height: 3.15rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-inline: auto;
+    border-top: 1px solid rgba(75, 62, 45, 0.08);
+}
+
+.dark .bccc-backend-crumbbar {
+    border-top-color: rgba(255, 255, 255, 0.07);
+}
+
+.bccc-backend-crumbbar p {
+    font-size: 0.64rem;
+    font-weight: 950;
+    letter-spacing: 0.22em;
+    color: var(--bccc-resort-gold-strong);
+    text-transform: uppercase;
+}
+
+.dark .bccc-backend-crumbbar p {
+    color: #e8d8b5;
+}
+
+.bccc-backend-crumbbar h1 {
+    margin-top: 0.05rem;
+    font-size: 0.9rem;
+    font-weight: 950;
+    letter-spacing: -0.03em;
+}
+
+.bccc-backend-breadcrumbs {
+    min-width: 0;
+    max-width: 58%;
+    overflow: hidden;
+    font-size: 0.72rem;
+    color: var(--bccc-resort-muted);
+}
+
+.bccc-backend-main {
+    position: relative;
+    z-index: 1;
+    width: min(100% - 2rem, 1680px);
+    margin-inline: auto;
+    padding-block: clamp(1rem, 2.5vw, 2rem) 3rem;
+}
+
+.bccc-backend-mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+}
+
+.bccc-backend-mobile-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+}
+
+.bccc-backend-mobile-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    width: min(100%, 26rem);
+    height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+    border-left: 1px solid var(--bccc-resort-line);
+    background: var(--bccc-resort-panel-solid);
+    padding: 1rem;
+    box-shadow: var(--bccc-resort-shadow);
+}
+
+.dark .bccc-backend-mobile-panel {
+    background: #171511;
+}
+
+.bccc-backend-mobile-panel h2 {
+    margin-top: 0.15rem;
+    font-size: 1.6rem;
+    font-weight: 950;
+    letter-spacing: -0.06em;
+}
+
+.bccc-backend-mobile-panel span {
+    color: var(--bccc-resort-muted);
+    font-size: 0.8rem;
+    font-weight: 750;
+}
+
+.bccc-backend-mobile-eyebrow,
+.bccc-backend-mobile-label {
+    color: var(--bccc-resort-gold-strong) !important;
+    font-size: 0.65rem !important;
+    font-weight: 950 !important;
+    letter-spacing: 0.2em !important;
+    text-transform: uppercase;
+}
+
+.dark .bccc-backend-mobile-eyebrow,
+.dark .bccc-backend-mobile-label {
+    color: #e8d8b5 !important;
+}
+
+.bccc-backend-mobile-scroll {
+    display: grid;
+    flex: 1;
+    gap: 1.25rem;
+    overflow-y: auto;
+    padding-block: 1.25rem;
+}
+
+.bccc-backend-mobile-scroll .bccc-backend-nav-link {
+    justify-content: flex-start;
+    min-height: 3rem;
+    background: rgba(255, 255, 255, 0.44);
+}
+
+.dark .bccc-backend-mobile-scroll .bccc-backend-nav-link {
+    background: rgba(255, 255, 255, 0.065);
+}
+
+.bccc-backend-mobile-cta,
+.bccc-backend-mobile-logout {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    font-size: 0.86rem;
+    font-weight: 950;
+}
+
+.bccc-backend-mobile-cta {
+    color: #fff9ec;
+    background: linear-gradient(135deg, #8f6423, #b9924b);
+}
+
+.bccc-backend-mobile-logout {
+    color: #b91c1c;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.08);
+}
+
+.dark .bccc-backend-mobile-logout {
+    color: #fecaca;
+}
+
+.bccc-workspace-page,
+.backend-booking-page {
+    min-width: 0;
+}
+
+.bccc-workspace-hero {
+    position: relative;
+    display: grid;
+    min-height: clamp(15rem, 23vw, 24rem);
+    grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
+    align-items: stretch;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    overflow: hidden;
+    border-radius: clamp(1.4rem, 3vw, 2.4rem);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 250, 240, 0.86),
+            rgba(255, 246, 225, 0.66)
+        ),
+        radial-gradient(
+            circle at 8% 12%,
+            rgba(185, 146, 75, 0.15),
+            transparent 40%
+        );
+    padding: clamp(1rem, 2.4vw, 2rem);
+    box-shadow: var(--bccc-resort-shadow);
+}
+
+.dark .bccc-workspace-hero {
+    border-color: rgba(255, 255, 255, 0.1);
+    background:
+        linear-gradient(135deg, rgba(31, 27, 20, 0.92), rgba(18, 16, 13, 0.82)),
+        radial-gradient(
+            circle at 10% 12%,
+            rgba(185, 146, 75, 0.13),
+            transparent 42%
+        );
+}
+
+.bccc-workspace-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        110deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 42%,
+        transparent 56%
+    );
+    transform: translateX(-110%) skewX(-12deg);
+    animation: bccc-resort-sheen 1.6s ease 0.1s forwards;
+}
+
+@keyframes bccc-resort-sheen {
+    to {
+        transform: translateX(110%) skewX(-12deg);
+    }
+}
+
+.bccc-workspace-hero.is-compact {
+    min-height: clamp(13rem, 18vw, 19rem);
+}
+
+.bccc-workspace-hero-copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(0.25rem, 1vw, 0.75rem);
+}
+
+.bccc-workspace-kicker-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.bccc-workspace-kicker,
+.bccc-workspace-role-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(185, 146, 75, 0.24);
+    background: rgba(185, 146, 75, 0.09);
+    padding: 0.42rem 0.72rem;
+    color: var(--bccc-resort-gold-strong);
+    font-size: 0.64rem;
+    font-weight: 950;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.dark .bccc-workspace-kicker,
+.dark .bccc-workspace-role-chip {
+    color: #e8d8b5;
+    background: rgba(185, 146, 75, 0.11);
+}
+
+.bccc-workspace-role-chip {
+    border-color: var(--bccc-resort-line);
+    background: rgba(255, 255, 255, 0.42);
+    color: var(--bccc-resort-muted);
+}
+
+.dark .bccc-workspace-role-chip {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(248, 240, 223, 0.72);
+}
+
+.bccc-workspace-hero h1 {
+    max-width: 58rem;
+    margin-top: 1rem;
+    font-size: clamp(2.25rem, 5vw, 5.7rem);
+    font-weight: 950;
+    line-height: 0.89;
+    letter-spacing: -0.078em;
+    color: var(--bccc-resort-ink);
+}
+
+.bccc-workspace-hero.is-compact h1 {
+    font-size: clamp(2rem, 4vw, 4.5rem);
+}
+
+.bccc-workspace-hero p {
+    max-width: 52rem;
+    margin-top: 1rem;
+    color: var(--bccc-resort-muted);
+    font-size: clamp(0.92rem, 1.2vw, 1.06rem);
+    font-weight: 650;
+    line-height: 1.75;
+}
+
+.bccc-workspace-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: 1.25rem;
+}
+
+.bccc-workspace-hero-meta span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.15rem;
+    border-radius: 999px;
+    border: 1px solid var(--bccc-resort-line);
+    background: rgba(255, 255, 255, 0.42);
+    padding-inline: 0.82rem;
+    color: var(--bccc-resort-muted);
+    font-size: 0.73rem;
+    font-weight: 900;
+}
+
+.dark .bccc-workspace-hero-meta span {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.bccc-workspace-hero-media {
+    position: relative;
+    min-height: 15rem;
+    overflow: hidden;
+    border-radius: 1.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    background: #201a13;
+    box-shadow: 0 22px 70px rgba(53, 39, 23, 0.18);
+}
+
+.dark .bccc-workspace-hero-media {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.bccc-workspace-hero-media img {
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    object-fit: cover;
+    filter: saturate(0.98) contrast(0.95) brightness(0.82);
+    transform: scale(1.02);
+}
+
+.bccc-workspace-hero-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to top, rgba(0, 0, 0, 0.68), transparent 55%),
+        linear-gradient(135deg, rgba(185, 146, 75, 0.18), transparent 40%);
+}
+
+.bccc-workspace-hero-media-card {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 2;
+    border-radius: 1.3rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(18, 16, 13, 0.62);
+    padding: 1rem;
+    color: #fff9ec;
+    backdrop-filter: blur(16px);
+}
+
+.bccc-workspace-hero-media-card span,
+.bccc-workspace-hero-media-card strong {
+    display: block;
+}
+
+.bccc-workspace-hero-media-card span {
+    color: rgba(255, 249, 236, 0.66);
+    font-size: 0.65rem;
+    font-weight: 950;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.bccc-workspace-hero-media-card strong {
+    margin-top: 0.35rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.15rem;
+    font-weight: 950;
+    letter-spacing: -0.04em;
+}
+
+.bccc-workspace-actions {
+    position: absolute;
+    right: clamp(1rem, 2.4vw, 2rem);
+    top: clamp(1rem, 2.4vw, 2rem);
+    z-index: 3;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.55rem;
+}
+
+.bccc-workspace-content {
+    display: grid;
+    gap: clamp(1rem, 2vw, 1.35rem);
+    margin-top: clamp(1rem, 2.4vw, 1.6rem);
+}
+
+.bccc-workspace-content > * {
+    min-width: 0;
+}
+
+.backend-page-shell,
+.backend-page-container,
+.backend-page-content,
+.backend-admin-page,
+.backend-admin-content-normalizer {
+    min-width: 0;
+}
+
+.backend-page-shell,
+.backend-page-container {
+    display: block;
+}
+
+.backend-page-hero,
+.backend-admin-card,
+.backend-booking-card,
+.booking-lux-filter-panel,
+.booking-lux-record-card,
+.booking-fit-card,
+.booking-review-card,
+.booking-digital-form-panel,
+.booking-summary-drawer-card {
+    border-radius: var(--bccc-resort-radius) !important;
+    border: 1px solid var(--bccc-resort-line) !important;
+    background: var(--bccc-resort-panel) !important;
+    color: var(--bccc-resort-ink) !important;
+    box-shadow: var(--bccc-resort-soft-shadow) !important;
+    backdrop-filter: blur(18px);
+}
+
+.dark .backend-page-hero,
+.dark .backend-admin-card,
+.dark .backend-booking-card,
+.dark .booking-lux-filter-panel,
+.dark .booking-lux-record-card,
+.dark .booking-fit-card,
+.dark .booking-review-card,
+.dark .booking-digital-form-panel,
+.dark .booking-summary-drawer-card {
+    background: var(--bccc-resort-panel) !important;
+}
+
+.backend-page-hero {
+    display: none !important;
+}
+
+.backend-page-content {
+    padding: 0 !important;
+}
+
+.backend-booking-page {
+    display: grid;
+    gap: 1rem;
+}
+
+.booking-lux-dashboard {
+    display: grid;
+    gap: 1rem;
+}
+
+.booking-lux-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+}
+
+.booking-lux-kpi-card {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.85rem;
+    overflow: hidden;
+    border-radius: 1.45rem;
+    border: 1px solid var(--bccc-resort-line);
+    background: rgba(255, 255, 255, 0.44);
+    padding: 1rem;
+    box-shadow: 0 14px 42px rgba(53, 39, 23, 0.06);
+}
+
+.dark .booking-lux-kpi-card {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.booking-lux-kpi-card::after {
+    content: '';
+    position: absolute;
+    inset: auto -2rem -3rem auto;
+    width: 8rem;
+    height: 8rem;
+    border-radius: 999px;
+    background: rgba(185, 146, 75, 0.1);
+    filter: blur(8px);
+}
+
+.booking-lux-kpi-icon {
+    display: inline-flex;
+    width: 3rem;
+    height: 3rem;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.15rem;
+    border: 1px solid rgba(185, 146, 75, 0.24);
+    background: rgba(185, 146, 75, 0.11);
+    color: var(--bccc-resort-gold-strong);
+}
+
+.dark .booking-lux-kpi-icon {
+    color: #e8d8b5;
+}
+
+.booking-lux-kpi-card p,
+.booking-lux-kpi-card strong,
+.booking-lux-kpi-card span {
+    display: block;
+}
+
+.booking-lux-kpi-card p {
+    color: var(--bccc-resort-muted);
+    font-size: 0.68rem;
+    font-weight: 950;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.booking-lux-kpi-card strong {
+    margin-top: 0.25rem;
+    font-size: 1.85rem;
+    font-weight: 950;
+    line-height: 1;
+    letter-spacing: -0.06em;
+}
+
+.booking-lux-kpi-card span {
+    margin-top: 0.25rem;
+    color: var(--bccc-resort-muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.booking-lux-filter-panel {
+    display: grid;
+    gap: 1rem;
+    padding: clamp(1rem, 2vw, 1.35rem);
+}
+
+.booking-lux-filter-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.booking-lux-filter-heading p,
+.backend-booking-label {
+    color: var(--bccc-resort-gold-strong) !important;
+    font-size: 0.66rem !important;
+    font-weight: 950 !important;
+    letter-spacing: 0.18em !important;
+    text-transform: uppercase !important;
+}
+
+.dark .booking-lux-filter-heading p,
+.dark .backend-booking-label {
+    color: #e8d8b5 !important;
+}
+
+.booking-lux-filter-heading h2 {
+    margin-top: 0.2rem;
+    font-size: clamp(1.35rem, 2vw, 2.15rem);
+    font-weight: 950;
+    letter-spacing: -0.055em;
+}
+
+.booking-lux-filter-heading > span {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(185, 146, 75, 0.24);
+    background: rgba(185, 146, 75, 0.09);
+    padding: 0.48rem 0.85rem;
+    color: var(--bccc-resort-gold-strong);
+    font-size: 0.72rem;
+    font-weight: 950;
+}
+
+.dark .booking-lux-filter-heading > span {
+    color: #e8d8b5;
+}
+
+.booking-lux-filter-grid {
+    display: grid;
+    grid-template-columns:
+        minmax(16rem, 1fr) minmax(11rem, 0.3fr) minmax(11rem, 0.3fr)
+        auto;
+    gap: 0.7rem;
+}
+
+.booking-lux-search-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.booking-lux-search-field svg {
+    position: absolute;
+    left: 1rem;
+    color: var(--bccc-resort-muted);
+}
+
+.booking-lux-search-field input {
+    padding-left: 2.75rem !important;
+}
+
+.backend-booking-input,
+.booking-lux-filter-grid input,
+.booking-lux-filter-grid select,
+.booking-wizard-field input,
+.booking-wizard-field select,
+.booking-wizard-field textarea,
+.ease-input,
+.bccc-backend-input {
+    width: 100%;
+    min-height: 3rem;
+    border-radius: 1rem;
+    border: 1px solid var(--bccc-resort-line) !important;
+    background: rgba(255, 255, 255, 0.58) !important;
+    padding-inline: 1rem;
+    color: var(--bccc-resort-ink) !important;
+    font-size: 0.9rem;
+    font-weight: 750;
+    outline: none;
+    transition:
+        border-color 0.22s ease,
+        box-shadow 0.22s ease,
+        background 0.22s ease;
+}
+
+.dark .backend-booking-input,
+.dark .booking-lux-filter-grid input,
+.dark .booking-lux-filter-grid select,
+.dark .booking-wizard-field input,
+.dark .booking-wizard-field select,
+.dark .booking-wizard-field textarea,
+.dark .ease-input,
+.dark .bccc-backend-input {
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.backend-booking-input:focus,
+.booking-lux-filter-grid input:focus,
+.booking-lux-filter-grid select:focus,
+.booking-wizard-field input:focus,
+.booking-wizard-field select:focus,
+.booking-wizard-field textarea:focus,
+.ease-input:focus,
+.bccc-backend-input:focus {
+    border-color: rgba(185, 146, 75, 0.48) !important;
+    box-shadow: 0 0 0 4px rgba(185, 146, 75, 0.11) !important;
+}
+
+.backend-booking-input::placeholder,
+.booking-lux-filter-grid input::placeholder,
+.booking-wizard-field input::placeholder,
+.booking-wizard-field textarea::placeholder {
+    color: currentColor;
+    opacity: 0.38;
+}
+
+.backend-booking-input option,
+.booking-lux-filter-grid select option,
+.booking-wizard-field select option,
+.ease-input option,
+.bccc-backend-input option {
+    background: #fffaf0;
+    color: #1f1a14;
+}
+
+.dark .backend-booking-input option,
+.dark .booking-lux-filter-grid select option,
+.dark .booking-wizard-field select option,
+.dark .ease-input option,
+.dark .bccc-backend-input option {
+    background: #171511;
+    color: #fff7e8;
+}
+
+.booking-lux-filter-actions {
+    display: flex;
+    gap: 0.55rem;
+}
+
+.booking-lux-record-list {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.booking-lux-record-card {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.9fr) minmax(0, 1.4fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    transition:
+        transform 0.24s ease,
+        border-color 0.24s ease,
+        box-shadow 0.24s ease;
+}
+
+.booking-lux-record-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(185, 146, 75, 0.26) !important;
+    box-shadow: 0 28px 85px rgba(53, 39, 23, 0.14) !important;
+}
+
+.dark .booking-lux-record-card:hover {
+    box-shadow: 0 28px 85px rgba(0, 0, 0, 0.38) !important;
+}
+
+.booking-lux-record-main {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.booking-lux-record-number {
+    display: inline-flex;
+    min-width: 3.2rem;
+    height: 3.2rem;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.15rem;
+    border: 1px solid rgba(185, 146, 75, 0.26);
+    background: rgba(185, 146, 75, 0.1);
+    color: var(--bccc-resort-gold-strong);
+    font-size: 0.78rem;
+    font-weight: 950;
+}
+
+.dark .booking-lux-record-number {
+    color: #e8d8b5;
+}
+
+.booking-lux-record-title {
+    display: block;
+    overflow: hidden;
+    color: var(--bccc-resort-ink);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1rem;
+    font-weight: 950;
+    letter-spacing: -0.025em;
+    text-decoration: none;
+}
+
+.booking-lux-record-title:hover {
+    color: var(--bccc-resort-gold-strong);
+}
+
+.dark .booking-lux-record-title:hover {
+    color: #e8d8b5;
+}
+
+.booking-lux-record-subtitle {
+    margin-top: 0.25rem;
+    overflow: hidden;
+    color: var(--bccc-resort-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.82rem;
+    font-weight: 750;
+}
+
+.booking-lux-record-details {
+    display: grid;
+    grid-template-columns: minmax(9rem, 1fr) minmax(10rem, 1fr) minmax(
+            9rem,
+            auto
+        );
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.booking-lux-record-details > div {
+    min-width: 0;
+    border-left: 1px solid var(--bccc-resort-line);
+    padding-left: 0.9rem;
+}
+
+.booking-lux-record-details span,
+.booking-lux-record-details strong,
+.booking-lux-record-details small {
+    display: block;
+}
+
+.booking-lux-record-details span {
+    color: var(--bccc-resort-muted);
+    font-size: 0.65rem;
+    font-weight: 950;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.booking-lux-record-details strong {
+    margin-top: 0.3rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.88rem;
+    font-weight: 900;
+}
+
+.booking-lux-record-details small {
+    margin-top: 0.25rem;
+    overflow: hidden;
+    color: var(--bccc-resort-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    font-weight: 750;
+}
+
+.booking-lux-status-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.35rem;
+}
+
+.booking-lux-record-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.55rem;
+}
+
+.booking-lux-guest-pill {
+    display: inline-flex;
+    min-height: 2.62rem;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    border: 1px solid var(--bccc-resort-line);
+    background: rgba(255, 255, 255, 0.42);
+    padding-inline: 0.85rem;
+    color: var(--bccc-resort-muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+.dark .booking-lux-guest-pill {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.booking-lux-empty-state {
+    display: grid;
+    min-height: 18rem;
+    place-items: center;
+    gap: 0.75rem;
+    border-radius: var(--bccc-resort-radius);
+    border: 1px dashed rgba(185, 146, 75, 0.28);
+    background: rgba(255, 255, 255, 0.32);
+    padding: 2rem;
+    text-align: center;
+}
+
+.dark .booking-lux-empty-state {
+    background: rgba(255, 255, 255, 0.045);
+}
+
+.booking-lux-empty-state svg {
+    color: var(--bccc-resort-gold-strong);
+}
+
+.dark .booking-lux-empty-state svg {
+    color: #e8d8b5;
+}
+
+.booking-lux-empty-state h3 {
+    font-size: 1.35rem;
+    font-weight: 950;
+    letter-spacing: -0.04em;
+}
+
+.booking-lux-empty-state p {
+    color: var(--bccc-resort-muted);
+    font-weight: 750;
+}
+
+.booking-lux-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.booking-lux-page-link {
+    display: inline-flex;
+    min-width: 2.45rem;
+    min-height: 2.45rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid var(--bccc-resort-line);
+    background: rgba(255, 255, 255, 0.42);
+    padding-inline: 0.75rem;
+    color: var(--bccc-resort-muted);
+    font-size: 0.78rem;
+    font-weight: 950;
+}
+
+.dark .booking-lux-page-link {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.booking-lux-page-link.is-active {
+    border-color: rgba(185, 146, 75, 0.32);
+    background: rgba(185, 146, 75, 0.14);
+    color: var(--bccc-resort-gold-strong);
+}
+
+.dark .booking-lux-page-link.is-active {
+    color: #e8d8b5;
+}
+
+.booking-lux-page-link.is-disabled {
+    opacity: 0.48;
+}
+
+/* Booking wizard: less boxed, more hotel-offer style */
+.booking-wizard-shell,
+.booking-hotel-wizard-shell {
+    position: relative;
+    display: grid;
+    gap: 0.85rem;
+    min-width: 0;
+}
+
+.booking-wizard-toolbar {
+    position: sticky;
+    top: 8.05rem;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--bccc-resort-line);
+    background: rgba(248, 240, 223, 0.76);
+    padding: 0.55rem;
+    box-shadow: var(--bccc-resort-soft-shadow);
+    backdrop-filter: blur(18px);
+}
+
+.dark .booking-wizard-toolbar {
+    background: rgba(17, 16, 13, 0.78);
+}
+
+.booking-wizard-top-steps {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    gap: 0.35rem;
+    overflow-x: auto;
+}
+
+.booking-wizard-step-pill {
+    display: inline-flex;
+    min-width: max-content;
+    min-height: 3rem;
+    align-items: center;
+    gap: 0.55rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    padding: 0.45rem 0.75rem;
+    color: var(--bccc-resort-muted);
+    transition: 0.22s ease;
+}
+
+.booking-wizard-step-pill:not(:disabled):hover,
+.booking-wizard-step-pill.is-current,
+.booking-wizard-step-pill.is-done {
+    border-color: rgba(185, 146, 75, 0.25);
+    background: rgba(255, 255, 255, 0.5);
+    color: var(--bccc-resort-ink);
+}
+
+.dark .booking-wizard-step-pill:not(:disabled):hover,
+.dark .booking-wizard-step-pill.is-current,
+.dark .booking-wizard-step-pill.is-done {
+    background: rgba(255, 255, 255, 0.065);
+}
+
+.booking-wizard-step-pill:disabled {
+    cursor: not-allowed;
+    opacity: 0.42;
+}
+
+.booking-wizard-step-icon,
+.backend-booking-icon,
+.booking-form-loading-orb,
+.backend-route-loader-orb {
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(185, 146, 75, 0.24);
+    background: rgba(185, 146, 75, 0.1);
+    color: var(--bccc-resort-gold-strong);
+}
+
+.dark .booking-wizard-step-icon,
+.dark .backend-booking-icon,
+.dark .booking-form-loading-orb,
+.dark .backend-route-loader-orb {
+    color: #e8d8b5;
+}
+
+.booking-wizard-stage {
+    min-width: 0;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+.booking-step-screen,
+.booking-package-step-screen,
+.booking-review-carousel {
+    min-width: 0;
+}
+
+.booking-hotel-header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.85rem;
+}
+
+.booking-hotel-header h2 {
+    margin-top: 0.55rem;
+    font-size: clamp(1.75rem, 3vw, 3.8rem);
+    font-weight: 950;
+    line-height: 0.94;
+    letter-spacing: -0.07em;
+}
+
+.booking-hotel-header p {
+    max-width: 58rem;
+    margin-top: 0.75rem;
+    color: var(--bccc-resort-muted);
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.7;
+}
+
+.booking-hotel-carousel-controls {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.45rem;
+}
+
+.booking-hotel-carousel {
+    display: grid;
+    grid-auto-columns: minmax(19rem, 28rem);
+    grid-auto-flow: column;
+    gap: 0.85rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding: 0.15rem 0.2rem 0.7rem;
+    scroll-snap-type: x mandatory;
+}
+
+.booking-hotel-card {
+    position: relative;
+    display: flex;
+    min-height: 32rem;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 1.75rem;
+    border: 1px solid var(--bccc-resort-line);
+    background: var(--bccc-resort-panel);
+    color: var(--bccc-resort-ink);
+    text-align: left;
+    box-shadow: var(--bccc-resort-soft-shadow);
+    scroll-snap-align: center;
+    transition: 0.28s ease;
+}
+
+.booking-hotel-card:hover,
+.booking-hotel-card.is-selected {
+    transform: translateY(-4px);
+    border-color: rgba(185, 146, 75, 0.36);
+    box-shadow: var(--bccc-resort-shadow);
+}
+
+.booking-hotel-card.is-disabled {
+    cursor: not-allowed;
+    filter: grayscale(0.3);
+    opacity: 0.58;
+}
+
+.booking-hotel-card-image {
+    position: relative;
+    min-height: 16rem;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            circle at 25% 15%,
+            rgba(185, 146, 75, 0.32),
+            transparent 36%
+        ),
+        linear-gradient(135deg, #2d2419, #172722);
+}
+
+.booking-hotel-card-badges,
+.booking-hotel-image-caption,
+.booking-hotel-selected-mark {
+    position: absolute;
+    z-index: 2;
+}
+
+.booking-hotel-card-badges {
+    top: 0.85rem;
+    left: 0.85rem;
+    right: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.45rem;
+}
+
+.booking-hotel-card-badges span,
+.booking-hotel-pill-grid span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(18, 16, 13, 0.42);
+    padding: 0.35rem 0.65rem;
+    color: #fff9ec;
+    font-size: 0.65rem;
+    font-weight: 900;
+    backdrop-filter: blur(12px);
+}
+
+.booking-hotel-selected-mark {
+    top: 0.85rem;
+    right: 0.85rem;
+    display: none;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(185, 146, 75, 0.96);
+    color: white;
+}
+
+.booking-hotel-selected-mark.is-selected {
+    display: inline-flex;
+}
+
+.booking-hotel-image-caption {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    color: #fff9ec;
+}
+
+.booking-hotel-image-caption p {
+    color: rgba(255, 249, 236, 0.72);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.booking-hotel-image-caption h3 {
+    margin-top: 0.25rem;
+    font-size: 1.55rem;
+    font-weight: 950;
+    letter-spacing: -0.055em;
+}
+
+.booking-hotel-card-body {
+    display: grid;
+    gap: 0.85rem;
+    padding: 1rem;
+}
+
+.booking-hotel-card-title-row {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.booking-hotel-card-title-row h4 {
+    margin-top: 0.25rem;
+    font-size: 1.12rem;
+    font-weight: 950;
+    letter-spacing: -0.045em;
+}
+
+.booking-hotel-card-description {
+    color: var(--bccc-resort-muted);
+    font-size: 0.86rem;
+    font-weight: 700;
+    line-height: 1.65;
+}
+
+.booking-hotel-rate-grid,
+.booking-review-grid,
+.booking-summary-drawer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+}
+
+.booking-hotel-rate-grid > div,
+.booking-review-grid > div,
+.booking-summary-drawer-grid > div,
+.booking-generated-card,
+.booking-check-card {
+    border-radius: 1.15rem !important;
+    border: 1px solid var(--bccc-resort-line) !important;
+    background: rgba(255, 255, 255, 0.36) !important;
+    padding: 0.85rem;
+}
+
+.dark .booking-hotel-rate-grid > div,
+.dark .booking-review-grid > div,
+.dark .booking-summary-drawer-grid > div,
+.dark .booking-generated-card,
+.dark .booking-check-card {
+    background: rgba(255, 255, 255, 0.055) !important;
+}
+
+.booking-hotel-rate-grid span,
+.booking-hotel-rate-grid strong,
+.booking-summary-drawer-grid strong {
+    display: block;
+}
+
+.booking-hotel-rate-grid span {
+    color: var(--bccc-resort-muted);
+    font-size: 0.65rem;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.booking-hotel-rate-grid strong,
+.booking-summary-drawer-grid strong {
+    margin-top: 0.25rem;
+    font-size: 0.98rem;
+    font-weight: 950;
+    letter-spacing: -0.04em;
+}
+
+.booking-hotel-selected-details {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.booking-hotel-pill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.55rem;
+}
+
+.booking-hotel-pill-grid span {
+    border-color: var(--bccc-resort-line);
+    background: rgba(185, 146, 75, 0.08);
+    color: var(--bccc-resort-muted);
+}
+
+.dark .booking-hotel-pill-grid span {
+    background: rgba(185, 146, 75, 0.1);
+}
+
+.booking-hotel-bottom-panel {
+    display: grid;
+    gap: 0.85rem;
+    border-radius: var(--bccc-resort-radius);
+    border: 1px solid var(--bccc-resort-line);
+    background: rgba(255, 255, 255, 0.42);
+    padding: 1rem;
+}
+
+.dark .booking-hotel-bottom-panel {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.booking-hotel-usage-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+}
+
+.backend-usage-card {
+    min-height: 6.2rem;
+    border-radius: 1.3rem;
+    border: 1px solid var(--bccc-resort-line);
+    background: rgba(255, 255, 255, 0.46);
+    padding: 0.9rem;
+    color: var(--bccc-resort-ink);
+    text-align: left;
+    transition: 0.22s ease;
+}
+
+.dark .backend-usage-card {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.backend-usage-card:hover,
+.backend-usage-card.is-selected {
+    transform: translateY(-2px);
+    border-color: rgba(185, 146, 75, 0.36);
+    background: rgba(185, 146, 75, 0.13);
+}
+
+.booking-hotel-booking-controls {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.7rem;
+    align-items: end;
+}
+
+.booking-wizard-field {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 0;
+}
+
+.booking-check-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 4.2rem;
+    cursor: pointer;
+}
+
+.booking-check-card input {
+    width: 1.05rem;
+    height: 1.05rem;
+    accent-color: var(--bccc-resort-gold-strong);
+}
+
+.booking-field-carousel {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.booking-fit-card .text-muted-foreground,
+.booking-guideline-card .text-muted-foreground,
+.booking-review-card .text-muted-foreground,
+.text-muted-foreground {
+    color: var(--bccc-resort-muted) !important;
+}
+
+.booking-guideline-carousel,
+.booking-review-carousel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+}
+
+.booking-review-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.booking-file,
+.backend-booking-file {
+    width: 100%;
+    min-height: 3rem;
+    border-radius: 1rem;
+    border: 1px dashed rgba(185, 146, 75, 0.34);
+    background: rgba(255, 255, 255, 0.4);
+    padding: 0.72rem;
+    color: var(--bccc-resort-muted);
+}
+
+.dark .booking-file,
+.dark .backend-booking-file {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.booking-wizard-footer {
+    position: sticky;
+    bottom: 1rem;
+    z-index: 38;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--bccc-resort-line);
+    background: rgba(248, 240, 223, 0.78);
+    padding: 0.55rem;
+    box-shadow: var(--bccc-resort-shadow);
+    backdrop-filter: blur(18px);
+}
+
+.dark .booking-wizard-footer {
+    background: rgba(17, 16, 13, 0.82);
+}
+
+.booking-summary-side-tab {
+    position: fixed;
+    right: 1rem;
+    top: 50%;
+    z-index: 45;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    transform: translateY(-50%) rotate(-90deg) translateY(-3.4rem);
+    transform-origin: center;
+    border-radius: 999px;
+    border: 1px solid rgba(185, 146, 75, 0.34);
+    background: linear-gradient(135deg, #8f6423, #b9924b);
+    padding: 0.62rem 0.9rem;
+    color: #fff9ec;
+    font-size: 0.78rem;
+    font-weight: 950;
+    box-shadow: 0 16px 42px rgba(143, 100, 35, 0.24);
+}
+
+.booking-summary-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    display: flex;
+    justify-content: flex-end;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+}
+
+.booking-summary-drawer.is-open {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.booking-summary-drawer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(3px);
+}
+
+.booking-summary-drawer-card {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 27rem);
+    height: calc(100% - 2rem);
+    margin: 1rem;
+    overflow-y: auto;
+    padding: 1rem;
+    transform: translateX(2rem);
+    transition: transform 0.24s ease;
+}
+
+.booking-summary-drawer.is-open .booking-summary-drawer-card {
+    transform: translateX(0);
+}
+
+.booking-summary-drawer-header,
+.booking-digital-form-topbar {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.booking-summary-drawer-header h3,
+.booking-digital-form-topbar h3 {
+    margin-top: 0.25rem;
+    font-size: 1.2rem;
+    font-weight: 950;
+    letter-spacing: -0.04em;
+}
+
+.booking-summary-close {
+    display: inline-flex;
+    width: 2.35rem;
+    height: 2.35rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid var(--bccc-resort-line);
+    background: rgba(255, 255, 255, 0.42);
+}
+
+.dark .booking-summary-close {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.booking-summary-drawer-grid {
+    grid-template-columns: 1fr;
+    margin-top: 1rem;
+}
+
+.booking-summary-actions {
+    margin-top: 1rem;
+}
+
+.booking-digital-form-panel {
+    position: fixed;
+    inset: 1rem;
+    z-index: 100;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    padding: 1rem;
+}
+
+.booking-digital-form-scroll {
+    min-height: 0;
+    overflow-y: auto;
+    padding-top: 1rem;
+}
+
+.booking-wizard-notice {
+    display: flex;
+    gap: 0.75rem;
+    border-radius: 1.35rem;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.08);
+    padding: 1rem;
+    color: #b91c1c;
+}
+
+.dark .booking-wizard-notice {
+    color: #fecaca;
+}
+
+.booking-form-loading-layer,
+.backend-route-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 130;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    pointer-events: none;
+    opacity: 0;
+    background: rgba(17, 16, 13, 0.12);
+    backdrop-filter: blur(2px);
+    transition: opacity 0.22s ease;
+}
+
+.booking-form-loading-layer.is-visible,
+.backend-route-overlay.is-visible {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.booking-form-loading-card,
+.backend-route-loader-card {
+    display: flex;
+    width: min(100%, 25rem);
+    align-items: center;
+    gap: 0.85rem;
+    border-radius: 1.5rem;
+    border: 1px solid var(--bccc-resort-line);
+    background: var(--bccc-resort-panel-solid);
+    padding: 1rem;
+    color: var(--bccc-resort-ink);
+    box-shadow: var(--bccc-resort-shadow);
+}
+
+.dark .booking-form-loading-card,
+.dark .backend-route-loader-card {
+    background: #171511;
+}
+
+.backend-route-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 140;
+    height: 3px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.backend-route-progress.is-active {
+    opacity: 1;
+}
+
+.backend-route-progress-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #8f6423, #b9924b, #e8d8b5);
+    transition: width 0.18s ease;
+}
+
+@keyframes bccc-feedback-progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* Normalize table-based old modules without redesigning every file yet. */
+.backend-booking-card table,
+.backend-admin-card table,
+.bccc-workspace-content table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.backend-booking-card th,
+.backend-booking-card td,
+.backend-admin-card th,
+.backend-admin-card td,
+.bccc-workspace-content th,
+.bccc-workspace-content td {
+    border-color: var(--bccc-resort-line) !important;
+}
+
+.backend-booking-card th,
+.backend-admin-card th,
+.bccc-workspace-content th {
+    color: var(--bccc-resort-muted) !important;
+    font-size: 0.68rem !important;
+    font-weight: 950 !important;
+    letter-spacing: 0.16em !important;
+    text-transform: uppercase !important;
+}
+
+.backend-booking-row:hover,
+.bccc-workspace-content tbody tr:hover {
+    background: rgba(185, 146, 75, 0.06) !important;
+}
+
+@media (max-width: 1280px) {
+    .bccc-backend-nav {
+        display: none;
+    }
+
+    .bccc-backend-mobile-trigger {
+        display: inline-flex;
+    }
+
+    .bccc-backend-topbar-inner {
+        grid-template-columns: minmax(180px, auto) 1fr;
+    }
+}
+
+@media (max-width: 1180px) {
+    .booking-lux-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .booking-lux-record-card {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-lux-record-details {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .booking-lux-record-actions {
+        justify-content: flex-start;
+    }
+
+    .booking-lux-filter-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .booking-lux-search-field,
+    .booking-lux-filter-actions {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 980px) {
+    .bccc-backend-topbar-inner,
+    .bccc-backend-crumbbar,
+    .bccc-backend-main {
+        width: min(100% - 1rem, 1680px);
+    }
+
+    .bccc-backend-topbar-inner {
+        min-height: 4.2rem;
+    }
+
+    .bccc-backend-brand-subtitle,
+    .bccc-backend-breadcrumbs,
+    .bccc-backend-crumbbar {
+        display: none;
+    }
+
+    .bccc-workspace-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .bccc-workspace-hero-media {
+        min-height: 12rem;
+    }
+
+    .bccc-workspace-actions {
+        position: static;
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+    }
+
+    .booking-wizard-toolbar {
+        top: 4.5rem;
+        align-items: stretch;
+        border-radius: 1.45rem;
+    }
+
+    .booking-digital-form-button {
+        display: none !important;
+    }
+
+    .booking-field-carousel,
+    .booking-guideline-carousel,
+    .booking-review-carousel,
+    .booking-hotel-booking-controls {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .bccc-backend-actions > .bccc-backend-round-button,
+    .bccc-backend-actions > [data-slot='button'] {
+        display: none !important;
+    }
+
+    .bccc-backend-brand-logo {
+        width: 2.65rem;
+        height: 2.65rem;
+    }
+
+    .bccc-backend-brand-title {
+        font-size: 0.86rem;
+    }
+
+    .bccc-workspace-hero {
+        border-radius: 1.35rem;
+        padding: 1rem;
+    }
+
+    .bccc-workspace-hero h1 {
+        font-size: clamp(2rem, 15vw, 3.6rem);
+    }
+
+    .booking-lux-kpi-grid,
+    .booking-lux-filter-grid,
+    .booking-lux-record-details,
+    .booking-hotel-usage-strip,
+    .booking-hotel-rate-grid,
+    .booking-review-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .booking-lux-filter-heading,
+    .booking-hotel-header,
+    .booking-wizard-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .booking-lux-filter-actions,
+    .booking-wizard-footer > div {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+
+    .booking-lux-record-details > div {
+        border-left: 0;
+        border-top: 1px solid var(--bccc-resort-line);
+        padding-left: 0;
+        padding-top: 0.75rem;
+    }
+
+    .booking-hotel-carousel {
+        grid-auto-columns: minmax(84vw, 1fr);
+    }
+
+    .booking-hotel-card {
+        min-height: 31rem;
+    }
+
+    .booking-wizard-toolbar,
+    .booking-wizard-footer {
+        border-radius: 1.25rem;
+    }
+
+    .booking-summary-side-tab {
+        right: 0.35rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+.backend-booking-page {
+    --booking-gold: #b98b4b;
+    --booking-brown: #8a5a2b;
+    --booking-cream: #fbf4e8;
+}
+
+.backend-booking-page input,
+.backend-booking-page select,
+.backend-booking-page textarea {
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        background-color 160ms ease;
+}
+
+.backend-booking-page input:focus,
+.backend-booking-page select:focus,
+.backend-booking-page textarea:focus {
+    box-shadow: 0 0 0 4px rgba(185, 139, 75, 0.16);
+}
+
+.backend-booking-page img {
+    image-rendering: auto;
+}
+
+.backend-booking-page ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+.backend-booking-page {
+    scrollbar-width: none;
+}
+
+@media (max-width: 768px) {
+    .backend-booking-page {
+        padding-inline: 0;
+    }
+
+    .backend-booking-page h2 {
+        word-break: break-word;
+    }
+}

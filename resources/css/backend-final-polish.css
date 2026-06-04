@@ -1,0 +1,314 @@
+@layer components {
+    /* =========================================================
+       FINAL BACKEND SAFETY SCOPE
+       Only backend pages are affected.
+       Public display is untouched.
+       ========================================================= */
+
+    .backend-page-frame {
+        min-width: 0;
+        overflow-x: hidden;
+    }
+
+    .backend-page-shell,
+    .backend-admin-page,
+    .backend-booking-page {
+        min-width: 0;
+    }
+
+    .backend-page-shell * {
+        box-sizing: border-box;
+    }
+
+    .backend-page-container {
+        min-width: 0;
+    }
+
+    .backend-page-content > *,
+    .backend-admin-page > *,
+    .backend-booking-page > * {
+        min-width: 0;
+    }
+
+    /* =========================================================
+       FINAL CARD RHYTHM
+       ========================================================= */
+
+    .backend-admin-card,
+    .backend-booking-card,
+    .backend-dashboard-section,
+    .backend-kpi-card,
+    .backend-action-card,
+    .backend-page-hero {
+        overflow-wrap: anywhere;
+    }
+
+    .backend-admin-card,
+    .backend-booking-card,
+    .backend-dashboard-section {
+        border-radius: 1.5rem;
+    }
+
+    .backend-admin-card > [data-slot='card-header'],
+    .backend-booking-card > [data-slot='card-header'],
+    .backend-dashboard-section > [data-slot='card-header'] {
+        padding: 1.25rem;
+    }
+
+    .backend-admin-card > [data-slot='card-content'],
+    .backend-booking-card > [data-slot='card-content'],
+    .backend-dashboard-section > [data-slot='card-content'] {
+        padding: 1.25rem;
+    }
+
+    @media (min-width: 768px) {
+        .backend-admin-card > [data-slot='card-header'],
+        .backend-booking-card > [data-slot='card-header'],
+        .backend-dashboard-section > [data-slot='card-header'] {
+            padding: 1.5rem;
+        }
+
+        .backend-admin-card > [data-slot='card-content'],
+        .backend-booking-card > [data-slot='card-content'],
+        .backend-dashboard-section > [data-slot='card-content'] {
+            padding: 1.5rem;
+        }
+    }
+
+    .backend-admin-card.overflow-hidden > [data-slot='card-content'].p-0,
+    .backend-booking-card.overflow-hidden > [data-slot='card-content'].p-0 {
+        padding: 0;
+    }
+
+    /* =========================================================
+       FINAL BUTTON POLISH
+       ========================================================= */
+
+    .backend-admin-shortcut {
+        font-weight: 800;
+    }
+
+    .backend-admin-page button,
+    .backend-admin-page a,
+    .backend-booking-page button,
+    .backend-booking-page a {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .backend-admin-page .rounded-full,
+    .backend-booking-page .rounded-full {
+        white-space: nowrap;
+    }
+
+    /* =========================================================
+       FINAL TABLE/LIST POLISH
+       ========================================================= */
+
+    .backend-admin-page table,
+    .backend-booking-page table {
+        width: 100%;
+    }
+
+    .backend-admin-page th,
+    .backend-booking-page th {
+        color: hsl(var(--muted-foreground));
+        font-size: 0.75rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .backend-admin-page td,
+    .backend-booking-page td {
+        vertical-align: middle;
+    }
+
+    .backend-admin-page .divide-y > *,
+    .backend-booking-page .divide-y > * {
+        border-color: hsl(var(--border));
+    }
+
+    .dark .backend-admin-page .divide-y > *,
+    .dark .backend-booking-page .divide-y > * {
+        border-color: rgb(255 255 255 / 0.1);
+    }
+
+    /* =========================================================
+       /admin/content NORMALIZER
+       This catches old light cards inside the content manager only.
+       ========================================================= */
+
+    .backend-admin-content-normalizer {
+        color: hsl(var(--foreground));
+    }
+
+    .backend-admin-content-normalizer .bg-white,
+    .backend-admin-content-normalizer .bg-gray-50,
+    .backend-admin-content-normalizer .bg-gray-100,
+    .backend-admin-content-normalizer .bg-slate-50,
+    .backend-admin-content-normalizer .bg-slate-100,
+    .backend-admin-content-normalizer .bg-stone-50,
+    .backend-admin-content-normalizer .bg-stone-100,
+    .backend-admin-content-normalizer .bg-neutral-50,
+    .backend-admin-content-normalizer .bg-neutral-100 {
+        background: hsl(var(--card)) !important;
+        color: hsl(var(--card-foreground)) !important;
+        border-color: hsl(var(--border)) !important;
+    }
+
+    .dark .backend-admin-content-normalizer .bg-white,
+    .dark .backend-admin-content-normalizer .bg-gray-50,
+    .dark .backend-admin-content-normalizer .bg-gray-100,
+    .dark .backend-admin-content-normalizer .bg-slate-50,
+    .dark .backend-admin-content-normalizer .bg-slate-100,
+    .dark .backend-admin-content-normalizer .bg-stone-50,
+    .dark .backend-admin-content-normalizer .bg-stone-100,
+    .dark .backend-admin-content-normalizer .bg-neutral-50,
+    .dark .backend-admin-content-normalizer .bg-neutral-100 {
+        background:
+            radial-gradient(
+                circle at top left,
+                rgb(255 255 255 / 0.045),
+                transparent 36%
+            ),
+            rgb(255 255 255 / 0.055) !important;
+        color: hsl(var(--foreground)) !important;
+        border-color: rgb(255 255 255 / 0.1) !important;
+    }
+
+    .backend-admin-content-normalizer .text-black,
+    .backend-admin-content-normalizer .text-gray-900,
+    .backend-admin-content-normalizer .text-gray-800,
+    .backend-admin-content-normalizer .text-slate-900,
+    .backend-admin-content-normalizer .text-slate-800,
+    .backend-admin-content-normalizer .text-stone-900,
+    .backend-admin-content-normalizer .text-stone-800,
+    .backend-admin-content-normalizer .text-neutral-900,
+    .backend-admin-content-normalizer .text-neutral-800 {
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .backend-admin-content-normalizer .text-gray-700,
+    .backend-admin-content-normalizer .text-gray-600,
+    .backend-admin-content-normalizer .text-slate-700,
+    .backend-admin-content-normalizer .text-slate-600,
+    .backend-admin-content-normalizer .text-stone-700,
+    .backend-admin-content-normalizer .text-stone-600,
+    .backend-admin-content-normalizer .text-neutral-700,
+    .backend-admin-content-normalizer .text-neutral-600 {
+        color: hsl(var(--muted-foreground)) !important;
+    }
+
+    .backend-admin-content-normalizer .text-gray-500,
+    .backend-admin-content-normalizer .text-gray-400,
+    .backend-admin-content-normalizer .text-slate-500,
+    .backend-admin-content-normalizer .text-slate-400,
+    .backend-admin-content-normalizer .text-stone-500,
+    .backend-admin-content-normalizer .text-stone-400,
+    .backend-admin-content-normalizer .text-neutral-500,
+    .backend-admin-content-normalizer .text-neutral-400 {
+        color: hsl(var(--muted-foreground) / 0.8) !important;
+    }
+
+    .backend-admin-content-normalizer .border-gray-200,
+    .backend-admin-content-normalizer .border-gray-300,
+    .backend-admin-content-normalizer .border-slate-200,
+    .backend-admin-content-normalizer .border-slate-300,
+    .backend-admin-content-normalizer .border-stone-200,
+    .backend-admin-content-normalizer .border-stone-300,
+    .backend-admin-content-normalizer .border-neutral-200,
+    .backend-admin-content-normalizer .border-neutral-300 {
+        border-color: hsl(var(--border)) !important;
+    }
+
+    .backend-admin-content-normalizer input,
+    .backend-admin-content-normalizer select,
+    .backend-admin-content-normalizer textarea {
+        border-color: hsl(var(--border)) !important;
+        background: hsl(var(--background)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .backend-admin-content-normalizer input:focus,
+    .backend-admin-content-normalizer select:focus,
+    .backend-admin-content-normalizer textarea:focus {
+        border-color: rgb(201 169 106 / 0.6) !important;
+        box-shadow: 0 0 0 4px rgb(201 169 106 / 0.12) !important;
+    }
+
+    .backend-admin-content-normalizer input::placeholder,
+    .backend-admin-content-normalizer textarea::placeholder {
+        color: hsl(var(--muted-foreground)) !important;
+    }
+
+    /* =========================================================
+       FINAL RESPONSIVE POLISH
+       ========================================================= */
+
+    @media (max-width: 768px) {
+        .backend-page-container {
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .backend-admin-page,
+        .backend-booking-page {
+            gap: 1rem;
+        }
+
+        .backend-page-hero,
+        .backend-admin-card,
+        .backend-booking-card,
+        .backend-dashboard-section,
+        .backend-kpi-card,
+        .backend-action-card {
+            border-radius: 1.25rem;
+        }
+
+        .backend-admin-page .flex-wrap,
+        .backend-booking-page .flex-wrap {
+            row-gap: 0.5rem;
+        }
+
+        .backend-admin-page .rounded-full,
+        .backend-booking-page .rounded-full {
+            white-space: normal;
+        }
+    }
+
+    /* =========================================================
+       OLD STYLE NEUTRALIZER
+       Keep this only during transition. Once old classes are deleted,
+       this section can also be removed.
+       ========================================================= */
+
+    .backend-page-shell .bk-lux-root,
+    .backend-page-shell .bk-role-admin,
+    .backend-page-shell .bk-role-manager,
+    .backend-page-shell .bk-role-staff,
+    .backend-page-shell .bk-role-user,
+    .backend-page-shell .ease-role-shell {
+        color: hsl(var(--foreground)) !important;
+    }
+
+    .backend-page-shell .bk-section-card,
+    .backend-page-shell .bk-side-panel,
+    .backend-page-shell .bk-venue-section,
+    .backend-page-shell .booking-lux-card,
+    .backend-page-shell .booking-hero-shell {
+        border-color: hsl(var(--border)) !important;
+        background: hsl(var(--card)) !important;
+        color: hsl(var(--card-foreground)) !important;
+        box-shadow: 0 16px 44px rgb(15 23 42 / 0.055) !important;
+    }
+
+    .dark .backend-page-shell .bk-section-card,
+    .dark .backend-page-shell .bk-side-panel,
+    .dark .backend-page-shell .bk-venue-section,
+    .dark .backend-page-shell .booking-lux-card,
+    .dark .backend-page-shell .booking-hero-shell {
+        border-color: rgb(255 255 255 / 0.1) !important;
+        background: rgb(255 255 255 / 0.055) !important;
+        box-shadow: 0 18px 50px rgb(0 0 0 / 0.18) !important;
+    }
+}

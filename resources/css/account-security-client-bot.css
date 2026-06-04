@@ -1,0 +1,1823 @@
+/* =========================================================
+   BCCC EASE — Account security + client system bot polish
+   ========================================================= */
+
+   .bccc-client-assistant {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 99970;
+    display: grid;
+    gap: 0.75rem;
+    justify-items: end;
+    pointer-events: none;
+}
+
+.bccc-client-assistant > * {
+    pointer-events: auto;
+}
+
+.bccc-client-assistant-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 3.35rem;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 999px;
+    padding: 0.45rem 0.95rem 0.45rem 0.45rem;
+    background: linear-gradient(135deg, #0b2421, #112d2a 52%, #2f2618);
+    color: white;
+    box-shadow: 0 22px 60px rgb(0 0 0 / 0.28);
+    backdrop-filter: blur(18px);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.bccc-client-assistant-tab:hover {
+    transform: translateY(-2px);
+    border-color: rgb(244 216 148 / 0.48);
+    box-shadow: 0 28px 80px rgb(0 0 0 / 0.34);
+}
+
+.bccc-client-assistant-tab-icon {
+    display: grid;
+    height: 2.45rem;
+    width: 2.45rem;
+    place-items: center;
+    border-radius: 999px;
+    background: rgb(125 215 198 / 0.15);
+    color: #7dd7c6;
+}
+
+.bccc-client-assistant-tab-text {
+    display: grid;
+    gap: 0.05rem;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.bccc-client-assistant-tab-text small {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgb(255 255 255 / 0.58);
+}
+
+.bccc-client-assistant-panel {
+    width: min(26rem, calc(100vw - 1.5rem));
+    max-height: min(42rem, calc(100dvh - 6rem));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid rgb(15 23 42 / 0.08);
+    border-radius: 1.5rem;
+    background: rgb(255 255 255 / 0.96);
+    box-shadow: 0 30px 95px rgb(15 23 42 / 0.22);
+    backdrop-filter: blur(22px);
+}
+
+.dark .bccc-client-assistant-panel {
+    border-color: rgb(255 255 255 / 0.1);
+    background: rgb(10 13 18 / 0.96);
+    box-shadow: 0 34px 105px rgb(0 0 0 / 0.45);
+}
+
+.bccc-client-assistant-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid rgb(15 23 42 / 0.08);
+    padding: 0.9rem;
+}
+
+.dark .bccc-client-assistant-header {
+    border-bottom-color: rgb(255 255 255 / 0.09);
+}
+
+.bccc-client-assistant-avatar {
+    display: grid;
+    height: 2.6rem;
+    width: 2.6rem;
+    place-items: center;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #0b2421, #176456);
+    color: #7dd7c6;
+    box-shadow: 0 16px 35px rgb(23 100 86 / 0.25);
+}
+
+.bccc-client-assistant-icon-button {
+    display: grid;
+    height: 2.1rem;
+    width: 2.1rem;
+    place-items: center;
+    border-radius: 0.8rem;
+    color: rgb(71 85 105);
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.bccc-client-assistant-icon-button:hover {
+    background: rgb(15 23 42 / 0.07);
+    color: rgb(15 23 42);
+}
+
+.dark .bccc-client-assistant-icon-button {
+    color: rgb(255 255 255 / 0.58);
+}
+
+.dark .bccc-client-assistant-icon-button:hover {
+    background: rgb(255 255 255 / 0.08);
+    color: white;
+}
+
+.bccc-client-assistant-notice {
+    margin: 0.75rem 0.9rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgb(214 176 92 / 0.22);
+    border-radius: 1rem;
+    background: rgb(214 176 92 / 0.1);
+    padding: 0.65rem 0.75rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #76551f;
+}
+
+.dark .bccc-client-assistant-notice {
+    color: #f4d894;
+    background: rgb(244 216 148 / 0.08);
+    border-color: rgb(244 216 148 / 0.16);
+}
+
+.bccc-client-assistant-messages {
+    min-height: 13rem;
+    flex: 1;
+    overflow-y: auto;
+    display: grid;
+    align-content: start;
+    gap: 0.65rem;
+    padding: 0.9rem;
+    scrollbar-width: thin;
+}
+
+.bccc-client-chat-bubble {
+    max-width: 92%;
+    border-radius: 1.1rem;
+    padding: 0.72rem 0.82rem;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+}
+
+.bccc-client-chat-bubble p + p {
+    margin-top: 0.45rem;
+}
+
+.bccc-client-chat-bubble.is-bot {
+    justify-self: start;
+    border: 1px solid rgb(15 23 42 / 0.07);
+    background: rgb(248 250 252);
+    color: rgb(51 65 85);
+}
+
+.dark .bccc-client-chat-bubble.is-bot {
+    border-color: rgb(255 255 255 / 0.08);
+    background: rgb(255 255 255 / 0.06);
+    color: rgb(226 232 240);
+}
+
+.bccc-client-chat-bubble.is-user {
+    justify-self: end;
+    background: #0b2421;
+    color: white;
+    box-shadow: 0 14px 35px rgb(11 36 33 / 0.22);
+}
+
+.bccc-client-chat-bubble.is-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #176456;
+    font-weight: 800;
+}
+
+.dark .bccc-client-chat-bubble.is-loading {
+    color: #7dd7c6;
+}
+
+.bccc-client-assistant-suggestions {
+    display: flex;
+    gap: 0.45rem;
+    overflow-x: auto;
+    padding: 0 0.9rem 0.75rem;
+    scrollbar-width: none;
+}
+
+.bccc-client-assistant-suggestions::-webkit-scrollbar {
+    display: none;
+}
+
+.bccc-client-assistant-suggestions button {
+    flex: 0 0 auto;
+    border: 1px solid rgb(15 23 42 / 0.08);
+    border-radius: 999px;
+    background: white;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: rgb(71 85 105);
+    text-transform: uppercase;
+}
+
+.dark .bccc-client-assistant-suggestions button {
+    border-color: rgb(255 255 255 / 0.09);
+    background: rgb(255 255 255 / 0.05);
+    color: rgb(255 255 255 / 0.7);
+}
+
+.bccc-client-assistant-form {
+    display: flex;
+    gap: 0.5rem;
+    border-top: 1px solid rgb(15 23 42 / 0.08);
+    padding: 0.75rem;
+}
+
+.dark .bccc-client-assistant-form {
+    border-top-color: rgb(255 255 255 / 0.09);
+}
+
+.bccc-client-assistant-form input {
+    min-width: 0;
+    flex: 1;
+    border: 1px solid rgb(15 23 42 / 0.1);
+    border-radius: 1rem;
+    background: rgb(248 250 252);
+    padding: 0.72rem 0.82rem;
+    font-size: 0.82rem;
+    color: rgb(15 23 42);
+    outline: none;
+}
+
+.bccc-client-assistant-form input:focus {
+    border-color: rgb(23 100 86 / 0.42);
+    box-shadow: 0 0 0 4px rgb(125 215 198 / 0.15);
+}
+
+.dark .bccc-client-assistant-form input {
+    border-color: rgb(255 255 255 / 0.1);
+    background: rgb(255 255 255 / 0.06);
+    color: white;
+}
+
+.bccc-client-assistant-form button {
+    display: grid;
+    width: 2.8rem;
+    place-items: center;
+    border-radius: 1rem;
+    background: #0b2421;
+    color: white;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.bccc-client-assistant-form button:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+.bccc-client-assistant-form button:disabled {
+    opacity: 0.5;
+}
+
+.bccc-client-assistant-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0 0.75rem 0.75rem;
+}
+
+.bccc-client-assistant-footer a {
+    display: inline-flex;
+    min-height: 2.15rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border-radius: 0.9rem;
+    background: rgb(15 23 42 / 0.05);
+    font-size: 0.72rem;
+    font-weight: 900;
+    color: rgb(51 65 85);
+}
+
+.dark .bccc-client-assistant-footer a {
+    background: rgb(255 255 255 / 0.06);
+    color: rgb(255 255 255 / 0.72);
+}
+
+.account-security-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 2rem;
+    border: 1px solid rgb(15 23 42 / 0.08);
+    background:
+        radial-gradient(circle at 12% 12%, rgb(125 215 198 / 0.22), transparent 32%),
+        linear-gradient(135deg, rgb(255 255 255 / 0.98), rgb(244 241 232 / 0.94));
+    box-shadow: 0 22px 70px rgb(15 23 42 / 0.08);
+}
+
+.dark .account-security-hero {
+    border-color: rgb(255 255 255 / 0.1);
+    background:
+        radial-gradient(circle at 12% 12%, rgb(125 215 198 / 0.16), transparent 32%),
+        linear-gradient(135deg, rgb(10 13 18 / 0.98), rgb(18 19 24 / 0.94));
+}
+
+.account-security-device-card {
+    border-radius: 1.5rem;
+    border: 1px solid rgb(15 23 42 / 0.08);
+    background: rgb(255 255 255 / 0.88);
+    box-shadow: 0 18px 50px rgb(15 23 42 / 0.06);
+}
+
+.dark .account-security-device-card {
+    border-color: rgb(255 255 255 / 0.1);
+    background: rgb(255 255 255 / 0.05);
+}
+
+@media (max-width: 640px) {
+    .bccc-client-assistant {
+        right: 0.75rem;
+        bottom: 0.75rem;
+    }
+
+    .bccc-client-assistant-panel {
+        width: calc(100vw - 1.5rem);
+        max-height: calc(100dvh - 5.5rem);
+        border-radius: 1.25rem;
+    }
+
+    .bccc-client-assistant-tab-text {
+        display: none;
+    }
+
+    .bccc-client-assistant-tab {
+        padding: 0.45rem;
+    }
+}
+
+/* Polished assistant intelligence states */
+.bccc-client-assistant-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding: 0.7rem 0.9rem 0;
+}
+
+.bccc-client-assistant-strip span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 1px solid rgb(23 100 86 / 0.12);
+    border-radius: 999px;
+    background: rgb(23 100 86 / 0.06);
+    padding: 0.35rem 0.55rem;
+    font-size: 0.65rem;
+    font-weight: 900;
+    letter-spacing: 0.07em;
+    color: #176456;
+    text-transform: uppercase;
+}
+
+.dark .bccc-client-assistant-strip span {
+    border-color: rgb(125 215 198 / 0.18);
+    background: rgb(125 215 198 / 0.08);
+    color: #7dd7c6;
+}
+
+.bccc-client-chat-meta {
+    margin-bottom: 0.38rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.58rem;
+    font-weight: 950;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: #176456;
+}
+
+.bccc-client-chat-meta span,
+.bccc-client-chat-meta small {
+    display: inline-flex;
+    border-radius: 999px;
+    background: rgb(23 100 86 / 0.08);
+    padding: 0.2rem 0.42rem;
+}
+
+.bccc-client-chat-meta small {
+    background: rgb(214 176 92 / 0.12);
+    color: #76551f;
+}
+
+.dark .bccc-client-chat-meta {
+    color: #7dd7c6;
+}
+
+.dark .bccc-client-chat-meta span {
+    background: rgb(125 215 198 / 0.1);
+}
+
+.dark .bccc-client-chat-meta small {
+    background: rgb(244 216 148 / 0.1);
+    color: #f4d894;
+}
+
+.bccc-client-assistant-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 0.28rem;
+    background: linear-gradient(90deg, #7dd7c6, #f4d894, #176456);
+}
+
+.bccc-client-assistant-panel {
+    position: relative;
+}
+
+.bccc-client-assistant-messages {
+    scroll-behavior: smooth;
+}
+
+.bccc-client-assistant-suggestions button:hover:not(:disabled) {
+    border-color: rgb(23 100 86 / 0.28);
+    color: #176456;
+    transform: translateY(-1px);
+}
+
+.dark .bccc-client-assistant-suggestions button:hover:not(:disabled) {
+    border-color: rgb(125 215 198 / 0.28);
+    color: #7dd7c6;
+}
+
+@media (max-width: 480px) {
+    .bccc-client-assistant-panel {
+        max-height: calc(100dvh - 4.75rem);
+    }
+
+    .bccc-client-assistant-strip {
+        padding-inline: 0.75rem;
+    }
+
+    .bccc-client-assistant-strip span {
+        font-size: 0.58rem;
+    }
+
+    .bccc-client-assistant-messages {
+        min-height: 11rem;
+        padding-inline: 0.75rem;
+    }
+
+    .bccc-client-chat-bubble {
+        max-width: 96%;
+        font-size: 0.78rem;
+    }
+}
+
+/* =========================================================
+   Global Messenger-style System Bot
+   - fixed on every Inertia page from app.tsx
+   - closed by default as the bottom-right tab
+   - chat opens as a compact Messenger-like window
+   ========================================================= */
+.bccc-client-assistant {
+    right: max(1.15rem, env(safe-area-inset-right)) !important;
+    bottom: max(1.15rem, env(safe-area-inset-bottom)) !important;
+    z-index: 2147483000 !important;
+}
+
+.bccc-client-assistant-panel {
+    width: min(23.25rem, calc(100vw - 1.15rem)) !important;
+    max-height: min(40.5rem, calc(100dvh - 5.5rem)) !important;
+    overflow: hidden !important;
+    border: 1px solid rgb(255 255 255 / 0.28) !important;
+    border-radius: 1.1rem 1.1rem 0.72rem 0.72rem !important;
+    background: #102a56 !important;
+    box-shadow: 0 28px 90px rgb(0 0 0 / 0.34) !important;
+    isolation: isolate;
+    transform-origin: bottom right;
+}
+
+.bccc-client-assistant-panel::before {
+    display: none !important;
+}
+
+.bccc-client-assistant-header {
+    min-height: 3.25rem;
+    border-bottom: 0 !important;
+    background: linear-gradient(135deg, #6da2ff, #6c91f3 48%, #6f7fea) !important;
+    padding: 0.62rem 0.72rem !important;
+    color: white !important;
+}
+
+.bccc-client-assistant-avatar {
+    height: 2.22rem !important;
+    width: 2.22rem !important;
+    border: 2px solid rgb(255 255 255 / 0.9) !important;
+    border-radius: 999px !important;
+    background: radial-gradient(circle at 35% 28%, #fff8e6 0 18%, #25405f 19% 44%, #0d1b2b 45% 100%) !important;
+    color: #f4d894 !important;
+    box-shadow: 0 10px 28px rgb(0 0 0 / 0.22) !important;
+}
+
+.bccc-client-assistant-icon-button {
+    height: 1.9rem !important;
+    width: 1.9rem !important;
+    border-radius: 999px !important;
+    color: white !important;
+}
+
+.bccc-client-assistant-icon-button:hover {
+    background: rgb(255 255 255 / 0.16) !important;
+    color: white !important;
+}
+
+.bccc-client-assistant-conversation {
+    position: relative;
+    min-height: 18rem;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 15% 15%, rgb(255 129 92 / 0.42), transparent 0.9rem),
+        radial-gradient(circle at 76% 20%, rgb(255 163 93 / 0.36), transparent 1.2rem),
+        radial-gradient(circle at 17% 62%, rgb(255 180 85 / 0.34), transparent 1.4rem),
+        radial-gradient(circle at 89% 72%, rgb(255 145 64 / 0.3), transparent 1.1rem),
+        linear-gradient(180deg, #29206b 0%, #173d66 48%, #0e4163 100%);
+}
+
+.bccc-client-assistant-conversation::before,
+.bccc-client-assistant-conversation::after {
+    content: '✽ ✿ ✽ ✿ ✽ ✿ ✽';
+    position: absolute;
+    inset-inline: 0;
+    pointer-events: none;
+    color: rgb(255 148 90 / 0.72);
+    font-size: 1.1rem;
+    letter-spacing: 1.25rem;
+    white-space: nowrap;
+    opacity: 0.6;
+    transform: rotate(-8deg);
+}
+
+.bccc-client-assistant-conversation::before {
+    top: 2.3rem;
+    left: 0.55rem;
+}
+
+.bccc-client-assistant-conversation::after {
+    right: -1rem;
+    bottom: 1.6rem;
+    color: rgb(255 194 97 / 0.6);
+    transform: rotate(10deg);
+}
+
+.bccc-client-assistant-strip {
+    position: relative;
+    z-index: 1;
+    padding: 0.55rem 0.65rem 0 !important;
+}
+
+.bccc-client-assistant-strip span {
+    border-color: rgb(255 255 255 / 0.16) !important;
+    background: rgb(0 0 0 / 0.18) !important;
+    color: rgb(255 255 255 / 0.82) !important;
+    backdrop-filter: blur(10px);
+}
+
+.bccc-client-assistant-notice {
+    position: relative;
+    z-index: 1;
+    margin: 0.55rem 0.65rem 0 !important;
+    border-color: rgb(255 255 255 / 0.18) !important;
+    background: rgb(11 22 54 / 0.62) !important;
+    color: rgb(255 255 255 / 0.9) !important;
+    box-shadow: 0 12px 30px rgb(0 0 0 / 0.14);
+    backdrop-filter: blur(12px);
+}
+
+.bccc-client-assistant-messages {
+    position: relative;
+    z-index: 1;
+    min-height: 18rem !important;
+    padding: 0.72rem 0.65rem 0.8rem !important;
+}
+
+.bccc-client-chat-bubble {
+    max-width: 88% !important;
+    border-radius: 1.12rem !important;
+    padding: 0.62rem 0.74rem !important;
+    font-size: 0.78rem !important;
+    line-height: 1.48 !important;
+    box-shadow: 0 10px 26px rgb(0 0 0 / 0.13);
+}
+
+.bccc-client-chat-bubble.is-bot {
+    border: 0 !important;
+    border-bottom-left-radius: 0.35rem !important;
+    background: rgb(255 255 255 / 0.94) !important;
+    color: #1e293b !important;
+}
+
+.dark .bccc-client-chat-bubble.is-bot {
+    background: rgb(255 255 255 / 0.94) !important;
+    color: #1e293b !important;
+}
+
+.bccc-client-chat-bubble.is-user {
+    border-bottom-right-radius: 0.35rem !important;
+    background: #0d4a78 !important;
+    color: white !important;
+}
+
+.bccc-client-chat-bubble.is-loading {
+    background: rgb(255 255 255 / 0.94) !important;
+    color: #0d4a78 !important;
+}
+
+.bccc-client-chat-meta {
+    color: #0d4a78 !important;
+}
+
+.bccc-client-chat-meta span,
+.bccc-client-chat-meta small {
+    background: rgb(13 74 120 / 0.08) !important;
+}
+
+.bccc-client-assistant-suggestions {
+    background: #0e4163 !important;
+    padding: 0.58rem 0.65rem !important;
+}
+
+.bccc-client-assistant-suggestions button {
+    border-color: rgb(255 255 255 / 0.18) !important;
+    background: rgb(255 255 255 / 0.13) !important;
+    color: white !important;
+    backdrop-filter: blur(10px);
+}
+
+.bccc-client-assistant-suggestions button:hover:not(:disabled) {
+    border-color: rgb(255 255 255 / 0.38) !important;
+    background: rgb(255 255 255 / 0.2) !important;
+    color: white !important;
+}
+
+.bccc-client-assistant-form {
+    align-items: center;
+    border-top: 0 !important;
+    background: #0e4163 !important;
+    padding: 0.58rem 0.65rem !important;
+}
+
+.bccc-client-assistant-form input {
+    min-height: 2.25rem !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: rgb(255 255 255 / 0.9) !important;
+    padding: 0.58rem 0.85rem !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+}
+
+.bccc-client-assistant-form input::placeholder {
+    color: rgb(71 85 105 / 0.72);
+}
+
+.bccc-client-assistant-form input:focus {
+    box-shadow: 0 0 0 3px rgb(109 162 255 / 0.25) !important;
+}
+
+.bccc-client-assistant-form button {
+    width: 2.25rem !important;
+    min-height: 2.25rem !important;
+    border-radius: 999px !important;
+    background: #6da2ff !important;
+    color: white !important;
+}
+
+.bccc-client-assistant-footer {
+    grid-template-columns: 1fr 1fr !important;
+    background: #0e4163 !important;
+    padding: 0 0.65rem 0.65rem !important;
+}
+
+.bccc-client-assistant-footer a {
+    background: rgb(255 255 255 / 0.12) !important;
+    color: rgb(255 255 255 / 0.86) !important;
+}
+
+.bccc-client-assistant-footer a:hover {
+    background: rgb(255 255 255 / 0.2) !important;
+    color: white !important;
+}
+
+.bccc-client-assistant-tab {
+    position: relative;
+    min-height: 3.15rem !important;
+    border: 1px solid rgb(255 255 255 / 0.22) !important;
+    border-radius: 999px !important;
+    background: linear-gradient(135deg, #6da2ff, #3667dc 58%, #102a56) !important;
+    color: white !important;
+    box-shadow: 0 18px 54px rgb(16 42 86 / 0.34) !important;
+}
+
+.bccc-client-assistant-tab:hover {
+    border-color: rgb(255 255 255 / 0.42) !important;
+    box-shadow: 0 26px 74px rgb(16 42 86 / 0.42) !important;
+}
+
+.bccc-client-assistant-tab-pulse {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
+    height: 0.72rem;
+    width: 0.72rem;
+    border: 2px solid #6da2ff;
+    border-radius: 999px;
+    background: #32d583;
+    box-shadow: 0 0 0 5px rgb(50 213 131 / 0.18);
+}
+
+.bccc-client-assistant-tab-icon {
+    background: rgb(255 255 255 / 0.16) !important;
+    color: white !important;
+}
+
+.bccc-client-assistant-tab-text small {
+    color: rgb(255 255 255 / 0.72) !important;
+}
+
+@media (max-width: 640px) {
+    .bccc-client-assistant {
+        right: 0.7rem !important;
+        bottom: 0.7rem !important;
+    }
+
+    .bccc-client-assistant-panel {
+        width: calc(100vw - 1.4rem) !important;
+        max-height: calc(100dvh - 4.7rem) !important;
+        border-radius: 1rem !important;
+    }
+
+    .bccc-client-assistant-messages {
+        min-height: 15rem !important;
+    }
+
+    .bccc-client-assistant-tab-text {
+        display: none !important;
+    }
+
+    .bccc-client-assistant-tab {
+        padding: 0.42rem !important;
+    }
+}
+
+@media print {
+    .bccc-client-assistant {
+        display: none !important;
+    }
+}
+
+/* Assistant system-search feedback and learning indicators */
+.bccc-client-chat-feedback {
+    margin-top: 0.55rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-top: 1px solid rgb(13 74 120 / 0.08);
+    padding-top: 0.45rem;
+    color: rgb(30 41 59 / 0.62);
+    font-size: 0.62rem;
+    font-weight: 800;
+}
+
+.bccc-client-chat-feedback button {
+    display: inline-grid;
+    height: 1.45rem;
+    width: 1.45rem;
+    place-items: center;
+    border-radius: 999px;
+    background: rgb(13 74 120 / 0.08);
+    color: #0d4a78;
+    transition: transform 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.bccc-client-chat-feedback button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: rgb(13 74 120 / 0.16);
+}
+
+.bccc-client-chat-feedback button.is-selected {
+    background: #0d4a78;
+    color: white;
+}
+
+.bccc-client-chat-feedback button:disabled {
+    cursor: default;
+}
+
+/* =========================================================
+   BCCC EASE — final global assistant layout polish
+   Reference: simple Messenger/Instagram-like floating chat.
+   This section intentionally overrides the older decorative bot skin.
+   ========================================================= */
+:root {
+    --bccc-float-right: max(1rem, env(safe-area-inset-right));
+    --bccc-float-bottom: max(1rem, env(safe-area-inset-bottom));
+    --bccc-float-size: 3.25rem;
+    --bccc-float-gap: 0.72rem;
+    --bccc-float-blue: #2563eb;
+    --bccc-float-blue-dark: #1d4ed8;
+}
+
+.bccc-client-assistant {
+    position: fixed !important;
+    right: var(--bccc-float-right) !important;
+    bottom: var(--bccc-float-bottom) !important;
+    z-index: 2147483000 !important;
+    display: grid !important;
+    gap: 0.66rem !important;
+    justify-items: end !important;
+    pointer-events: none !important;
+}
+
+.bccc-client-assistant > * {
+    pointer-events: auto !important;
+}
+
+.bccc-client-assistant-tab,
+.bccc-floating-quick-links > button,
+.bccc-availability-collapsed-toggle {
+    width: var(--bccc-float-size) !important;
+    height: var(--bccc-float-size) !important;
+    min-width: var(--bccc-float-size) !important;
+    min-height: var(--bccc-float-size) !important;
+    border-radius: 999px !important;
+    padding: 0 !important;
+    border: 1px solid rgb(255 255 255 / 0.7) !important;
+    box-shadow: 0 14px 36px rgb(15 23 42 / 0.22) !important;
+    backdrop-filter: blur(18px) !important;
+}
+
+.bccc-client-assistant-tab {
+    display: grid !important;
+    place-items: center !important;
+    background: var(--bccc-float-blue) !important;
+    color: white !important;
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease !important;
+}
+
+.bccc-client-assistant-tab:hover {
+    transform: translateY(-2px) !important;
+    background: var(--bccc-float-blue-dark) !important;
+    box-shadow: 0 18px 44px rgb(37 99 235 / 0.32) !important;
+}
+
+.bccc-client-assistant-tab-icon {
+    display: grid !important;
+    width: 100% !important;
+    height: 100% !important;
+    place-items: center !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    color: currentColor !important;
+}
+
+.bccc-client-assistant-tab-text {
+    position: absolute !important;
+    right: calc(100% + 0.55rem) !important;
+    top: 50% !important;
+    display: block !important;
+    width: max-content !important;
+    max-width: 12rem !important;
+    transform: translateY(-50%) translateX(0.4rem) !important;
+    border-radius: 999px !important;
+    background: rgb(15 23 42 / 0.9) !important;
+    padding: 0.38rem 0.65rem !important;
+    color: white !important;
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.18s ease, transform 0.18s ease !important;
+    white-space: nowrap !important;
+}
+
+.bccc-client-assistant-tab:hover .bccc-client-assistant-tab-text,
+.bccc-client-assistant-tab:focus-visible .bccc-client-assistant-tab-text {
+    opacity: 1 !important;
+    transform: translateY(-50%) translateX(0) !important;
+}
+
+.bccc-client-assistant-tab-text small {
+    display: none !important;
+}
+
+.bccc-client-assistant-tab-pulse {
+    position: absolute !important;
+    top: 0.18rem !important;
+    right: 0.22rem !important;
+    width: 0.72rem !important;
+    height: 0.72rem !important;
+    border: 2px solid white !important;
+    border-radius: 999px !important;
+    background: #22c55e !important;
+    box-shadow: 0 0 0 5px rgb(34 197 94 / 0.16) !important;
+}
+
+.bccc-client-assistant-panel {
+    position: relative !important;
+    width: min(24.5rem, calc(100vw - 1rem)) !important;
+    height: min(34.5rem, calc(100dvh - 5.75rem)) !important;
+    max-height: min(34.5rem, calc(100dvh - 5.75rem)) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1px solid rgb(15 23 42 / 0.1) !important;
+    border-radius: 1rem !important;
+    background: #ffffff !important;
+    box-shadow: 0 22px 70px rgb(15 23 42 / 0.22) !important;
+    transform-origin: bottom right !important;
+    isolation: isolate !important;
+}
+
+.dark .bccc-client-assistant-panel {
+    border-color: rgb(255 255 255 / 0.12) !important;
+    background: #111827 !important;
+    box-shadow: 0 24px 78px rgb(0 0 0 / 0.48) !important;
+}
+
+.bccc-client-assistant-panel::before,
+.bccc-client-assistant-conversation::before,
+.bccc-client-assistant-conversation::after {
+    display: none !important;
+    content: none !important;
+}
+
+.bccc-client-assistant-header {
+    min-height: 4rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.72rem !important;
+    border-bottom: 1px solid rgb(15 23 42 / 0.08) !important;
+    background: #ffffff !important;
+    padding: 0.72rem 0.82rem !important;
+    color: #0f172a !important;
+}
+
+.dark .bccc-client-assistant-header {
+    border-bottom-color: rgb(255 255 255 / 0.1) !important;
+    background: #111827 !important;
+    color: white !important;
+}
+
+.bccc-client-assistant-avatar,
+.bccc-client-chat-avatar-mini {
+    display: grid !important;
+    place-items: center !important;
+    border-radius: 999px !important;
+    background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+.bccc-client-assistant-avatar {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    border: 0 !important;
+}
+
+.bccc-client-chat-avatar-mini {
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+    flex: 0 0 auto !important;
+    margin-top: 0.2rem !important;
+}
+
+.bccc-client-assistant-icon-button {
+    display: grid !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    place-items: center !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    color: #64748b !important;
+    transition: background 0.18s ease, color 0.18s ease !important;
+}
+
+.bccc-client-assistant-icon-button:hover,
+.bccc-client-assistant-icon-button:focus-visible {
+    background: rgb(15 23 42 / 0.08) !important;
+    color: #0f172a !important;
+    outline: none !important;
+}
+
+.dark .bccc-client-assistant-icon-button {
+    color: rgb(255 255 255 / 0.62) !important;
+}
+
+.dark .bccc-client-assistant-icon-button:hover,
+.dark .bccc-client-assistant-icon-button:focus-visible {
+    background: rgb(255 255 255 / 0.1) !important;
+    color: white !important;
+}
+
+.bccc-client-assistant-conversation {
+    background: transparent !important;
+}
+
+.bccc-client-assistant-strip,
+.bccc-client-assistant-notice,
+.bccc-client-assistant-footer {
+    display: none !important;
+}
+
+.bccc-client-assistant-messages {
+    min-height: 0 !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-content: initial !important;
+    gap: 0.68rem !important;
+    overflow-y: auto !important;
+    padding: 0.9rem 0.78rem !important;
+    background: #f8fafc !important;
+    scroll-behavior: smooth !important;
+    scrollbar-width: thin !important;
+}
+
+.dark .bccc-client-assistant-messages {
+    background: #0b1120 !important;
+}
+
+.bccc-client-chat-row {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 0.46rem !important;
+    width: 100% !important;
+}
+
+.bccc-client-chat-row.is-user {
+    justify-content: flex-end !important;
+}
+
+.bccc-client-chat-bubble {
+    width: fit-content !important;
+    max-width: min(82%, 18.5rem) !important;
+    border: 0 !important;
+    border-radius: 1.05rem !important;
+    padding: 0.66rem 0.78rem !important;
+    font-size: 0.83rem !important;
+    line-height: 1.52 !important;
+    white-space: pre-wrap !important;
+    box-shadow: none !important;
+}
+
+.bccc-client-chat-bubble p + p {
+    margin-top: 0.36rem !important;
+}
+
+.bccc-client-chat-bubble.is-bot {
+    justify-self: initial !important;
+    border-bottom-left-radius: 0.35rem !important;
+    background: #ffffff !important;
+    color: #1f2937 !important;
+}
+
+.dark .bccc-client-chat-bubble.is-bot {
+    background: rgb(255 255 255 / 0.09) !important;
+    color: #e5e7eb !important;
+}
+
+.bccc-client-chat-bubble.is-user {
+    justify-self: initial !important;
+    border-bottom-right-radius: 0.35rem !important;
+    background: var(--bccc-float-blue) !important;
+    color: white !important;
+}
+
+.bccc-client-chat-bubble.is-loading {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.48rem !important;
+    color: #1d4ed8 !important;
+    font-weight: 700 !important;
+}
+
+.dark .bccc-client-chat-bubble.is-loading {
+    color: #93c5fd !important;
+}
+
+.bccc-client-chat-meta {
+    display: block !important;
+    margin-bottom: 0.28rem !important;
+    padding: 0 !important;
+    background: transparent !important;
+    color: #64748b !important;
+    font-size: 0.64rem !important;
+    font-weight: 700 !important;
+    letter-spacing: normal !important;
+    line-height: 1.25 !important;
+    text-transform: none !important;
+}
+
+.bccc-client-chat-meta span,
+.bccc-client-chat-meta small {
+    display: inline !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    color: inherit !important;
+}
+
+.dark .bccc-client-chat-meta {
+    color: rgb(255 255 255 / 0.55) !important;
+}
+
+.bccc-client-chat-feedback {
+    margin-top: 0.5rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.32rem !important;
+    border-top: 1px solid rgb(15 23 42 / 0.06) !important;
+    padding-top: 0.42rem !important;
+    color: #64748b !important;
+    font-size: 0.65rem !important;
+    font-weight: 700 !important;
+}
+
+.dark .bccc-client-chat-feedback {
+    border-top-color: rgb(255 255 255 / 0.09) !important;
+    color: rgb(255 255 255 / 0.55) !important;
+}
+
+.bccc-client-chat-feedback button {
+    display: inline-grid !important;
+    width: 1.55rem !important;
+    height: 1.55rem !important;
+    place-items: center !important;
+    border-radius: 999px !important;
+    background: rgb(37 99 235 / 0.08) !important;
+    color: #2563eb !important;
+    transition: transform 0.16s ease, background 0.16s ease, color 0.16s ease !important;
+}
+
+.bccc-client-chat-feedback button:hover:not(:disabled) {
+    transform: translateY(-1px) !important;
+    background: rgb(37 99 235 / 0.15) !important;
+}
+
+.bccc-client-chat-feedback button.is-selected {
+    background: #2563eb !important;
+    color: white !important;
+}
+
+.bccc-client-assistant-suggestions {
+    display: flex !important;
+    gap: 0.42rem !important;
+    overflow-x: auto !important;
+    padding: 0.62rem 0.78rem !important;
+    background: #f8fafc !important;
+    scrollbar-width: none !important;
+}
+
+.dark .bccc-client-assistant-suggestions {
+    background: #0b1120 !important;
+}
+
+.bccc-client-assistant-suggestions::-webkit-scrollbar {
+    display: none !important;
+}
+
+.bccc-client-assistant-suggestions button {
+    flex: 0 0 auto !important;
+    max-width: 13rem !important;
+    overflow: hidden !important;
+    border: 1px solid rgb(37 99 235 / 0.14) !important;
+    border-radius: 999px !important;
+    background: #ffffff !important;
+    padding: 0.42rem 0.66rem !important;
+    color: #1d4ed8 !important;
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    letter-spacing: normal !important;
+    text-overflow: ellipsis !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+}
+
+.bccc-client-assistant-suggestions button:hover:not(:disabled) {
+    border-color: rgb(37 99 235 / 0.28) !important;
+    background: rgb(37 99 235 / 0.08) !important;
+    color: #1d4ed8 !important;
+    transform: translateY(-1px) !important;
+}
+
+.dark .bccc-client-assistant-suggestions button {
+    border-color: rgb(147 197 253 / 0.16) !important;
+    background: rgb(255 255 255 / 0.08) !important;
+    color: #bfdbfe !important;
+}
+
+.bccc-client-assistant-form {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    border-top: 1px solid rgb(15 23 42 / 0.08) !important;
+    background: #ffffff !important;
+    padding: 0.68rem 0.78rem !important;
+}
+
+.dark .bccc-client-assistant-form {
+    border-top-color: rgb(255 255 255 / 0.1) !important;
+    background: #111827 !important;
+}
+
+.bccc-client-assistant-form input {
+    min-width: 0 !important;
+    min-height: 2.45rem !important;
+    flex: 1 1 auto !important;
+    border: 1px solid rgb(15 23 42 / 0.1) !important;
+    border-radius: 999px !important;
+    background: #f1f5f9 !important;
+    padding: 0.62rem 0.85rem !important;
+    color: #0f172a !important;
+    font-size: 0.84rem !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.bccc-client-assistant-form input:focus {
+    border-color: rgb(37 99 235 / 0.32) !important;
+    box-shadow: 0 0 0 4px rgb(37 99 235 / 0.12) !important;
+}
+
+.dark .bccc-client-assistant-form input {
+    border-color: rgb(255 255 255 / 0.1) !important;
+    background: rgb(255 255 255 / 0.08) !important;
+    color: white !important;
+}
+
+.bccc-client-assistant-form button {
+    display: grid !important;
+    width: 2.45rem !important;
+    min-width: 2.45rem !important;
+    height: 2.45rem !important;
+    min-height: 2.45rem !important;
+    place-items: center !important;
+    border-radius: 999px !important;
+    background: var(--bccc-float-blue) !important;
+    color: white !important;
+    transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease !important;
+}
+
+.bccc-client-assistant-form button:hover:not(:disabled) {
+    transform: translateY(-1px) !important;
+    background: var(--bccc-float-blue-dark) !important;
+}
+
+.bccc-client-assistant-form button:disabled {
+    opacity: 0.48 !important;
+}
+
+/* Align public info icon, availability icon, and global chat tab into one clean right-side stack. */
+.bccc-floating-quick-links,
+.bccc-availability-collapsed-toggle,
+.bccc-client-assistant {
+    right: var(--bccc-float-right) !important;
+}
+
+.bccc-floating-quick-links {
+    bottom: calc(var(--bccc-float-bottom) + ((var(--bccc-float-size) + var(--bccc-float-gap)) * 2)) !important;
+    z-index: 2147482998 !important;
+    gap: 0.55rem !important;
+}
+
+.bccc-availability-collapsed-toggle {
+    bottom: calc(var(--bccc-float-bottom) + var(--bccc-float-size) + var(--bccc-float-gap)) !important;
+    z-index: 2147482999 !important;
+    background: #0f766e !important;
+    color: white !important;
+}
+
+.bccc-availability-collapsed-toggle:hover {
+    transform: translateY(-2px) !important;
+    background: #0d9488 !important;
+}
+
+.bccc-floating-quick-links > button {
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
+
+.dark .bccc-floating-quick-links > button {
+    background: #111827 !important;
+    color: white !important;
+}
+
+.bccc-floating-quick-links-panel {
+    margin-right: calc(var(--bccc-float-size) + 0.55rem) !important;
+    margin-bottom: calc(-1 * var(--bccc-float-size)) !important;
+}
+
+.bccc-floating-quick-links-panel a {
+    width: min(17rem, calc(100vw - 5.5rem)) !important;
+    border-radius: 1rem !important;
+}
+
+body:has(.bccc-availability-dock:not(.bccc-availability-collapsed-toggle)) .bccc-client-assistant {
+    bottom: calc(var(--bccc-float-bottom) + 5.2rem) !important;
+}
+
+body:has(.bccc-availability-dock:not(.bccc-availability-collapsed-toggle)) .bccc-floating-quick-links {
+    bottom: calc(var(--bccc-float-bottom) + 13.2rem) !important;
+}
+
+@media (max-width: 640px) {
+    :root {
+        --bccc-float-right: max(0.75rem, env(safe-area-inset-right));
+        --bccc-float-bottom: max(0.75rem, env(safe-area-inset-bottom));
+        --bccc-float-size: 3rem;
+        --bccc-float-gap: 0.58rem;
+    }
+
+    .bccc-client-assistant-panel {
+        width: calc(100vw - 1rem) !important;
+        height: min(32rem, calc(100dvh - 5rem)) !important;
+        max-height: min(32rem, calc(100dvh - 5rem)) !important;
+        border-radius: 0.95rem !important;
+    }
+
+    .bccc-client-chat-bubble {
+        max-width: 86% !important;
+        font-size: 0.8rem !important;
+    }
+
+    .bccc-client-assistant-header {
+        min-height: 3.75rem !important;
+        padding: 0.65rem 0.72rem !important;
+    }
+
+    .bccc-client-assistant-messages {
+        padding: 0.75rem 0.65rem !important;
+    }
+
+    .bccc-client-assistant-suggestions,
+    .bccc-client-assistant-form {
+        padding-inline: 0.65rem !important;
+    }
+
+    .bccc-floating-quick-links-panel {
+        margin-right: calc(var(--bccc-float-size) + 0.42rem) !important;
+    }
+
+    .bccc-floating-quick-links-panel a {
+        width: min(15.5rem, calc(100vw - 4.8rem)) !important;
+    }
+
+    body:has(.bccc-availability-dock:not(.bccc-availability-collapsed-toggle)) .bccc-client-assistant {
+        bottom: calc(var(--bccc-float-bottom) + 4.8rem) !important;
+    }
+}
+
+@media (max-width: 390px) {
+    .bccc-client-assistant-panel {
+        width: calc(100vw - 0.75rem) !important;
+    }
+
+    .bccc-client-chat-bubble {
+        max-width: 90% !important;
+    }
+
+    .bccc-client-chat-avatar-mini {
+        display: none !important;
+    }
+}
+
+@media print {
+    .bccc-client-assistant,
+    .bccc-floating-quick-links,
+    .bccc-availability-collapsed-toggle {
+        display: none !important;
+    }
+}
+
+/* Backend/admin assistant role polish */
+.bccc-client-assistant[data-assistant-surface='backend'] .bccc-client-assistant-avatar,
+.bccc-client-assistant[data-assistant-surface='backend'] .bccc-client-assistant-tab-icon,
+.bccc-client-assistant[data-assistant-surface='backend'] .bccc-client-assistant-form button {
+    background: linear-gradient(135deg, #111827, #2563eb) !important;
+    color: #ffffff !important;
+}
+
+.bccc-client-assistant[data-assistant-surface='backend'] .bccc-client-assistant-header {
+    background: linear-gradient(180deg, rgb(248 250 252), rgb(255 255 255)) !important;
+}
+
+.dark .bccc-client-assistant[data-assistant-surface='backend'] .bccc-client-assistant-header {
+    background: linear-gradient(180deg, #0f172a, #111827) !important;
+}
+
+.bccc-client-assistant[data-assistant-surface='backend'] .bccc-client-chat-meta {
+    color: #2563eb !important;
+}
+
+.dark .bccc-client-assistant[data-assistant-surface='backend'] .bccc-client-chat-meta {
+    color: #93c5fd !important;
+}
+
+.bccc-client-assistant[data-assistant-surface='backend'] .bccc-client-chat-bubble.is-user {
+    background: #2563eb !important;
+    box-shadow: 0 12px 28px rgb(37 99 235 / 0.22) !important;
+}
+
+.bccc-client-assistant[data-assistant-surface='backend'] .bccc-client-assistant-suggestions button {
+    border-color: rgb(37 99 235 / 0.18) !important;
+    color: #1d4ed8 !important;
+}
+
+.bccc-client-assistant[data-assistant-role='admin'] .bccc-client-assistant-tab-pulse {
+    background: rgb(37 99 235 / 0.28) !important;
+}
+
+/* =========================================================
+   BCCC EASE — final responsive assistant persistence polish
+   Applies to mobile, tablet, laptop, and desktop screens.
+   Keeps the floating stack aligned and prevents chat overflow.
+   ========================================================= */
+:root {
+    --bccc-assistant-panel-width: 24.25rem;
+    --bccc-assistant-panel-height: 34rem;
+    --bccc-assistant-edge: max(1rem, env(safe-area-inset-right));
+    --bccc-assistant-bottom: max(1rem, env(safe-area-inset-bottom));
+    --bccc-assistant-float-size: 3.2rem;
+    --bccc-assistant-float-gap: 0.66rem;
+}
+
+.bccc-client-assistant,
+.bccc-floating-quick-links,
+.bccc-availability-collapsed-toggle {
+    right: var(--bccc-assistant-edge) !important;
+}
+
+.bccc-client-assistant {
+    bottom: var(--bccc-assistant-bottom) !important;
+    gap: var(--bccc-assistant-float-gap) !important;
+    max-width: calc(100vw - (var(--bccc-assistant-edge) * 2)) !important;
+}
+
+.bccc-client-assistant-tab,
+.bccc-floating-quick-links > button,
+.bccc-availability-collapsed-toggle {
+    width: var(--bccc-assistant-float-size) !important;
+    height: var(--bccc-assistant-float-size) !important;
+    min-width: var(--bccc-assistant-float-size) !important;
+    min-height: var(--bccc-assistant-float-size) !important;
+}
+
+.bccc-availability-collapsed-toggle {
+    bottom: calc(var(--bccc-assistant-bottom) + var(--bccc-assistant-float-size) + var(--bccc-assistant-float-gap)) !important;
+}
+
+.bccc-floating-quick-links {
+    bottom: calc(var(--bccc-assistant-bottom) + ((var(--bccc-assistant-float-size) + var(--bccc-assistant-float-gap)) * 2)) !important;
+}
+
+.bccc-client-assistant-panel {
+    width: min(var(--bccc-assistant-panel-width), calc(100vw - (var(--bccc-assistant-edge) * 2))) !important;
+    height: min(var(--bccc-assistant-panel-height), calc(100dvh - var(--bccc-assistant-bottom) - var(--bccc-assistant-float-size) - var(--bccc-assistant-float-gap) - 0.75rem)) !important;
+    max-height: min(var(--bccc-assistant-panel-height), calc(100dvh - var(--bccc-assistant-bottom) - var(--bccc-assistant-float-size) - var(--bccc-assistant-float-gap) - 0.75rem)) !important;
+    min-height: min(25rem, calc(100dvh - 5rem)) !important;
+    overflow: hidden !important;
+}
+
+.bccc-client-assistant-header {
+    flex: 0 0 auto !important;
+}
+
+.bccc-client-assistant-messages {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+.bccc-client-assistant-suggestions,
+.bccc-client-assistant-form {
+    flex: 0 0 auto !important;
+}
+
+.bccc-client-assistant-form input {
+    min-width: 0 !important;
+}
+
+.bccc-client-chat-row,
+.bccc-client-chat-bubble {
+    min-width: 0 !important;
+}
+
+.bccc-client-chat-bubble {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+}
+
+/* While the chat panel is open, keep the page clean and prevent the info/availability buttons from overlapping the panel. */
+body:has(.bccc-client-assistant[data-assistant-open='true']) .bccc-floating-quick-links,
+body:has(.bccc-client-assistant[data-assistant-open='true']) .bccc-availability-collapsed-toggle {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(0.4rem) scale(0.96) !important;
+    transition: opacity 0.18s ease, transform 0.18s ease !important;
+}
+
+@media (min-width: 1440px) {
+    :root {
+        --bccc-assistant-panel-width: 25.5rem;
+        --bccc-assistant-panel-height: 36rem;
+        --bccc-assistant-edge: max(1.25rem, env(safe-area-inset-right));
+        --bccc-assistant-bottom: max(1.25rem, env(safe-area-inset-bottom));
+    }
+
+    .bccc-client-assistant-panel {
+        border-radius: 1.08rem !important;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+    :root {
+        --bccc-assistant-panel-width: 24.25rem;
+        --bccc-assistant-panel-height: 34rem;
+        --bccc-assistant-edge: max(1rem, env(safe-area-inset-right));
+        --bccc-assistant-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+    :root {
+        --bccc-assistant-panel-width: 23.5rem;
+        --bccc-assistant-panel-height: 33rem;
+        --bccc-assistant-edge: max(0.9rem, env(safe-area-inset-right));
+        --bccc-assistant-bottom: max(0.9rem, env(safe-area-inset-bottom));
+        --bccc-assistant-float-size: 3.05rem;
+        --bccc-assistant-float-gap: 0.58rem;
+    }
+
+    .bccc-client-assistant-panel {
+        border-radius: 1rem !important;
+    }
+
+    .bccc-client-assistant-tab-text {
+        display: none !important;
+    }
+}
+
+@media (max-width: 640px) {
+    :root {
+        --bccc-assistant-panel-width: calc(100vw - 0.9rem);
+        --bccc-assistant-panel-height: calc(100dvh - 4.75rem);
+        --bccc-assistant-edge: max(0.45rem, env(safe-area-inset-right));
+        --bccc-assistant-bottom: max(0.55rem, env(safe-area-inset-bottom));
+        --bccc-assistant-float-size: 2.95rem;
+        --bccc-assistant-float-gap: 0.52rem;
+    }
+
+    .bccc-client-assistant-panel {
+        width: calc(100vw - 0.9rem) !important;
+        height: min(calc(100dvh - 4.75rem), 33rem) !important;
+        max-height: min(calc(100dvh - 4.75rem), 33rem) !important;
+        min-height: min(22rem, calc(100dvh - 4.75rem)) !important;
+        border-radius: 0.92rem !important;
+    }
+
+    .bccc-client-assistant-header {
+        min-height: 3.55rem !important;
+        padding: 0.58rem 0.65rem !important;
+    }
+
+    .bccc-client-assistant-avatar {
+        width: 2.05rem !important;
+        height: 2.05rem !important;
+    }
+
+    .bccc-client-assistant-icon-button {
+        width: 1.85rem !important;
+        height: 1.85rem !important;
+    }
+
+    .bccc-client-assistant-messages {
+        gap: 0.55rem !important;
+        padding: 0.68rem 0.6rem !important;
+    }
+
+    .bccc-client-chat-avatar-mini {
+        width: 1.55rem !important;
+        height: 1.55rem !important;
+    }
+
+    .bccc-client-chat-bubble {
+        max-width: 88% !important;
+        padding: 0.58rem 0.68rem !important;
+        font-size: 0.79rem !important;
+        line-height: 1.48 !important;
+    }
+
+    .bccc-client-assistant-suggestions {
+        padding: 0.55rem 0.6rem !important;
+    }
+
+    .bccc-client-assistant-suggestions button {
+        max-width: 11.25rem !important;
+        padding: 0.38rem 0.58rem !important;
+        font-size: 0.67rem !important;
+    }
+
+    .bccc-client-assistant-form {
+        gap: 0.42rem !important;
+        padding: 0.6rem !important;
+    }
+
+    .bccc-client-assistant-form input {
+        min-height: 2.28rem !important;
+        padding: 0.55rem 0.75rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    .bccc-client-assistant-form button {
+        width: 2.28rem !important;
+        min-width: 2.28rem !important;
+        height: 2.28rem !important;
+        min-height: 2.28rem !important;
+    }
+
+    .bccc-client-assistant-tab-text {
+        display: none !important;
+    }
+}
+
+@media (max-width: 390px) {
+    :root {
+        --bccc-assistant-edge: max(0.35rem, env(safe-area-inset-right));
+        --bccc-assistant-bottom: max(0.45rem, env(safe-area-inset-bottom));
+        --bccc-assistant-float-size: 2.75rem;
+        --bccc-assistant-float-gap: 0.48rem;
+    }
+
+    .bccc-client-assistant-panel {
+        width: calc(100vw - 0.7rem) !important;
+        height: min(calc(100dvh - 4.4rem), 31rem) !important;
+        max-height: min(calc(100dvh - 4.4rem), 31rem) !important;
+    }
+
+    .bccc-client-chat-avatar-mini {
+        display: none !important;
+    }
+
+    .bccc-client-chat-bubble {
+        max-width: 91% !important;
+    }
+}
+
+@media (max-height: 620px) and (orientation: landscape) {
+    :root {
+        --bccc-assistant-panel-width: 23rem;
+        --bccc-assistant-panel-height: calc(100dvh - 1rem);
+        --bccc-assistant-edge: max(0.55rem, env(safe-area-inset-right));
+        --bccc-assistant-bottom: max(0.45rem, env(safe-area-inset-bottom));
+        --bccc-assistant-float-size: 2.65rem;
+        --bccc-assistant-float-gap: 0.4rem;
+    }
+
+    .bccc-client-assistant-panel {
+        height: calc(100dvh - 3.95rem) !important;
+        max-height: calc(100dvh - 3.95rem) !important;
+        min-height: 17.5rem !important;
+    }
+
+    .bccc-client-assistant-header {
+        min-height: 3rem !important;
+        padding-block: 0.45rem !important;
+    }
+
+    .bccc-client-assistant-suggestions {
+        display: none !important;
+    }
+
+    .bccc-client-assistant-messages {
+        padding-block: 0.55rem !important;
+    }
+}
+
+@supports not selector(body:has(.bccc-client-assistant)) {
+    .bccc-floating-quick-links,
+    .bccc-availability-collapsed-toggle {
+        transition: opacity 0.18s ease, transform 0.18s ease !important;
+    }
+}
+
+/* Assistant persistent guide, links, and spam-warning polish */
+.bccc-client-chat-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.25rem !important;
+    margin-inline: 0.1rem !important;
+    border-radius: 999px !important;
+    background: rgb(37 99 235 / 0.1) !important;
+    padding: 0.1rem 0.42rem !important;
+    color: #1d4ed8 !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    word-break: break-word !important;
+}
+
+.bccc-client-chat-link:hover,
+.bccc-client-chat-link:focus-visible {
+    background: rgb(37 99 235 / 0.18) !important;
+    color: #1e40af !important;
+    outline: none !important;
+}
+
+.dark .bccc-client-chat-link {
+    background: rgb(147 197 253 / 0.16) !important;
+    color: #bfdbfe !important;
+}
+
+.dark .bccc-client-chat-link:hover,
+.dark .bccc-client-chat-link:focus-visible {
+    background: rgb(147 197 253 / 0.26) !important;
+    color: #dbeafe !important;
+}
+
+.bccc-client-chat-bubble p {
+    overflow-wrap: anywhere !important;
+}
+
+.bccc-client-assistant[data-assistant-open='true'] {
+    pointer-events: none !important;
+}
+
+.bccc-client-assistant[data-assistant-open='true'] .bccc-client-assistant-panel,
+.bccc-client-assistant[data-assistant-open='true'] .bccc-client-assistant-tab {
+    pointer-events: auto !important;
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .bccc-client-assistant-panel {
+        width: min(25rem, calc(100vw - 1.5rem)) !important;
+        height: min(36rem, calc(100dvh - 5rem)) !important;
+        max-height: min(36rem, calc(100dvh - 5rem)) !important;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1366px) {
+    .bccc-client-assistant-panel {
+        width: min(24rem, calc(100vw - 2rem)) !important;
+        height: min(34rem, calc(100dvh - 5.5rem)) !important;
+    }
+}
+
+@media (min-width: 1600px) {
+    .bccc-client-assistant-panel {
+        width: 26rem !important;
+        height: 36rem !important;
+    }
+}
+
+@media (max-height: 620px) {
+    .bccc-client-assistant-panel {
+        height: calc(100dvh - 1.5rem) !important;
+        max-height: calc(100dvh - 1.5rem) !important;
+    }
+
+    .bccc-client-assistant-header {
+        min-height: 3.35rem !important;
+        padding-block: 0.5rem !important;
+    }
+
+    .bccc-client-assistant-suggestions {
+        padding-block: 0.45rem !important;
+    }
+
+    .bccc-client-assistant-form {
+        padding-block: 0.5rem !important;
+    }
+}

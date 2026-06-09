@@ -31,37 +31,97 @@ const spamMuteMs = 10 * 60 * 1000;
 const maxStoredMessages = 60;
 
 const bookingGuidePackages = [
-    { code: 'GRAND_CONVENTION_PACKAGE', label: 'Grand Convention Package', hint: 'Full Hall + LED Wall + Lounge + Boardroom, best for 801–2,000 pax' },
-    { code: 'PREMIUM_CONFERENCE_PACKAGE', label: 'Premium Conference Package', hint: 'Main Hall + LED Wall + Lounge + Boardroom' },
-    { code: 'CORPORATE_FORUM_PACKAGE', label: 'Corporate Forum Package', hint: 'Main Hall + LED Wall' },
-    { code: 'CEREMONY_AWARDS_PACKAGE', label: 'Ceremony & Awards Package', hint: 'Main Hall + Lounge + LED Wall' },
-    { code: 'TRAINING_WORKSHOP_PACKAGE', label: 'Training & Workshop Package', hint: 'Main Hall + Boardroom' },
-    { code: 'EXECUTIVE_MEETING_PACKAGE', label: 'Executive Meeting Package', hint: 'Lounge + Boardroom, best for smaller executive use' },
-    { code: 'EXHIBIT_TRADE_FAIR_GRAND_PACKAGE', label: 'Exhibit & Trade Fair Package - Grand', hint: 'Full Hall exhibit setup + support rooms' },
-    { code: 'EXHIBIT_TRADE_FAIR_STANDARD_PACKAGE', label: 'Exhibit & Trade Fair Package - Standard', hint: 'Main Hall exhibit setup + LED Wall' },
+    {
+        code: 'GRAND_CONVENTION_PACKAGE',
+        label: 'Grand Convention Package',
+        hint: 'Full Hall + LED Wall + Lounge + Boardroom, best for 801–2,000 pax',
+    },
+    {
+        code: 'PREMIUM_CONFERENCE_PACKAGE',
+        label: 'Premium Conference Package',
+        hint: 'Main Hall + LED Wall + Lounge + Boardroom',
+    },
+    {
+        code: 'CORPORATE_FORUM_PACKAGE',
+        label: 'Corporate Forum Package',
+        hint: 'Main Hall + LED Wall',
+    },
+    {
+        code: 'CEREMONY_AWARDS_PACKAGE',
+        label: 'Ceremony & Awards Package',
+        hint: 'Main Hall + Lounge + LED Wall',
+    },
+    {
+        code: 'TRAINING_WORKSHOP_PACKAGE',
+        label: 'Training & Workshop Package',
+        hint: 'Main Hall + Boardroom',
+    },
+    {
+        code: 'EXECUTIVE_MEETING_PACKAGE',
+        label: 'Executive Meeting Package',
+        hint: 'Lounge + Boardroom, best for smaller executive use',
+    },
+    {
+        code: 'EXHIBIT_TRADE_FAIR_GRAND_PACKAGE',
+        label: 'Exhibit & Trade Fair Package - Grand',
+        hint: 'Full Hall exhibit setup + support rooms',
+    },
+    {
+        code: 'EXHIBIT_TRADE_FAIR_STANDARD_PACKAGE',
+        label: 'Exhibit & Trade Fair Package - Standard',
+        hint: 'Main Hall exhibit setup + LED Wall',
+    },
 ] as const;
 
 const manualAreaOptions = [
-    { code: 'full_hall', label: 'Full Hall', aliases: ['full hall', 'full', 'convention hall'] },
-    { code: 'main_hall', label: 'Main Hall', aliases: ['main hall', 'ground hall', 'main'] },
+    {
+        code: 'full_hall',
+        label: 'Full Hall',
+        aliases: ['full hall', 'full', 'convention hall'],
+    },
+    {
+        code: 'main_hall',
+        label: 'Main Hall',
+        aliases: ['main hall', 'ground hall', 'main'],
+    },
     { code: 'led_wall', label: 'LED Wall', aliases: ['led wall', 'led'] },
-    { code: 'vip_lounge', label: 'Lounge / VIP Lounge', aliases: ['lounge', 'vip lounge', 'vip'] },
-    { code: 'board_room', label: 'Boardroom', aliases: ['boardroom', 'board room'] },
+    {
+        code: 'vip_lounge',
+        label: 'Lounge / VIP Lounge',
+        aliases: ['lounge', 'vip lounge', 'vip'],
+    },
+    {
+        code: 'board_room',
+        label: 'Boardroom',
+        aliases: ['boardroom', 'board room'],
+    },
 ] as const;
 
 const monthMap: Record<string, number> = {
-    january: 1, jan: 1,
-    february: 2, feb: 2,
-    march: 3, mar: 3,
-    april: 4, apr: 4,
+    january: 1,
+    jan: 1,
+    february: 2,
+    feb: 2,
+    march: 3,
+    mar: 3,
+    april: 4,
+    apr: 4,
     may: 5,
-    june: 6, jun: 6,
-    july: 7, jul: 7,
-    august: 8, aug: 8,
-    september: 9, sep: 9, sept: 9,
-    october: 10, oct: 10,
-    november: 11, nov: 11,
-    december: 12, dec: 12,
+    june: 6,
+    jun: 6,
+    july: 7,
+    jul: 7,
+    august: 8,
+    aug: 8,
+    september: 9,
+    sep: 9,
+    sept: 9,
+    october: 10,
+    oct: 10,
+    november: 11,
+    nov: 11,
+    december: 12,
+    dec: 12,
 };
 
 type PublicAssistantRole = BackendRole | 'public';
@@ -85,6 +145,7 @@ type ChatMessage = {
 type AssistantResponse = {
     answer?: string;
     mode?: 'local' | 'gemini';
+    scope?: 'bccc' | 'general';
     fallback?: boolean;
     suggestions?: string[];
     confidence?: number;
@@ -223,17 +284,7 @@ function isBackendPath(url: string) {
     );
 }
 
-function isClientPath(url: string) {
-    return (
-        url.startsWith('/my-dashboard') ||
-        url.startsWith('/my-bookings') ||
-        url.startsWith('/my-calendar') ||
-        url.startsWith('/notifications') ||
-        url.startsWith('/book')
-    );
-}
-
-function assistantRole(auth: SharedProps['auth'], _url: string): PublicAssistantRole {
+function assistantRole(auth: SharedProps['auth']): PublicAssistantRole {
     if (auth?.user) {
         return getBackendRole(auth);
     }
@@ -325,9 +376,11 @@ function assistantTabSmallText(role: PublicAssistantRole) {
 }
 
 function assistantPlaceholder(role: PublicAssistantRole) {
-    if (role === 'admin') return 'Ask admin workflow, bookings, payments, reports...';
+    if (role === 'admin')
+        return 'Ask admin workflow, bookings, payments, reports...';
     if (role === 'manager') return 'Ask review, approvals, payments, MICE...';
-    if (role === 'staff') return 'Ask booking assistance, schedules, notices...';
+    if (role === 'staff')
+        return 'Ask booking assistance, schedules, notices...';
 
     return 'Message BCCC Assistant...';
 }
@@ -345,9 +398,10 @@ function introText(role: PublicAssistantRole, pageContext: string) {
         return `Hi, I am your BCCC Staff Assistant. You are on ${pageContext}. I can help you assist clients, check availability, create assisted bookings, monitor schedules, send notices, and explain booking status.\n\nAsk what task you want to complete.`;
     }
 
-    const privacy = role === 'public'
-        ? 'I can answer public booking, availability, facilities, rates, requirements, FAQs, and contact questions.'
-        : 'I can guide you using safe BCCC EASE records, your page context, and your own account notices when available.';
+    const privacy =
+        role === 'public'
+            ? 'I can answer general questions plus public booking, availability, facilities, rates, requirements, FAQs, and contact questions.'
+            : 'I can answer general questions and guide you using safe BCCC EASE records, your page context, and your own account notices when available.';
 
     return `Hi, I am the BCCC EASE assistant. You are on ${pageContext}. ${privacy}\n\nAsk a short question or send a date, for example: “Is June 20, 2026 available?”`;
 }
@@ -386,7 +440,10 @@ function safeStorage() {
     }
 }
 
-function freshWelcome(role: PublicAssistantRole, pageContext: string): ChatMessage[] {
+function freshWelcome(
+    role: PublicAssistantRole,
+    pageContext: string,
+): ChatMessage[] {
     return [
         {
             id: messageId('assistant-welcome'),
@@ -408,7 +465,14 @@ function normalizeStoredGuide(guide: unknown): BookingGuideState | null {
 
     const item = guide as Partial<BookingGuideState>;
     const step = typeof item.step === 'string' ? item.step : 'dates';
-    const allowedSteps: BookingGuideStep[] = ['dates', 'mode', 'package', 'manual_areas', 'event_details', 'confirm'];
+    const allowedSteps: BookingGuideStep[] = [
+        'dates',
+        'mode',
+        'package',
+        'manual_areas',
+        'event_details',
+        'confirm',
+    ];
 
     if (!item.active || !allowedSteps.includes(step as BookingGuideStep)) {
         return null;
@@ -419,10 +483,19 @@ function normalizeStoredGuide(guide: unknown): BookingGuideState | null {
         step: step as BookingGuideStep,
         dateFrom: typeof item.dateFrom === 'string' ? item.dateFrom : undefined,
         dateTo: typeof item.dateTo === 'string' ? item.dateTo : undefined,
-        mode: item.mode === 'packages' || item.mode === 'manual' ? item.mode : undefined,
-        packageCode: typeof item.packageCode === 'string' ? item.packageCode : undefined,
-        selectedAreas: Array.isArray(item.selectedAreas) ? item.selectedAreas.filter((value): value is string => typeof value === 'string') : [],
-        eventType: typeof item.eventType === 'string' ? item.eventType : undefined,
+        mode:
+            item.mode === 'packages' || item.mode === 'manual'
+                ? item.mode
+                : undefined,
+        packageCode:
+            typeof item.packageCode === 'string' ? item.packageCode : undefined,
+        selectedAreas: Array.isArray(item.selectedAreas)
+            ? item.selectedAreas.filter(
+                  (value): value is string => typeof value === 'string',
+              )
+            : [],
+        eventType:
+            typeof item.eventType === 'string' ? item.eventType : undefined,
         guests: typeof item.guests === 'string' ? item.guests : undefined,
         updatedAt: Number(item.updatedAt) || Date.now(),
     };
@@ -437,15 +510,16 @@ function normalizeSpamGuard(guard: unknown): SpamGuardState {
 
     return {
         warnings: Math.max(0, Math.min(3, Number(item.warnings) || 0)),
-        mutedUntil: typeof item.mutedUntil === 'number' ? item.mutedUntil : null,
+        mutedUntil:
+            typeof item.mutedUntil === 'number' ? item.mutedUntil : null,
         recent: Array.isArray(item.recent)
             ? item.recent
-                .map((row) => ({
-                    text: typeof row?.text === 'string' ? row.text : '',
-                    at: Number(row?.at) || 0,
-                }))
-                .filter((row) => row.text && row.at > 0)
-                .slice(-8)
+                  .map((row) => ({
+                      text: typeof row?.text === 'string' ? row.text : '',
+                      at: Number(row?.at) || 0,
+                  }))
+                  .filter((row) => row.text && row.at > 0)
+                  .slice(-8)
             : [],
     };
 }
@@ -497,15 +571,18 @@ function loadStoredAssistantChat(
     }
 
     try {
-        const parsed = JSON.parse(storage.getItem(storageKey) || 'null') as Partial<StoredAssistantChat> | null;
+        const parsed = JSON.parse(
+            storage.getItem(storageKey) || 'null',
+        ) as Partial<StoredAssistantChat> | null;
 
         if (!parsed || typeof parsed !== 'object') {
             return fallback;
         }
 
-        const isGuestExpired = role === 'public'
-            && typeof parsed.expiresAt === 'number'
-            && parsed.expiresAt <= Date.now();
+        const isGuestExpired =
+            role === 'public' &&
+            typeof parsed.expiresAt === 'number' &&
+            parsed.expiresAt <= Date.now();
 
         if (isGuestExpired) {
             storage.removeItem(storageKey);
@@ -519,12 +596,20 @@ function loadStoredAssistantChat(
         }
 
         const suggestions = Array.isArray(parsed.suggestions)
-            ? parsed.suggestions.filter((item): item is string => typeof item === 'string' && item.trim() !== '').slice(0, 4)
+            ? parsed.suggestions
+                  .filter(
+                      (item): item is string =>
+                          typeof item === 'string' && item.trim() !== '',
+                  )
+                  .slice(0, 4)
             : starterSuggestionsFor(role);
 
         return {
             messages,
-            suggestions: suggestions.length > 0 ? suggestions : starterSuggestionsFor(role),
+            suggestions:
+                suggestions.length > 0
+                    ? suggestions
+                    : starterSuggestionsFor(role),
             open: Boolean(parsed.open),
             role,
             pageContext,
@@ -694,7 +779,9 @@ function assistantMeta(message: ChatMessage) {
     ];
 
     if (message.sourceCount) {
-        parts.push(`${message.sourceCount} source${message.sourceCount === 1 ? '' : 's'}`);
+        parts.push(
+            `${message.sourceCount} source${message.sourceCount === 1 ? '' : 's'}`,
+        );
     }
 
     if (typeof message.confidence === 'number') {
@@ -708,7 +795,6 @@ function assistantMeta(message: ChatMessage) {
     return parts.join(' • ');
 }
 
-
 function pad2(value: number) {
     return String(value).padStart(2, '0');
 }
@@ -720,17 +806,31 @@ function validDate(year: number, month: number, day: number) {
         return null;
     }
 
-    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+    if (
+        date.getFullYear() !== year ||
+        date.getMonth() !== month - 1 ||
+        date.getDate() !== day
+    ) {
         return null;
     }
 
     return `${year}-${pad2(month)}-${pad2(day)}`;
 }
 
-function extractDateRangeForGuide(message: string): { from: string; to: string } | null {
-    const normalized = message.replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
+function extractDateRangeForGuide(
+    message: string,
+): { from: string; to: string } | null {
+    const normalized = message
+        .replace(/[–—]/g, '-')
+        .replace(/\s+/g, ' ')
+        .trim();
     const monthPattern = Object.keys(monthMap).join('|');
-    const textRange = normalized.match(new RegExp(`\\b(${monthPattern})\\.?\\s+(\\d{1,2})(?:\\s*(?:-|to|until)\\s*(?:(?:${monthPattern})\\.?\\s+)?(\\d{1,2}))?\\s*,?\\s*(20\\d{2})\\b`, 'i'));
+    const textRange = normalized.match(
+        new RegExp(
+            `\\b(${monthPattern})\\.?\\s+(\\d{1,2})(?:\\s*(?:-|to|until)\\s*(?:(?:${monthPattern})\\.?\\s+)?(\\d{1,2}))?\\s*,?\\s*(20\\d{2})\\b`,
+            'i',
+        ),
+    );
 
     if (textRange) {
         const month = monthMap[textRange[1].toLowerCase()];
@@ -743,7 +843,9 @@ function extractDateRangeForGuide(message: string): { from: string; to: string }
         return from && to ? { from, to } : null;
     }
 
-    const isoRange = normalized.match(/\b(20\d{2})[-/](\d{1,2})[-/](\d{1,2})(?:\s*(?:-|to|until)\s*(?:(20\d{2})[-/](\d{1,2})[-/])?(\d{1,2}))?\b/i);
+    const isoRange = normalized.match(
+        /\b(20\d{2})[-/](\d{1,2})[-/](\d{1,2})(?:\s*(?:-|to|until)\s*(?:(20\d{2})[-/](\d{1,2})[-/])?(\d{1,2}))?\b/i,
+    );
 
     if (isoRange) {
         const year = Number(isoRange[1]);
@@ -765,9 +867,10 @@ function startsBookingGuide(message: string) {
     const lower = message.toLowerCase();
 
     return (
-        /\b(guide|assist|help|create|prepare|start)\b/.test(lower) &&
-        /\b(book|booking|reserve|reservation|event)\b/.test(lower)
-    ) || /\bbook\s+(the\s+)?date\b/.test(lower);
+        (/\b(guide|assist|help|create|prepare|start)\b/.test(lower) &&
+            /\b(book|booking|reserve|reservation|event)\b/.test(lower)) ||
+        /\bbook\s+(the\s+)?date\b/.test(lower)
+    );
 }
 
 function packageOptionsText() {
@@ -795,7 +898,11 @@ function findPackageFromMessage(message: string) {
         const compact = label.replace(/[^a-z0-9]+/g, ' ').trim();
         const code = item.code.toLowerCase();
 
-        return lower.includes(label) || lower.includes(compact) || lower.includes(code);
+        return (
+            lower.includes(label) ||
+            lower.includes(compact) ||
+            lower.includes(code)
+        );
     })?.code;
 }
 
@@ -804,7 +911,10 @@ function findManualAreasFromMessage(message: string) {
     const matched = new Set<string>();
 
     manualAreaOptions.forEach((item, index) => {
-        if (new RegExp(`\\b${index + 1}\\b`).test(lower) || item.aliases.some((alias) => lower.includes(alias))) {
+        if (
+            new RegExp(`\\b${index + 1}\\b`).test(lower) ||
+            item.aliases.some((alias) => lower.includes(alias))
+        ) {
             matched.add(item.code);
         }
     });
@@ -813,15 +923,23 @@ function findManualAreasFromMessage(message: string) {
 }
 
 function extractGuests(message: string) {
-    const match = message.match(/\b(\d{1,5})\s*(?:pax|guest|guests|attendee|attendees|people|persons)?\b/i);
+    const match = message.match(
+        /\b(\d{1,5})\s*(?:pax|guest|guests|attendee|attendees|people|persons)?\b/i,
+    );
 
     return match ? match[1] : undefined;
 }
 
 function cleanEventType(message: string) {
     const cleaned = message
-        .replace(/\b\d{1,5}\s*(?:pax|guest|guests|attendee|attendees|people|persons)?\b/gi, '')
-        .replace(/\b(event|type|guests|pax|attendees|people|is|are|for|with|about)\b/gi, ' ')
+        .replace(
+            /\b\d{1,5}\s*(?:pax|guest|guests|attendee|attendees|people|persons)?\b/gi,
+            '',
+        )
+        .replace(
+            /\b(event|type|guests|pax|attendees|people|is|are|for|with|about)\b/gi,
+            ' ',
+        )
         .replace(/[^a-zA-Z0-9 &/'-]+/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
@@ -840,7 +958,11 @@ function formatDateRange(guide: BookingGuideState) {
 }
 
 function selectedPackageLabel(code?: string) {
-    return bookingGuidePackages.find((item) => item.code === code)?.label ?? code ?? 'Not selected';
+    return (
+        bookingGuidePackages.find((item) => item.code === code)?.label ??
+        code ??
+        'Not selected'
+    );
 }
 
 function selectedAreaLabels(areas?: string[]) {
@@ -849,7 +971,11 @@ function selectedAreaLabels(areas?: string[]) {
     }
 
     return areas
-        .map((code) => manualAreaOptions.find((item) => item.code === code)?.label ?? code)
+        .map(
+            (code) =>
+                manualAreaOptions.find((item) => item.code === code)?.label ??
+                code,
+        )
         .join(', ');
 }
 
@@ -857,13 +983,18 @@ function bookingCreateBasePath(surface: 'public' | 'client' | 'backend') {
     return surface === 'backend' ? '/bookings/create' : '/book';
 }
 
-function buildBookingGuideLink(guide: BookingGuideState, surface: 'public' | 'client' | 'backend') {
+function buildBookingGuideLink(
+    guide: BookingGuideState,
+    surface: 'public' | 'client' | 'backend',
+) {
     const params = new URLSearchParams();
 
     if (guide.dateFrom) params.set('start_date', guide.dateFrom);
     if (guide.dateTo) params.set('end_date', guide.dateTo);
-    if (guide.packageCode && guide.mode === 'packages') params.set('package', guide.packageCode);
-    if (guide.mode === 'manual' && guide.selectedAreas?.length) params.set('areas', guide.selectedAreas.join(','));
+    if (guide.packageCode && guide.mode === 'packages')
+        params.set('package', guide.packageCode);
+    if (guide.mode === 'manual' && guide.selectedAreas?.length)
+        params.set('areas', guide.selectedAreas.join(','));
     if (guide.eventType) params.set('event_type', guide.eventType);
     if (guide.guests) params.set('guests', guide.guests);
     params.set('assistant_booking', '1');
@@ -879,7 +1010,8 @@ async function createAssistantBookingDraft(
         return {
             created: false,
             link: buildBookingGuideLink(guide, surface),
-            message: 'The booking guide is missing required details. Please complete the date, selection, event type, and guests first.',
+            message:
+                'The booking guide is missing required details. Please complete the date, selection, event type, and guests first.',
         };
     }
 
@@ -913,15 +1045,17 @@ async function createAssistantBookingDraft(
         return {
             created: false,
             link: buildBookingGuideLink(guide, surface),
-            message: 'I prepared a booking form link. The server draft could not be saved right now, so please review the form carefully before submitting.',
+            message:
+                'I prepared a booking form link. The server draft could not be saved right now, so please review the form carefully before submitting.',
         };
     }
 }
 
 function bookingGuideSummary(guide: BookingGuideState) {
-    const selection = guide.mode === 'manual'
-        ? selectedAreaLabels(guide.selectedAreas)
-        : selectedPackageLabel(guide.packageCode);
+    const selection =
+        guide.mode === 'manual'
+            ? selectedAreaLabels(guide.selectedAreas)
+            : selectedPackageLabel(guide.packageCode);
 
     return [
         `Date: ${formatDateRange(guide)}`,
@@ -932,21 +1066,28 @@ function bookingGuideSummary(guide: BookingGuideState) {
 }
 
 function guideSuggestionsFor(step: BookingGuideStep): string[] {
-    if (step === 'dates') return ['June 12-14, 2026', '2026-06-12 to 2026-06-14'];
+    if (step === 'dates')
+        return ['June 12-14, 2026', '2026-06-12 to 2026-06-14'];
     if (step === 'mode') return ['Use package', 'Manual services'];
     if (step === 'package') return ['1', '2', 'Executive Meeting Package'];
-    if (step === 'manual_areas') return ['Main Hall and LED Wall', 'Lounge and Boardroom', 'Full Hall'];
-    if (step === 'event_details') return ['Conference, 300 guests', 'Meeting, 50 pax'];
+    if (step === 'manual_areas')
+        return ['Main Hall and LED Wall', 'Lounge and Boardroom', 'Full Hall'];
+    if (step === 'event_details')
+        return ['Conference, 300 guests', 'Meeting, 50 pax'];
 
     return ['Yes, prepare it', 'Change package', 'Change date'];
 }
 
-function suspiciousChatMessage(message: string, recent: SpamGuardState['recent']) {
+function suspiciousChatMessage(
+    message: string,
+    recent: SpamGuardState['recent'],
+) {
     const now = Date.now();
     const lower = message.toLowerCase().trim();
     const compact = lower.replace(/\s+/g, '');
     const recentWindow = recent.filter((item) => now - item.at < 30_000);
-    const repeatedSame = recentWindow.filter((item) => item.text === lower).length >= 2;
+    const repeatedSame =
+        recentWindow.filter((item) => item.text === lower).length >= 2;
     const rapidSpam = recentWindow.length >= 6;
     const oneChar = compact.length === 1;
     const repeatedChars = compact.length >= 5 && /^(.)\1+$/.test(compact);
@@ -963,7 +1104,11 @@ function mutedMessage(mutedUntil?: number | null) {
 }
 
 function internalVisit(event: MouseEvent<HTMLAnchorElement>, href: string) {
-    if (/^https?:\/\//i.test(href) || href.startsWith('mailto:') || href.startsWith('tel:')) {
+    if (
+        /^https?:\/\//i.test(href) ||
+        href.startsWith('mailto:') ||
+        href.startsWith('tel:')
+    ) {
         return;
     }
 
@@ -993,7 +1138,9 @@ function AssistantText({ text }: { text: string }) {
 
         return parts.map((part, partIndex) => {
             if (typeof part === 'string') {
-                return <span key={`${lineIndex}-text-${partIndex}`}>{part}</span>;
+                return (
+                    <span key={`${lineIndex}-text-${partIndex}`}>{part}</span>
+                );
             }
 
             return (
@@ -1018,7 +1165,11 @@ function AssistantText({ text }: { text: string }) {
                     return <span key={`gap-${index}`} className="block h-1" />;
                 }
 
-                return <p key={`${trimmed}-${index}`}>{renderInline(trimmed, index)}</p>;
+                return (
+                    <p key={`${trimmed}-${index}`}>
+                        {renderInline(trimmed, index)}
+                    </p>
+                );
             })}
         </>
     );
@@ -1028,18 +1179,39 @@ export default function ClientBookingAssistant() {
     const page = usePage();
     const props = page.props as SharedProps;
     const currentUrl = page.url || '/';
-    const role = assistantRole(props.auth, currentUrl);
-    const pageContext = useMemo(() => pageContextFromUrl(currentUrl, role), [currentUrl, role]);
-    const storageKey = useMemo(() => assistantStorageKey(props.auth), [props.auth]);
+    const role = assistantRole(props.auth);
+    const pageContext = useMemo(
+        () => pageContextFromUrl(currentUrl, role),
+        [currentUrl, role],
+    );
+    const storageKey = useMemo(
+        () => assistantStorageKey(props.auth),
+        [props.auth],
+    );
 
     const [activeStorageKey, setActiveStorageKey] = useState(storageKey);
-    const [open, setOpen] = useState(() => loadStoredAssistantChat(storageKey, role, pageContext).open);
+    const [open, setOpen] = useState(
+        () => loadStoredAssistantChat(storageKey, role, pageContext).open,
+    );
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>(() => loadStoredAssistantChat(storageKey, role, pageContext).suggestions);
-    const [messages, setMessages] = useState<ChatMessage[]>(() => loadStoredAssistantChat(storageKey, role, pageContext).messages);
-    const [bookingGuide, setBookingGuide] = useState<BookingGuideState | null>(() => loadStoredAssistantChat(storageKey, role, pageContext).guide ?? null);
-    const [spamGuard, setSpamGuard] = useState<SpamGuardState>(() => loadStoredAssistantChat(storageKey, role, pageContext).spamGuard ?? defaultSpamGuard());
+    const [dynamicSuggestions, setDynamicSuggestions] = useState<string[]>(
+        () =>
+            loadStoredAssistantChat(storageKey, role, pageContext).suggestions,
+    );
+    const [messages, setMessages] = useState<ChatMessage[]>(
+        () => loadStoredAssistantChat(storageKey, role, pageContext).messages,
+    );
+    const [bookingGuide, setBookingGuide] = useState<BookingGuideState | null>(
+        () =>
+            loadStoredAssistantChat(storageKey, role, pageContext).guide ??
+            null,
+    );
+    const [spamGuard, setSpamGuard] = useState<SpamGuardState>(
+        () =>
+            loadStoredAssistantChat(storageKey, role, pageContext).spamGuard ??
+            defaultSpamGuard(),
+    );
 
     const inputRef = useRef<HTMLInputElement | null>(null);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -1054,10 +1226,13 @@ export default function ClientBookingAssistant() {
         spamGuard,
     });
     const serverRestoreKeyRef = useRef<string | null>(null);
-    const serverSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const serverSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+        null,
+    );
 
     const isPublic = role === 'public';
-    const isPrivileged = role === 'admin' || role === 'manager' || role === 'staff';
+    const isPrivileged =
+        role === 'admin' || role === 'manager' || role === 'staff';
     const surface = isPublic ? 'public' : isPrivileged ? 'backend' : 'client';
     const isAdminSurface = surface === 'backend';
 
@@ -1066,7 +1241,11 @@ export default function ClientBookingAssistant() {
             return;
         }
 
-        const nextStoredChat = loadStoredAssistantChat(storageKey, role, pageContext);
+        const nextStoredChat = loadStoredAssistantChat(
+            storageKey,
+            role,
+            pageContext,
+        );
         setActiveStorageKey(storageKey);
         setOpen(nextStoredChat.open);
         setDynamicSuggestions(nextStoredChat.suggestions);
@@ -1099,7 +1278,16 @@ export default function ClientBookingAssistant() {
             bookingGuide,
             spamGuard,
         );
-    }, [storageKey, role, pageContext, messages, dynamicSuggestions, open, bookingGuide, spamGuard]);
+    }, [
+        storageKey,
+        role,
+        pageContext,
+        messages,
+        dynamicSuggestions,
+        open,
+        bookingGuide,
+        spamGuard,
+    ]);
 
     useEffect(() => {
         let cancelled = false;
@@ -1123,20 +1311,27 @@ export default function ClientBookingAssistant() {
                 return;
             }
 
-            const localSnapshot = loadStoredAssistantChat(storageKey, role, pageContext);
-            const serverUpdatedAt = Date.parse(state.last_activity_at || '') || 0;
+            const localSnapshot = loadStoredAssistantChat(
+                storageKey,
+                role,
+                pageContext,
+            );
+            const serverUpdatedAt =
+                Date.parse(state.last_activity_at || '') || 0;
             const shouldUseServer =
                 serverMessages.length > localSnapshot.messages.length ||
                 localSnapshot.messages.length <= 1 ||
-                (serverUpdatedAt > 0 && serverUpdatedAt >= localSnapshot.updatedAt);
+                (serverUpdatedAt > 0 &&
+                    serverUpdatedAt >= localSnapshot.updatedAt);
 
             if (!shouldUseServer) {
                 return;
             }
 
-            const nextSuggestions = Array.isArray(state.suggestions) && state.suggestions.length > 0
-                ? state.suggestions.filter(Boolean).slice(0, 4)
-                : starterSuggestionsFor(role);
+            const nextSuggestions =
+                Array.isArray(state.suggestions) && state.suggestions.length > 0
+                    ? state.suggestions.filter(Boolean).slice(0, 4)
+                    : starterSuggestionsFor(role);
             const nextGuide = normalizeStoredGuide(state.guide);
             const nextSpamGuard = normalizeSpamGuard(state.spam_guard);
             const nextOpen = Boolean(state.open);
@@ -1187,16 +1382,32 @@ export default function ClientBookingAssistant() {
                 clearTimeout(serverSaveTimerRef.current);
             }
         };
-    }, [role, surface, pageContext, messages, dynamicSuggestions, open, bookingGuide, spamGuard]);
+    }, [
+        role,
+        surface,
+        pageContext,
+        messages,
+        dynamicSuggestions,
+        open,
+        bookingGuide,
+        spamGuard,
+    ]);
 
     useEffect(() => {
         const removeListener = router.on('before', (event) => {
-            const detail = (event as unknown as { detail?: { visit?: { method?: string; url?: unknown } } }).detail;
+            const detail = (
+                event as unknown as {
+                    detail?: { visit?: { method?: string; url?: unknown } };
+                }
+            ).detail;
             const visit = detail?.visit;
             const method = String(visit?.method ?? '').toLowerCase();
             const url = String(visit?.url ?? '');
 
-            if (method === 'post' && url.replace(/\/+$/, '').endsWith('/logout')) {
+            if (
+                method === 'post' &&
+                url.replace(/\/+$/, '').endsWith('/logout')
+            ) {
                 clearAssistantStorage();
                 clearServerAssistantState();
                 return;
@@ -1241,7 +1452,8 @@ export default function ClientBookingAssistant() {
 
         window.addEventListener('beforeunload', persistBeforeUnload);
 
-        return () => window.removeEventListener('beforeunload', persistBeforeUnload);
+        return () =>
+            window.removeEventListener('beforeunload', persistBeforeUnload);
     }, []);
 
     useEffect(() => {
@@ -1256,8 +1468,12 @@ export default function ClientBookingAssistant() {
             }
 
             try {
-                const parsed = JSON.parse(storage.getItem(storageKey) || 'null') as Partial<StoredAssistantChat> | null;
-                const isExpired = typeof parsed?.expiresAt === 'number' && parsed.expiresAt <= Date.now();
+                const parsed = JSON.parse(
+                    storage.getItem(storageKey) || 'null',
+                ) as Partial<StoredAssistantChat> | null;
+                const isExpired =
+                    typeof parsed?.expiresAt === 'number' &&
+                    parsed.expiresAt <= Date.now();
 
                 if (!isExpired) {
                     return;
@@ -1279,7 +1495,10 @@ export default function ClientBookingAssistant() {
     }, [storageKey, role, pageContext]);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        messagesEndRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'end',
+        });
     }, [messages, loading, open]);
 
     useEffect(() => {
@@ -1314,7 +1533,9 @@ export default function ClientBookingAssistant() {
         ]);
     };
 
-    const handleBookingGuideMessage = async (message: string): Promise<boolean> => {
+    const handleBookingGuideMessage = async (
+        message: string,
+    ): Promise<boolean> => {
         const lower = message.toLowerCase();
         let guide = bookingGuide;
 
@@ -1322,7 +1543,10 @@ export default function ClientBookingAssistant() {
             return false;
         }
 
-        if (guide?.active && /\b(cancel|stop|reset guide|exit guide)\b/.test(lower)) {
+        if (
+            guide?.active &&
+            /\b(cancel|stop|reset guide|exit guide)\b/.test(lower)
+        ) {
             setBookingGuide(null);
             appendBotMessage(
                 'Booking guide cancelled. You can start again anytime by asking “Guide me to book an event.”',
@@ -1370,7 +1594,13 @@ export default function ClientBookingAssistant() {
                 return true;
             }
 
-            const nextGuide = { ...guide, step: 'mode' as BookingGuideStep, dateFrom: dateRange.from, dateTo: dateRange.to, updatedAt: Date.now() };
+            const nextGuide = {
+                ...guide,
+                step: 'mode' as BookingGuideStep,
+                dateFrom: dateRange.from,
+                dateTo: dateRange.to,
+                updatedAt: Date.now(),
+            };
             setBookingGuide(nextGuide);
             appendBotMessage(
                 `Schedule saved: ${formatDateRange(nextGuide)}.\n\nWould you like a ready package or manual venue/service selection?`,
@@ -1383,8 +1613,19 @@ export default function ClientBookingAssistant() {
             const foundPackage = findPackageFromMessage(message);
             const areas = findManualAreasFromMessage(message);
 
-            if (/\b(package|packages|ready|preset)\b/.test(lower) || foundPackage) {
-                const nextGuide = { ...guide, mode: 'packages' as const, packageCode: foundPackage, step: foundPackage ? 'event_details' as BookingGuideStep : 'package' as BookingGuideStep, updatedAt: Date.now() };
+            if (
+                /\b(package|packages|ready|preset)\b/.test(lower) ||
+                foundPackage
+            ) {
+                const nextGuide = {
+                    ...guide,
+                    mode: 'packages' as const,
+                    packageCode: foundPackage,
+                    step: foundPackage
+                        ? ('event_details' as BookingGuideStep)
+                        : ('package' as BookingGuideStep),
+                    updatedAt: Date.now(),
+                };
                 setBookingGuide(nextGuide);
 
                 if (foundPackage) {
@@ -1402,8 +1643,22 @@ export default function ClientBookingAssistant() {
                 return true;
             }
 
-            if (/\b(manual|custom|choose area|services|areas|venue)\b/.test(lower) || areas.length > 0) {
-                const nextGuide = { ...guide, mode: 'manual' as const, selectedAreas: areas, step: areas.length > 0 ? 'event_details' as BookingGuideStep : 'manual_areas' as BookingGuideStep, updatedAt: Date.now() };
+            if (
+                /\b(manual|custom|choose area|services|areas|venue)\b/.test(
+                    lower,
+                ) ||
+                areas.length > 0
+            ) {
+                const nextGuide = {
+                    ...guide,
+                    mode: 'manual' as const,
+                    selectedAreas: areas,
+                    step:
+                        areas.length > 0
+                            ? ('event_details' as BookingGuideStep)
+                            : ('manual_areas' as BookingGuideStep),
+                    updatedAt: Date.now(),
+                };
                 setBookingGuide(nextGuide);
 
                 if (areas.length > 0) {
@@ -1439,7 +1694,12 @@ export default function ClientBookingAssistant() {
                 return true;
             }
 
-            const nextGuide = { ...guide, packageCode, step: 'event_details' as BookingGuideStep, updatedAt: Date.now() };
+            const nextGuide = {
+                ...guide,
+                packageCode,
+                step: 'event_details' as BookingGuideStep,
+                updatedAt: Date.now(),
+            };
             setBookingGuide(nextGuide);
             appendBotMessage(
                 `Package selected: ${selectedPackageLabel(packageCode)}.\n\nNow send the event type and estimated guests. Example: “Conference, 300 guests”.`,
@@ -1459,7 +1719,12 @@ export default function ClientBookingAssistant() {
                 return true;
             }
 
-            const nextGuide = { ...guide, selectedAreas: areas, step: 'event_details' as BookingGuideStep, updatedAt: Date.now() };
+            const nextGuide = {
+                ...guide,
+                selectedAreas: areas,
+                step: 'event_details' as BookingGuideStep,
+                updatedAt: Date.now(),
+            };
             setBookingGuide(nextGuide);
             appendBotMessage(
                 `Manual areas selected: ${selectedAreaLabels(areas)}.\n\nNow send the event type and estimated guests. Example: “Seminar, 150 guests”.`,
@@ -1473,8 +1738,18 @@ export default function ClientBookingAssistant() {
             const eventType = cleanEventType(message) ?? guide.eventType;
 
             if (!eventType || !guests) {
-                const missing = [!eventType ? 'event type' : null, !guests ? 'estimated guests' : null].filter(Boolean).join(' and ');
-                const nextGuide = { ...guide, eventType, guests, updatedAt: Date.now() };
+                const missing = [
+                    !eventType ? 'event type' : null,
+                    !guests ? 'estimated guests' : null,
+                ]
+                    .filter(Boolean)
+                    .join(' and ');
+                const nextGuide = {
+                    ...guide,
+                    eventType,
+                    guests,
+                    updatedAt: Date.now(),
+                };
                 setBookingGuide(nextGuide);
                 appendBotMessage(
                     `I still need the ${missing}. Example: “Conference, 300 guests”.`,
@@ -1483,7 +1758,13 @@ export default function ClientBookingAssistant() {
                 return true;
             }
 
-            const nextGuide = { ...guide, eventType, guests, step: 'confirm' as BookingGuideStep, updatedAt: Date.now() };
+            const nextGuide = {
+                ...guide,
+                eventType,
+                guests,
+                step: 'confirm' as BookingGuideStep,
+                updatedAt: Date.now(),
+            };
             setBookingGuide(nextGuide);
             appendBotMessage(
                 `Please review this booking guide draft:\n${bookingGuideSummary(nextGuide)}\n\nShould I prepare the booking form link now?`,
@@ -1494,29 +1775,59 @@ export default function ClientBookingAssistant() {
 
         if (guide.step === 'confirm') {
             if (/\b(change date|date)\b/.test(lower)) {
-                const nextGuide = { ...guide, step: 'dates' as BookingGuideStep, updatedAt: Date.now() };
+                const nextGuide = {
+                    ...guide,
+                    step: 'dates' as BookingGuideStep,
+                    updatedAt: Date.now(),
+                };
                 setBookingGuide(nextGuide);
-                appendBotMessage('Okay. Send the corrected date or date range.', guideSuggestionsFor('dates'));
+                appendBotMessage(
+                    'Okay. Send the corrected date or date range.',
+                    guideSuggestionsFor('dates'),
+                );
                 return true;
             }
 
             if (/\b(change package|package)\b/.test(lower)) {
-                const nextGuide = { ...guide, mode: 'packages' as const, packageCode: undefined, step: 'package' as BookingGuideStep, updatedAt: Date.now() };
+                const nextGuide = {
+                    ...guide,
+                    mode: 'packages' as const,
+                    packageCode: undefined,
+                    step: 'package' as BookingGuideStep,
+                    updatedAt: Date.now(),
+                };
                 setBookingGuide(nextGuide);
-                appendBotMessage(`Choose the package again:\n${packageOptionsText()}`, guideSuggestionsFor('package'));
+                appendBotMessage(
+                    `Choose the package again:\n${packageOptionsText()}`,
+                    guideSuggestionsFor('package'),
+                );
                 return true;
             }
 
             if (/\b(change area|manual|service)\b/.test(lower)) {
-                const nextGuide = { ...guide, mode: 'manual' as const, selectedAreas: [], step: 'manual_areas' as BookingGuideStep, updatedAt: Date.now() };
+                const nextGuide = {
+                    ...guide,
+                    mode: 'manual' as const,
+                    selectedAreas: [],
+                    step: 'manual_areas' as BookingGuideStep,
+                    updatedAt: Date.now(),
+                };
                 setBookingGuide(nextGuide);
-                appendBotMessage(`Choose the manual areas again:\n${manualAreaOptionsText()}`, guideSuggestionsFor('manual_areas'));
+                appendBotMessage(
+                    `Choose the manual areas again:\n${manualAreaOptionsText()}`,
+                    guideSuggestionsFor('manual_areas'),
+                );
                 return true;
             }
 
-            if (/\b(yes|proceed|prepare|create|complete|submit|go)\b/.test(lower)) {
+            if (
+                /\b(yes|proceed|prepare|create|complete|submit|go)\b/.test(
+                    lower,
+                )
+            ) {
                 const draft = await createAssistantBookingDraft(guide, surface);
-                const link = draft.link || buildBookingGuideLink(guide, surface);
+                const link =
+                    draft.link || buildBookingGuideLink(guide, surface);
                 const draftLine = draft.created
                     ? 'I also saved it as a booking draft in your account.'
                     : draft.requires_login
@@ -1558,14 +1869,19 @@ export default function ClientBookingAssistant() {
 
         const bypassSpamCheck = Boolean(bookingGuide?.active);
 
-        if (!bypassSpamCheck && suspiciousChatMessage(message, spamGuard.recent)) {
+        if (
+            !bypassSpamCheck &&
+            suspiciousChatMessage(message, spamGuard.recent)
+        ) {
             const nextWarnings = Math.min(3, spamGuard.warnings + 1);
             const mutedUntil = nextWarnings >= 3 ? now + spamMuteMs : null;
             const nextGuard: SpamGuardState = {
                 warnings: nextWarnings,
                 mutedUntil,
                 recent: [
-                    ...spamGuard.recent.filter((item) => now - item.at < 60_000),
+                    ...spamGuard.recent.filter(
+                        (item) => now - item.at < 60_000,
+                    ),
                     { text: message.toLowerCase(), at: now },
                 ].slice(-8),
             };
@@ -1617,6 +1933,10 @@ export default function ClientBookingAssistant() {
                     page: currentUrl,
                     context: pageContext,
                     surface,
+                    history: messages.slice(-10).map((item) => ({
+                        role: item.role,
+                        text: item.text,
+                    })),
                 }),
             });
 
@@ -1680,22 +2000,38 @@ export default function ClientBookingAssistant() {
         setMessages(nextMessages);
         setBookingGuide(null);
         setSpamGuard(defaultSpamGuard());
-        saveStoredAssistantChat(storageKey, role, pageContext, nextMessages, nextSuggestions, open, null, defaultSpamGuard());
+        saveStoredAssistantChat(
+            storageKey,
+            role,
+            pageContext,
+            nextMessages,
+            nextSuggestions,
+            open,
+            null,
+            defaultSpamGuard(),
+        );
         window.setTimeout(() => inputRef.current?.focus(), 80);
     };
 
-    const markFeedback = async (messageIdValue: string, trackingId: string, helpful: boolean) => {
+    const markFeedback = async (
+        messageIdValue: string,
+        trackingId: string,
+        helpful: boolean,
+    ) => {
         const correction = helpful
             ? ''
-            : window.prompt(
-                'What should the BCCC EASE assistant learn for review? You may leave this blank.',
-                '',
-            ) ?? '';
+            : (window.prompt(
+                  'What should the BCCC EASE assistant learn for review? You may leave this blank.',
+                  '',
+              ) ?? '');
 
         setMessages((current) =>
             current.map((message) =>
                 message.id === messageIdValue
-                    ? { ...message, feedback: helpful ? 'helpful' : 'unhelpful' }
+                    ? {
+                          ...message,
+                          feedback: helpful ? 'helpful' : 'unhelpful',
+                      }
                     : message,
             ),
         );
@@ -1793,23 +2129,57 @@ export default function ClientBookingAssistant() {
                                             </div>
                                         ) : null}
                                         <AssistantText text={message.text} />
-                                        {message.role === 'bot' && message.trackingId ? (
+                                        {message.role === 'bot' &&
+                                        message.trackingId ? (
                                             <div className="bccc-client-chat-feedback">
                                                 <span>Helpful?</span>
                                                 <button
                                                     type="button"
-                                                    className={message.feedback === 'helpful' ? 'is-selected' : ''}
-                                                    onClick={() => void markFeedback(message.id, message.trackingId!, true)}
-                                                    disabled={message.feedback === 'helpful'}
+                                                    className={
+                                                        message.feedback ===
+                                                        'helpful'
+                                                            ? 'is-selected'
+                                                            : ''
+                                                    }
+                                                    onClick={() =>
+                                                        void markFeedback(
+                                                            message.id,
+                                                            message.trackingId!,
+                                                            true,
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        message.feedback ===
+                                                        'helpful'
+                                                    }
                                                     aria-label="Mark assistant answer as helpful"
                                                 >
-                                                    {message.feedback === 'helpful' ? <Check className="h-3.5 w-3.5" /> : <ThumbsUp className="h-3.5 w-3.5" />}
+                                                    {message.feedback ===
+                                                    'helpful' ? (
+                                                        <Check className="h-3.5 w-3.5" />
+                                                    ) : (
+                                                        <ThumbsUp className="h-3.5 w-3.5" />
+                                                    )}
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    className={message.feedback === 'unhelpful' ? 'is-selected' : ''}
-                                                    onClick={() => void markFeedback(message.id, message.trackingId!, false)}
-                                                    disabled={message.feedback === 'unhelpful'}
+                                                    className={
+                                                        message.feedback ===
+                                                        'unhelpful'
+                                                            ? 'is-selected'
+                                                            : ''
+                                                    }
+                                                    onClick={() =>
+                                                        void markFeedback(
+                                                            message.id,
+                                                            message.trackingId!,
+                                                            false,
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        message.feedback ===
+                                                        'unhelpful'
+                                                    }
                                                     aria-label="Mark assistant answer as not helpful"
                                                 >
                                                     <ThumbsDown className="h-3.5 w-3.5" />
@@ -1839,7 +2209,9 @@ export default function ClientBookingAssistant() {
                                 <button
                                     key={suggestion}
                                     type="button"
-                                    onClick={() => void submitMessage(suggestion)}
+                                    onClick={() =>
+                                        void submitMessage(suggestion)
+                                    }
                                     disabled={loading}
                                 >
                                     {suggestion}
@@ -1847,17 +2219,30 @@ export default function ClientBookingAssistant() {
                             ))}
                         </div>
 
-                        <form onSubmit={onSubmit} className="bccc-client-assistant-form">
+                        <form
+                            onSubmit={onSubmit}
+                            className="bccc-client-assistant-form"
+                        >
                             <input
                                 ref={inputRef}
                                 type="text"
                                 value={input}
-                                onChange={(event) => setInput(event.target.value)}
+                                onChange={(event) =>
+                                    setInput(event.target.value)
+                                }
                                 placeholder={assistantPlaceholder(role)}
-                                maxLength={1200}
+                                maxLength={4000}
                             />
-                            <button type="submit" disabled={loading || !input.trim()} aria-label="Send message to assistant">
-                                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                            <button
+                                type="submit"
+                                disabled={loading || !input.trim()}
+                                aria-label="Send message to assistant"
+                            >
+                                {loading ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Send className="h-4 w-4" />
+                                )}
                             </button>
                         </form>
                     </motion.section>
@@ -1872,7 +2257,10 @@ export default function ClientBookingAssistant() {
                 aria-label="Open BCCC EASE assistant"
                 title="BCCC Assistant"
             >
-                <span className="bccc-client-assistant-tab-pulse" aria-hidden="true" />
+                <span
+                    className="bccc-client-assistant-tab-pulse"
+                    aria-hidden="true"
+                />
                 <span className="bccc-client-assistant-tab-icon">
                     <MessageCircle className="h-5 w-5" />
                 </span>

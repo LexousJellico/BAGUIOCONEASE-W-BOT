@@ -3209,6 +3209,129 @@ body:has(.bccc-availability-dock) .bccc-public-hero-copy {
     isolation: isolate;
 }
 
+.bccc-focused-tour-page {
+    min-height: calc(100svh - 78px);
+}
+
+.bccc-focused-layout-page {
+    min-height: calc(100svh - 78px);
+}
+
+.bccc-focused-tour-workspace {
+    height: calc(100svh - 78px);
+    min-height: 42rem;
+}
+
+.bccc-focused-layout-workspace {
+    height: calc(100svh - 78px);
+    min-height: 42rem;
+}
+
+.bccc-focused-tour-view,
+.bccc-live-tour-map,
+.bccc-focused-layout-view,
+.bccc-bccc-layout-panel {
+    height: 100% !important;
+    min-height: 0 !important;
+}
+
+.bccc-live-tour-map {
+    border-radius: 0.85rem;
+}
+
+.bccc-bccc-layout-panel {
+    border-radius: 0.85rem;
+}
+
+.bccc-area-map-canvas {
+    box-shadow:
+        inset 0 0 0 1px rgba(20, 63, 56, 0.08),
+        0 18px 46px rgba(0, 0, 0, 0.16);
+}
+
+.bccc-map-room {
+    outline: none;
+}
+
+.bccc-map-room rect {
+    fill: rgba(255, 255, 255, 0.76);
+    stroke: rgba(20, 63, 56, 0.28);
+    stroke-width: 0.75;
+    transition:
+        fill 180ms ease,
+        stroke 180ms ease,
+        opacity 180ms ease;
+}
+
+.bccc-map-room text {
+    pointer-events: none;
+    fill: #143f38;
+    font-size: 2.6px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.bccc-map-room.is-active-room rect {
+    fill: rgba(159, 232, 220, 0.36);
+    stroke: #176456;
+    stroke-width: 1.1;
+}
+
+.bccc-map-room.is-feature-room rect {
+    fill: rgba(244, 223, 173, 0.42);
+    stroke: rgba(157, 116, 50, 0.52);
+    stroke-dasharray: 2 1;
+}
+
+.bccc-map-room.is-surrounding-room rect {
+    fill: rgba(255, 255, 255, 0.54);
+    stroke: rgba(20, 63, 56, 0.34);
+}
+
+.bccc-map-room.is-clickable-room {
+    cursor: pointer;
+}
+
+.bccc-map-room.is-clickable-room:hover rect,
+.bccc-map-room.is-clickable-room:focus rect {
+    fill: #f4dfad;
+    stroke: #176456;
+    stroke-width: 1.25;
+}
+
+.bccc-map-route-line {
+    stroke: rgba(23, 100, 86, 0.52);
+    stroke-width: 0.9;
+    stroke-dasharray: 2.4 1.8;
+    stroke-linecap: round;
+}
+
+.bccc-map-camera-node {
+    box-shadow: 0 8px 24px rgba(20, 63, 56, 0.25);
+}
+
+.bccc-map-camera-node.is-current {
+    box-shadow:
+        0 0 0 5px rgba(244, 223, 173, 0.5),
+        0 10px 28px rgba(20, 63, 56, 0.4);
+    animation: bccc-map-node-pulse 2s ease-in-out infinite;
+}
+
+@keyframes bccc-map-node-pulse {
+    0%,
+    100% {
+        box-shadow:
+            0 0 0 4px rgba(244, 223, 173, 0.3),
+            0 10px 28px rgba(20, 63, 56, 0.35);
+    }
+    50% {
+        box-shadow:
+            0 0 0 8px rgba(244, 223, 173, 0.12),
+            0 10px 34px rgba(20, 63, 56, 0.5);
+    }
+}
+
 .bccc-windowed-tour-shell,
 .bccc-windowed-layout-shell {
     height: clamp(28rem, 62svh, 50rem);
@@ -3267,10 +3390,6 @@ body.bccc-viewer-is-expanded {
     box-shadow: 0 18px 54px rgba(0, 0, 0, 0.28);
 }
 
-.bccc-tour-scene-toolbar {
-    margin-right: 3.65rem;
-}
-
 .bccc-windowed-tour-shell:fullscreen .bccc-viewer-fullscreen-button,
 .bccc-windowed-layout-shell:fullscreen .bccc-viewer-fullscreen-button,
 .bccc-windowed-tour-shell.is-viewer-expanded .bccc-viewer-fullscreen-button,
@@ -3282,11 +3401,6 @@ body.bccc-viewer-is-expanded {
 .bccc-windowed-tour-shell:fullscreen .bccc-street-view-route-controls,
 .bccc-windowed-tour-shell.is-viewer-expanded .bccc-street-view-route-controls {
     bottom: max(1rem, env(safe-area-inset-bottom)) !important;
-}
-
-.bccc-windowed-tour-shell:fullscreen .bccc-tour-scene-toolbar,
-.bccc-windowed-tour-shell.is-viewer-expanded .bccc-tour-scene-toolbar {
-    margin-right: 3.75rem;
 }
 
 .bccc-windowed-layout-shell:fullscreen .bccc-scene-orbit-controls,
@@ -3302,9 +3416,50 @@ body.bccc-viewer-is-expanded {
     cursor: grab;
 }
 
+.bccc-virtual-tour-viewport {
+    touch-action: none;
+    overscroll-behavior: contain;
+}
+
+.bccc-virtual-tour-viewport > img {
+    will-change: transform, filter, opacity;
+    backface-visibility: hidden;
+}
+
+.bccc-tour-panorama {
+    overflow: hidden;
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            rgba(159, 232, 220, 0.12),
+            transparent 58%
+        ),
+        #061514;
+}
+
+.bccc-tour-panorama canvas {
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: none;
+    transition:
+        filter 680ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 680ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: filter, transform;
+}
+
+.bccc-tour-panorama.is-loading canvas {
+    filter: blur(16px) brightness(0.76);
+    transform: scale(1.045);
+}
+
 .bccc-virtual-tour-viewport canvas:active,
+.bccc-virtual-tour-viewport canvas[data-dragging='true'],
 .bccc-convention-layout-scene canvas:active {
     cursor: grabbing;
+}
+
+.bccc-tour-look-hint {
+    box-shadow: 0 14px 44px rgba(0, 0, 0, 0.24);
 }
 
 .bccc-scene-orbit-controls {
@@ -3319,6 +3474,10 @@ body.bccc-viewer-is-expanded {
     max-width: min(42rem, calc(100% - 1.5rem));
     margin-inline: auto;
     box-shadow: 0 18px 54px rgba(0, 0, 0, 0.3);
+}
+
+.bccc-street-view-route-controls.bccc-street-view-route-choices {
+    max-width: min(56rem, calc(100% - 1.5rem));
 }
 
 .bccc-street-view-route-controls button {
@@ -3385,6 +3544,36 @@ body.bccc-viewer-is-expanded {
     .bccc-luxury-preview-panel {
         max-width: 100%;
     }
+
+    .bccc-focused-tour-workspace {
+        height: auto;
+        min-height: auto;
+    }
+
+    .bccc-focused-layout-workspace {
+        height: auto;
+        min-height: auto;
+    }
+
+    .bccc-focused-tour-view {
+        height: clamp(26rem, 58svh, 42rem) !important;
+        min-height: 26rem !important;
+    }
+
+    .bccc-focused-layout-view {
+        height: clamp(28rem, 62svh, 44rem) !important;
+        min-height: 28rem !important;
+    }
+
+    .bccc-live-tour-map {
+        height: min(46rem, calc(100svh - 2rem)) !important;
+        min-height: 38rem !important;
+    }
+
+    .bccc-bccc-layout-panel {
+        height: min(50rem, calc(100svh - 2rem)) !important;
+        min-height: 44rem !important;
+    }
 }
 
 @media (max-width: 767px) {
@@ -3400,6 +3589,26 @@ body.bccc-viewer-is-expanded {
         border-radius: 0.8rem !important;
     }
 
+    .bccc-focused-tour-view {
+        height: clamp(24rem, 58svh, 34rem) !important;
+        min-height: 24rem !important;
+    }
+
+    .bccc-focused-layout-view {
+        height: clamp(26rem, 58svh, 36rem) !important;
+        min-height: 26rem !important;
+    }
+
+    .bccc-live-tour-map {
+        height: 42rem !important;
+        min-height: 42rem !important;
+    }
+
+    .bccc-bccc-layout-panel {
+        height: 46rem !important;
+        min-height: 46rem !important;
+    }
+
     .bccc-scene-orbit-controls {
         left: auto !important;
         right: 1rem !important;
@@ -3411,18 +3620,6 @@ body.bccc-viewer-is-expanded {
     .bccc-scene-orbit-controls button {
         height: 2.35rem;
         width: 2.35rem;
-    }
-
-    .bccc-tour-scene-toolbar {
-        margin-right: 0;
-        transform: scale(0.86);
-        transform-origin: top right;
-    }
-
-    .bccc-windowed-tour-shell:fullscreen .bccc-tour-scene-toolbar,
-    .bccc-windowed-tour-shell.is-viewer-expanded .bccc-tour-scene-toolbar {
-        margin-right: 0;
-        transform: scale(0.82);
     }
 
     .bccc-virtual-tour-page h1,
@@ -3454,7 +3651,8 @@ body.bccc-viewer-is-expanded {
     }
 
     .bccc-street-view-route-controls button {
-        min-height: 2.45rem;
+        min-width: 0;
+        min-height: 2.8rem;
         padding-inline: 0.85rem;
         font-size: 0.58rem;
         letter-spacing: 0.08em;
@@ -3472,15 +3670,6 @@ body.bccc-viewer-is-expanded {
         transform: scale(0.78);
     }
 
-    .bccc-tour-scene-toolbar {
-        transform: scale(0.76);
-    }
-
-    .bccc-windowed-tour-shell:fullscreen .bccc-tour-scene-toolbar,
-    .bccc-windowed-tour-shell.is-viewer-expanded .bccc-tour-scene-toolbar {
-        transform: scale(0.72);
-    }
-
     .bccc-windowed-tour-shell,
     .bccc-windowed-layout-shell {
         height: clamp(22rem, 60svh, 29rem);
@@ -3496,9 +3685,10 @@ body.bccc-viewer-is-expanded {
     }
 
     .bccc-street-view-route-controls button {
-        min-height: 2.25rem;
-        padding-inline: 0.55rem;
+        min-height: 2.7rem;
+        padding-inline: 0.45rem;
         font-size: 0.52rem;
+        letter-spacing: 0.055em;
     }
 
     .bccc-virtual-tour-page h1,

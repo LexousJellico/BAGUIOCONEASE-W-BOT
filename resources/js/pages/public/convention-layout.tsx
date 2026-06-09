@@ -262,14 +262,22 @@ function LayoutScene({
                 );
 
                 camera = new THREE.PerspectiveCamera(
-                    viewMode === 'interior' ? 42 : 46,
+                    viewMode === 'interior' ? 42 : 48,
                     Math.max(mountElement.clientWidth, 1) /
                         Math.max(mountElement.clientHeight, 1),
                     0.1,
                     120,
                 );
-                camera.position.set(10, 9.2, 13.5);
-                camera.lookAt(0.4, 0, 0.25);
+                camera.position.set(
+                    viewMode === 'interior' ? 10 : 17,
+                    viewMode === 'interior' ? 9.2 : 13.2,
+                    viewMode === 'interior' ? 13.5 : 23,
+                );
+                camera.lookAt(
+                    viewMode === 'interior' ? 0.4 : 0,
+                    viewMode === 'interior' ? 0 : 1.8,
+                    viewMode === 'interior' ? 0.25 : 0.7,
+                );
 
                 renderer = new THREE.WebGLRenderer({
                     antialias: true,
@@ -287,7 +295,7 @@ function LayoutScene({
                     'h-full w-full touch-none outline-none';
                 renderer.domElement.setAttribute(
                     'aria-label',
-                    `${viewMode} blueprint-style 3D convention layout preview`,
+                    `${viewMode} 3D model of the Baguio Convention and Cultural Center`,
                 );
                 renderer.domElement.setAttribute('role', 'img');
                 renderer.domElement.style.cursor = 'grab';
@@ -368,59 +376,348 @@ function LayoutScene({
                     return texture;
                 };
 
-                const plateGeometry = new THREE.BoxGeometry(
-                    WHOLE_TOUR.footprint.width + 2.2,
-                    0.08,
-                    WHOLE_TOUR.footprint.depth + 2.1,
-                );
-                geometries.push(plateGeometry);
-                const plateMaterial = new THREE.MeshBasicMaterial({
-                    color: viewMode === 'interior' ? 0x061625 : 0x0a1d19,
-                    transparent: true,
-                    opacity: 0.86,
+                const addBox = ({
+                    size,
+                    position,
+                    color,
+                    opacity = 1,
+                    metalness = 0.08,
+                    roughness = 0.62,
+                }: {
+                    size: [number, number, number];
+                    position: [number, number, number];
+                    color: number;
+                    opacity?: number;
+                    metalness?: number;
+                    roughness?: number;
+                }) => {
+                    const geometry = new THREE.BoxGeometry(...size);
+                    geometries.push(geometry);
+                    const material = new THREE.MeshStandardMaterial({
+                        color,
+                        metalness,
+                        roughness,
+                        transparent: opacity < 1,
+                        opacity,
+                        side: THREE.DoubleSide,
+                    });
+                    materials.push(material);
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(...position);
+                    modelGroup?.add(mesh);
+
+                    return mesh;
+                };
+
+                const addCylinder = ({
+                    radiusTop,
+                    radiusBottom,
+                    height,
+                    position,
+                    color,
+                    segments = 24,
+                    opacity = 1,
+                }: {
+                    radiusTop: number;
+                    radiusBottom: number;
+                    height: number;
+                    position: [number, number, number];
+                    color: number;
+                    segments?: number;
+                    opacity?: number;
+                }) => {
+                    const geometry = new THREE.CylinderGeometry(
+                        radiusTop,
+                        radiusBottom,
+                        height,
+                        segments,
+                    );
+                    geometries.push(geometry);
+                    const material = new THREE.MeshStandardMaterial({
+                        color,
+                        metalness: 0.05,
+                        roughness: 0.68,
+                        transparent: opacity < 1,
+                        opacity,
+                    });
+                    materials.push(material);
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(...position);
+                    modelGroup?.add(mesh);
+
+                    return mesh;
+                };
+
+                const addHipRoof = ({
+                    width,
+                    depth,
+                    height,
+                    position,
+                    color,
+                    opacity = 1,
+                }: {
+                    width: number;
+                    depth: number;
+                    height: number;
+                    position: [number, number, number];
+                    color: number;
+                    opacity?: number;
+                }) => {
+                    const halfWidth = width / 2;
+                    const halfDepth = depth / 2;
+                    const geometry = new THREE.BufferGeometry();
+                    const vertices = new Float32Array([
+                        -halfWidth,
+                        0,
+                        -halfDepth,
+                        halfWidth,
+                        0,
+                        -halfDepth,
+                        halfWidth,
+                        0,
+                        halfDepth,
+                        -halfWidth,
+                        0,
+                        halfDepth,
+                        0,
+                        height,
+                        0,
+                    ]);
+                    geometry.setAttribute(
+                        'position',
+                        new THREE.BufferAttribute(vertices, 3),
+                    );
+                    geometry.setIndex([
+                        0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4, 0, 3, 2, 0, 2, 1,
+                    ]);
+                    geometry.computeVertexNormals();
+                    geometries.push(geometry);
+                    const material = new THREE.MeshStandardMaterial({
+                        color,
+                        metalness: 0.04,
+                        roughness: 0.82,
+                        transparent: opacity < 1,
+                        opacity,
+                        side: THREE.DoubleSide,
+                    });
+                    materials.push(material);
+                    const roof = new THREE.Mesh(geometry, material);
+                    roof.position.set(...position);
+                    modelGroup?.add(roof);
+
+                    return roof;
+                };
+
+                const addTree = (x: number, z: number, scale = 1) => {
+                    addCylinder({
+                        radiusTop: 0.08 * scale,
+                        radiusBottom: 0.13 * scale,
+                        height: 1.1 * scale,
+                        position: [x, 0.55 * scale, z],
+                        color: 0x594331,
+                        segments: 10,
+                    });
+                    addCylinder({
+                        radiusTop: 0.18 * scale,
+                        radiusBottom: 0.72 * scale,
+                        height: 1.9 * scale,
+                        position: [x, 1.55 * scale, z],
+                        color: 0x285b42,
+                        segments: 12,
+                    });
+                };
+
+                addBox({
+                    size: [26, 0.18, 19],
+                    position: [0, -0.16, 0.8],
+                    color: viewMode === 'interior' ? 0x061625 : 0x244d3a,
+                    roughness: 0.9,
                 });
-                materials.push(plateMaterial);
-                const plate = new THREE.Mesh(plateGeometry, plateMaterial);
-                plate.position.y = -0.12;
-                modelGroup.add(plate);
 
-                const gridHelper = new THREE.GridHelper(
-                    22.5,
-                    30,
-                    viewMode === 'interior' ? 0x9fe8dc : 0xd8b56d,
-                    viewMode === 'interior' ? 0x24475e : 0x2a4f49,
-                );
-                gridHelper.position.y = -0.04;
-                modelGroup.add(gridHelper);
+                if (viewMode === 'exterior') {
+                    addBox({
+                        size: [13.5, 0.08, 8.2],
+                        position: [0.2, -0.03, 7.1],
+                        color: 0x26302f,
+                        roughness: 0.94,
+                    });
+                    addBox({
+                        size: [18.2, 1.25, 9.7],
+                        position: [0, 0.63, -0.15],
+                        color: 0xd9d7ce,
+                        roughness: 0.78,
+                    });
+                    addBox({
+                        size: [13.8, 1.7, 8.25],
+                        position: [0, 1.5, -0.4],
+                        color: 0xc9c7be,
+                        roughness: 0.8,
+                    });
+                    addHipRoof({
+                        width: 18.6,
+                        depth: 10.5,
+                        height: 4.1,
+                        position: [0, 2.34, -0.45],
+                        color: 0x665044,
+                    });
 
-                const halfWidth = WHOLE_TOUR.footprint.width / 2;
-                const halfDepth = WHOLE_TOUR.footprint.depth / 2;
-                const boundaryY = 0.04;
-                addLine(
+                    addBox({
+                        size: [1.55, 0.72, 1.45],
+                        position: [0, 6.55, -0.45],
+                        color: 0x2e3432,
+                    });
+                    addHipRoof({
+                        width: 2.1,
+                        depth: 1.95,
+                        height: 0.7,
+                        position: [0, 6.9, -0.45],
+                        color: 0x4f3d35,
+                    });
+
+                    addBox({
+                        size: [12.2, 0.3, 4.0],
+                        position: [2.3, 2.7, 5.0],
+                        color: 0xe2ddd0,
+                        metalness: 0.12,
+                        roughness: 0.54,
+                    });
+                    [-2.4, 0.5, 3.4, 6.4].forEach((x) => {
+                        addBox({
+                            size: [0.38, 2.65, 0.38],
+                            position: [x, 1.35, 5.2],
+                            color: 0x5a625d,
+                            roughness: 0.9,
+                        });
+                    });
+                    addBox({
+                        size: [8.8, 1.95, 0.18],
+                        position: [1.2, 1.28, 4.78],
+                        color: 0x5e8f92,
+                        opacity: 0.72,
+                        metalness: 0.2,
+                        roughness: 0.25,
+                    });
+                    [-2.8, -0.8, 1.2, 3.2, 5.2].forEach((x) => {
+                        addBox({
+                            size: [0.08, 2.0, 0.2],
+                            position: [x, 1.3, 4.82],
+                            color: 0xd8d6cb,
+                        });
+                    });
+
+                    addBox({
+                        size: [1.55, 4.2, 1.5],
+                        position: [-7.7, 2.1, 4.25],
+                        color: 0x5a514b,
+                        roughness: 0.94,
+                    });
+                    addBox({
+                        size: [1.0, 3.3, 1.58],
+                        position: [-6.45, 1.66, 4.25],
+                        color: 0xdedbd2,
+                        roughness: 0.82,
+                    });
+
+                    addCylinder({
+                        radiusTop: 1.15,
+                        radiusBottom: 1.15,
+                        height: 0.13,
+                        position: [4.7, 0.05, 7.15],
+                        color: 0xd8d4ca,
+                        segments: 40,
+                    });
+                    addCylinder({
+                        radiusTop: 0.72,
+                        radiusBottom: 0.84,
+                        height: 0.22,
+                        position: [4.7, 0.2, 7.15],
+                        color: 0x4d8f9b,
+                        segments: 40,
+                    });
+                    addCylinder({
+                        radiusTop: 0.12,
+                        radiusBottom: 0.22,
+                        height: 0.65,
+                        position: [4.7, 0.58, 7.15],
+                        color: 0xc5b274,
+                        segments: 20,
+                    });
+
+                    [-2.1, -0.8, 0.5, 1.8, 7.0].forEach((x) => {
+                        addCylinder({
+                            radiusTop: 0.025,
+                            radiusBottom: 0.035,
+                            height: 3.25,
+                            position: [x, 1.63, 7.0],
+                            color: 0xd8dedb,
+                            segments: 8,
+                        });
+                    });
+
                     [
-                        new THREE.Vector3(-halfWidth, boundaryY, -halfDepth),
-                        new THREE.Vector3(halfWidth, boundaryY, -halfDepth),
-                        new THREE.Vector3(halfWidth, boundaryY, halfDepth),
-                        new THREE.Vector3(-halfWidth, boundaryY, halfDepth),
-                        new THREE.Vector3(-halfWidth, boundaryY, -halfDepth),
-                    ],
-                    0xf4dfad,
-                    0.86,
-                );
+                        [-10.4, -2.4, 1.25],
+                        [-10.7, 2.0, 1.1],
+                        [10.3, -2.1, 1.2],
+                        [10.5, 2.8, 1.05],
+                        [-8.9, 7.0, 0.88],
+                        [9.1, 7.7, 0.88],
+                    ].forEach(([x, z, scale]) => addTree(x, z, scale));
+                } else {
+                    const gridHelper = new THREE.GridHelper(
+                        24,
+                        32,
+                        0x9fe8dc,
+                        0x24475e,
+                    );
+                    gridHelper.position.y = -0.04;
+                    modelGroup.add(gridHelper);
 
-                addLine(
-                    [
-                        new THREE.Vector3(-8.2, 0.12, 4.8),
-                        new THREE.Vector3(-5.1, 0.12, 1.4),
-                        new THREE.Vector3(-3.0, 0.12, 0.4),
-                        new THREE.Vector3(0.2, 0.12, 0.2),
-                        new THREE.Vector3(2.2, 0.12, 1.0),
-                        new THREE.Vector3(5.8, 0.12, 1.0),
-                        new THREE.Vector3(8.4, 0.12, 1.2),
-                    ],
-                    viewMode === 'interior' ? 0x9fe8dc : 0xf4dfad,
-                    viewMode === 'interior' ? 0.8 : 0.62,
-                );
+                    addLine(
+                        [
+                            new THREE.Vector3(-9.5, 0.04, -5.8),
+                            new THREE.Vector3(9.5, 0.04, -5.8),
+                            new THREE.Vector3(9.5, 0.04, 5.8),
+                            new THREE.Vector3(-9.5, 0.04, 5.8),
+                            new THREE.Vector3(-9.5, 0.04, -5.8),
+                        ],
+                        0xf4dfad,
+                        0.86,
+                    );
+                    addLine(
+                        [
+                            new THREE.Vector3(-8.2, 0.12, 4.8),
+                            new THREE.Vector3(-5.1, 0.12, 1.4),
+                            new THREE.Vector3(-3.0, 0.12, 0.4),
+                            new THREE.Vector3(0.2, 0.12, 0.2),
+                            new THREE.Vector3(2.2, 0.12, 1.0),
+                            new THREE.Vector3(5.8, 0.12, 1.0),
+                            new THREE.Vector3(8.4, 0.12, 1.2),
+                        ],
+                        0x9fe8dc,
+                        0.8,
+                    );
+
+                    addBox({
+                        size: [8.0, 0.24, 4.8],
+                        position: [3.3, 0.18, 1.1],
+                        color: 0x176456,
+                        opacity: 0.52,
+                    });
+                    addBox({
+                        size: [2.4, 0.46, 0.9],
+                        position: [3.3, 0.38, 3.05],
+                        color: 0xf4dfad,
+                        opacity: 0.74,
+                    });
+                    [-0.7, 0.2, 1.1, 5.5, 6.4, 7.3].forEach((x) => {
+                        addBox({
+                            size: [0.55, 0.22, 2.8],
+                            position: [x, 0.46, 0.6],
+                            color: 0x9fe8dc,
+                            opacity: 0.32,
+                        });
+                    });
+                }
 
                 const showingWhole = activeArea.id === WHOLE_TOUR.id;
 
@@ -431,9 +728,7 @@ function LayoutScene({
                     const height =
                         viewMode === 'interior'
                             ? footprint.height * 0.82
-                            : selected
-                              ? footprint.height + 0.34
-                              : footprint.height;
+                            : 0.08;
                     const geometry = new THREE.BoxGeometry(
                         footprint.width,
                         height,
@@ -443,28 +738,18 @@ function LayoutScene({
 
                     const material = new THREE.MeshStandardMaterial({
                         color: footprint.color,
-                        metalness:
-                            viewMode === 'interior'
-                                ? 0.08
-                                : selected
-                                  ? 0.36
-                                  : 0.14,
-                        roughness:
-                            viewMode === 'interior'
-                                ? 0.72
-                                : selected
-                                  ? 0.28
-                                  : 0.52,
+                        metalness: viewMode === 'interior' ? 0.08 : 0.02,
+                        roughness: viewMode === 'interior' ? 0.72 : 0.9,
                         transparent: true,
                         opacity:
                             viewMode === 'interior'
                                 ? selected
                                     ? 0.34
                                     : 0.2
-                                : selected
-                                  ? 0.95
-                                  : 0.68,
-                        depthWrite: viewMode === 'exterior',
+                                : exactSelection
+                                  ? 0.4
+                                  : 0.035,
+                        depthWrite: viewMode === 'interior',
                         side: THREE.DoubleSide,
                     });
                     materials.push(material);
@@ -529,30 +814,6 @@ function LayoutScene({
                         );
                     }
 
-                    if (viewMode === 'exterior') {
-                        const roofGeometry = new THREE.BoxGeometry(
-                            footprint.width * 1.04,
-                            0.08,
-                            footprint.depth * 1.04,
-                        );
-                        geometries.push(roofGeometry);
-                        const roofMaterial = new THREE.MeshStandardMaterial({
-                            color: selected ? 0xf4dfad : 0x142f2a,
-                            metalness: 0.18,
-                            roughness: 0.46,
-                            transparent: true,
-                            opacity: selected ? 0.84 : 0.62,
-                        });
-                        materials.push(roofMaterial);
-                        const roof = new THREE.Mesh(roofGeometry, roofMaterial);
-                        roof.position.set(
-                            footprint.x,
-                            height + 0.055,
-                            footprint.z,
-                        );
-                        modelGroup?.add(roof);
-                    }
-
                     const edgeGeometry = new THREE.EdgesGeometry(geometry);
                     geometries.push(edgeGeometry);
                     const edgeMaterial = new THREE.LineBasicMaterial({
@@ -565,7 +826,14 @@ function LayoutScene({
                                   ? 0xffffff
                                   : 0xf4dfad,
                         transparent: true,
-                        opacity: selected ? 0.9 : 0.32,
+                        opacity:
+                            viewMode === 'interior'
+                                ? selected
+                                    ? 0.9
+                                    : 0.32
+                                : exactSelection
+                                  ? 0.8
+                                  : 0.04,
                     });
                     materials.push(edgeMaterial);
                     const edges = new THREE.LineSegments(
@@ -595,10 +863,29 @@ function LayoutScene({
                         );
                         marker.position.set(
                             footprint.x,
-                            height + 0.25,
+                            viewMode === 'exterior' ? 0.22 : height + 0.25,
                             footprint.z,
                         );
                         modelGroup?.add(marker);
+
+                        if (viewMode === 'exterior') {
+                            addLine(
+                                [
+                                    new THREE.Vector3(
+                                        footprint.x,
+                                        0.28,
+                                        footprint.z,
+                                    ),
+                                    new THREE.Vector3(
+                                        footprint.x,
+                                        7.05,
+                                        footprint.z,
+                                    ),
+                                ],
+                                0xf4dfad,
+                                0.72,
+                            );
+                        }
                     }
 
                     const labelTexture = createLabelTexture(
@@ -606,7 +893,10 @@ function LayoutScene({
                         selected,
                     );
 
-                    if (labelTexture) {
+                    if (
+                        labelTexture &&
+                        (viewMode === 'interior' || exactSelection)
+                    ) {
                         const labelMaterial = new THREE.SpriteMaterial({
                             map: labelTexture,
                             transparent: true,
@@ -617,7 +907,9 @@ function LayoutScene({
                         const label = new THREE.Sprite(labelMaterial);
                         label.position.set(
                             footprint.x,
-                            height + (selected ? 0.84 : 0.58),
+                            viewMode === 'exterior'
+                                ? 7.45
+                                : height + (selected ? 0.84 : 0.58),
                             footprint.z,
                         );
                         label.scale.set(
@@ -629,7 +921,7 @@ function LayoutScene({
                     }
                 });
 
-                let dragRotation = -0.42;
+                let dragRotation = -0.2;
                 let tiltOffset = 0;
                 let manualPanX = 0;
                 let manualPanZ = 0;
@@ -644,7 +936,7 @@ function LayoutScene({
 
                 sceneControlRef.current = (command) => {
                     if (command.type === 'reset') {
-                        dragRotation = -0.42;
+                        dragRotation = -0.2;
                         tiltOffset = 0;
                         manualPanX = 0;
                         manualPanZ = 0;
@@ -871,16 +1163,21 @@ function LayoutScene({
                     const elapsed = clock.getElapsedTime();
                     const zoom = zoomLevelRef.current;
                     camera.position.set(
-                        10 / zoom,
+                        (viewMode === 'interior' ? 10 : 17) / zoom,
                         Math.max(
-                            viewMode === 'interior' ? 4.6 : 5.6,
-                            (viewMode === 'interior' ? 8.2 : 9.2) /
+                            viewMode === 'interior' ? 4.6 : 8.5,
+                            (viewMode === 'interior' ? 8.2 : 13.2) /
                                 Math.sqrt(zoom) +
                                 tiltOffset,
                         ),
-                        13.5 / zoom,
+                        (viewMode === 'interior' ? 13.5 : 23) / zoom,
                     );
-                    camera.lookAt(0.4, 0.34 + tiltOffset * 0.12, 0.25);
+                    camera.lookAt(
+                        viewMode === 'interior' ? 0.4 : 0,
+                        (viewMode === 'interior' ? 0.34 : 1.8) +
+                            tiltOffset * 0.12,
+                        viewMode === 'interior' ? 0.25 : 0.7,
+                    );
 
                     modelGroup.rotation.y =
                         dragRotation + (reduceMotion ? 0 : elapsed * 0.025);
@@ -888,7 +1185,9 @@ function LayoutScene({
                         activeArea.id === WHOLE_TOUR.id
                             ? null
                             : activeArea.footprint;
-                    const focusMultiplier = Math.min(zoom, 1.8) * 0.18;
+                    const focusMultiplier =
+                        Math.min(zoom, 1.8) *
+                        (viewMode === 'interior' ? 0.18 : 0.06);
                     modelGroup.position.x = THREE.MathUtils.lerp(
                         modelGroup.position.x,
                         (focusedFootprint
@@ -943,14 +1242,14 @@ function LayoutScene({
         <div className="bccc-convention-layout-scene absolute inset-0">
             <div
                 ref={mountRef}
-                className="absolute inset-0 bg-[radial-gradient(circle_at_52%_20%,rgba(244,223,173,0.16),transparent_34%),linear-gradient(135deg,#07110f,#102a27_52%,#040706)]"
+                className="absolute inset-0 bg-[radial-gradient(circle_at_52%_18%,rgba(244,223,173,0.18),transparent_32%),linear-gradient(145deg,#07110f,#17483d_52%,#040706)]"
             />
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.74),rgba(0,0,0,0.22)_44%,rgba(0,0,0,0.58))]" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/82 via-black/20 to-transparent" />
             <div className="pointer-events-none absolute top-4 left-4 rounded-full border border-[#9fe8dc]/18 bg-[#041116]/58 px-3 py-2 text-[10px] font-black tracking-[0.16em] text-[#9fe8dc] uppercase backdrop-blur-xl">
                 {viewMode === 'interior'
-                    ? 'Interior X-Ray Blueprint'
-                    : 'Exterior Massing Blueprint'}
+                    ? 'BCCC Interior Cutaway'
+                    : 'BCCC Exterior Model'}
             </div>
 
             <div className="bccc-scene-orbit-controls absolute top-16 left-4 z-20 grid grid-cols-3 gap-1.5 rounded-2xl border border-white/12 bg-black/42 p-2 backdrop-blur-xl sm:top-20">
@@ -1136,6 +1435,195 @@ function LayerButton({
     );
 }
 
+function BcccLayoutPanel({
+    activeArea,
+    viewMode,
+    zoom,
+    onSelectArea,
+    onViewModeChange,
+    onZoomChange,
+    onPreview,
+}: {
+    activeArea: TourArea;
+    viewMode: LayoutViewMode;
+    zoom: number;
+    onSelectArea: (area: TourArea) => void;
+    onViewModeChange: (mode: LayoutViewMode) => void;
+    onZoomChange: (zoom: number) => void;
+    onPreview: (area: TourArea) => void;
+}) {
+    return (
+        <aside className="bccc-bccc-layout-panel flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0a1c18] text-white shadow-[0_24px_80px_rgba(0,0,0,0.34)]">
+            <div className="relative overflow-hidden border-b border-white/10">
+                <img
+                    src="/marketing/images/hero/bccc.png"
+                    alt="Baguio Convention and Cultural Center exterior reference"
+                    className="h-36 w-full object-cover object-center opacity-58"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a1c18] via-[#0a1c18]/42 to-black/12" />
+                <div className="absolute inset-x-0 bottom-0 p-4">
+                    <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.18em] text-[#f4dfad] uppercase">
+                        <Building2 className="h-3.5 w-3.5" />
+                        BCCC architectural explorer
+                    </div>
+                    <h2 className="mt-2 text-xl font-semibold text-white">
+                        Baguio Convention & Cultural Center
+                    </h2>
+                </div>
+            </div>
+
+            <div className="border-b border-white/10 p-3.5">
+                <div className="grid grid-cols-2 gap-2">
+                    {(
+                        [
+                            ['exterior', 'Exterior'],
+                            ['interior', 'Interior cutaway'],
+                        ] as const
+                    ).map(([mode, label]) => (
+                        <button
+                            key={mode}
+                            type="button"
+                            onClick={() => onViewModeChange(mode)}
+                            aria-pressed={viewMode === mode}
+                            className={cx(
+                                'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-3 text-[9px] font-black tracking-[0.12em] uppercase transition',
+                                viewMode === mode
+                                    ? 'border-[#f4dfad] bg-[#f4dfad] text-[#102a27]'
+                                    : 'border-white/10 bg-white/[0.055] text-white/58 hover:border-white/24 hover:bg-white/10 hover:text-white',
+                            )}
+                        >
+                            {mode === 'exterior' ? (
+                                <Building2 className="h-3.5 w-3.5" />
+                            ) : (
+                                <Eye className="h-3.5 w-3.5" />
+                            )}
+                            {label}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="mt-3 flex items-center gap-2">
+                    <button
+                        type="button"
+                        onClick={() => onZoomChange(zoom - 0.14)}
+                        className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/[0.055] text-white/68 transition hover:bg-white/12 hover:text-white"
+                        title="Zoom out"
+                    >
+                        <Minus className="h-4 w-4" />
+                        <span className="sr-only">Zoom out</span>
+                    </button>
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-3 text-[8px] font-black tracking-[0.14em] text-white/42 uppercase">
+                            <span>Model zoom</span>
+                            <span className="text-[#f4dfad]">
+                                {Math.round(zoom * 100)}%
+                            </span>
+                        </div>
+                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+                            <div
+                                className="h-full rounded-full bg-[linear-gradient(90deg,#9fe8dc,#f4dfad)]"
+                                style={{
+                                    width: `${Math.round(
+                                        ((zoom - 0.62) / (2.2 - 0.62)) * 100,
+                                    )}%`,
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => onZoomChange(zoom + 0.14)}
+                        className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/[0.055] text-white/68 transition hover:bg-white/12 hover:text-white"
+                        title="Zoom in"
+                    >
+                        <Plus className="h-4 w-4" />
+                        <span className="sr-only">Zoom in</span>
+                    </button>
+                </div>
+            </div>
+
+            <div className="border-b border-white/10 p-3.5">
+                <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                        <p className="text-[8px] font-black tracking-[0.16em] text-[#f4dfad] uppercase">
+                            Selected building layer
+                        </p>
+                        <h3 className="mt-1.5 truncate text-lg font-semibold text-white">
+                            {activeArea.label}
+                        </h3>
+                    </div>
+                    <span className="shrink-0 rounded-full border border-[#9fe8dc]/20 bg-[#9fe8dc]/10 px-2.5 py-1 text-[8px] font-black tracking-[0.1em] text-[#9fe8dc] uppercase">
+                        {activeArea.category}
+                    </span>
+                </div>
+                <p className="mt-2 line-clamp-2 text-xs leading-5 font-semibold text-white/52">
+                    {activeArea.layoutNote}
+                </p>
+                <button
+                    type="button"
+                    onClick={() => onPreview(activeArea)}
+                    className="mt-3 inline-flex min-h-9 w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/[0.055] px-3 text-[9px] font-black tracking-[0.12em] text-white/64 uppercase transition hover:border-[#f4dfad]/40 hover:bg-[#f4dfad] hover:text-[#102a27]"
+                >
+                    Area details
+                    <ScanEye className="h-3.5 w-3.5" />
+                </button>
+            </div>
+
+            <div className="min-h-0 flex-1 p-3.5">
+                <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.16em] text-[#f4dfad] uppercase">
+                        <Layers3 className="h-3.5 w-3.5" />
+                        Building layers
+                    </div>
+                    <span className="rounded-full border border-white/10 bg-white/[0.055] px-2.5 py-1 text-[8px] font-black text-white/48">
+                        {LAYOUT_AREAS.length}
+                    </span>
+                </div>
+                <div className="mt-3 grid max-h-full grid-cols-2 gap-1.5 overflow-y-auto pr-1 [scrollbar-width:thin]">
+                    {LAYOUT_AREAS.map((area) => (
+                        <button
+                            key={`focused-layer-${area.id}`}
+                            type="button"
+                            onClick={() => onSelectArea(area)}
+                            aria-pressed={area.id === activeArea.id}
+                            className={cx(
+                                'min-h-11 rounded-lg border px-2.5 text-left text-[8px] font-black tracking-[0.08em] uppercase transition',
+                                area.id === activeArea.id
+                                    ? 'border-[#f4dfad] bg-[#f4dfad] text-[#102a27]'
+                                    : 'border-white/10 bg-white/[0.05] text-white/56 hover:border-white/24 hover:bg-white/10 hover:text-white',
+                            )}
+                        >
+                            <span className="block truncate">
+                                {area.shortLabel}
+                            </span>
+                            <span
+                                className={cx(
+                                    'mt-0.5 block truncate text-[7px]',
+                                    area.id === activeArea.id
+                                        ? 'text-[#102a27]/55'
+                                        : 'text-white/28',
+                                )}
+                            >
+                                {area.category}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <div className="border-t border-white/10 p-3.5">
+                <Link
+                    href="/virtual-tour"
+                    className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-[#f4dfad] px-3 text-[9px] font-black tracking-[0.12em] text-[#102a27] uppercase transition hover:bg-white"
+                >
+                    Open 360 virtual tour
+                    <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+            </div>
+        </aside>
+    );
+}
+
 export default function ConventionLayoutPage() {
     const reduceMotion = useReducedMotion();
     const [activeArea, setActiveArea] = useState<TourArea>(DEFAULT_LAYOUT_AREA);
@@ -1159,6 +1647,110 @@ export default function ConventionLayoutPage() {
         setActiveArea(area);
         setPreviewArea(area);
     };
+
+    if (MODEL_AREAS.length > 0) {
+        return (
+            <PublicLayout>
+                <Head title="BCCC 3D Layout" />
+
+                <section className="bccc-convention-layout-page bccc-focused-layout-page bg-[#07110f] text-white">
+                    <div className="bccc-focused-layout-workspace grid gap-3 p-3 lg:grid-cols-[minmax(0,1.75fr)_minmax(21rem,0.75fr)] lg:gap-4 lg:p-4">
+                        <motion.div
+                            ref={layoutShellRef}
+                            initial={
+                                reduceMotion
+                                    ? { opacity: 1 }
+                                    : {
+                                          opacity: 0,
+                                          scale: 0.99,
+                                          filter: 'blur(8px)',
+                                      }
+                            }
+                            animate={{
+                                opacity: 1,
+                                scale: 1,
+                                filter: 'blur(0px)',
+                            }}
+                            transition={{ duration: 0.62, ease }}
+                            className={cx(
+                                'bccc-windowed-layout-shell bccc-focused-layout-view relative min-h-0 overflow-hidden rounded-xl border border-white/12 bg-black/30 shadow-[0_26px_90px_rgba(0,0,0,0.4)]',
+                                isLayoutViewerExpanded && 'is-viewer-expanded',
+                            )}
+                        >
+                            <LayoutScene
+                                activeArea={activeArea}
+                                areas={MODEL_AREAS}
+                                viewMode={viewMode}
+                                zoomLevel={layoutZoom}
+                                onZoomChange={changeLayoutZoom}
+                            />
+                            <button
+                                type="button"
+                                onClick={toggleLayoutFullscreen}
+                                aria-pressed={isLayoutViewerExpanded}
+                                className="bccc-viewer-fullscreen-button absolute top-4 right-4 z-30 grid h-11 w-11 place-items-center rounded-full border border-white/14 bg-black/46 text-white/78 backdrop-blur-xl transition hover:border-[#f4dfad]/50 hover:bg-[#f4dfad] hover:text-[#102a27]"
+                                title={
+                                    isLayoutViewerExpanded
+                                        ? 'Exit fullscreen'
+                                        : 'Open fullscreen'
+                                }
+                            >
+                                {isLayoutViewerExpanded ? (
+                                    <Minimize2 className="h-4 w-4" />
+                                ) : (
+                                    <Maximize2 className="h-4 w-4" />
+                                )}
+                                <span className="sr-only">
+                                    {isLayoutViewerExpanded
+                                        ? 'Exit fullscreen'
+                                        : 'Open fullscreen'}
+                                </span>
+                            </button>
+                        </motion.div>
+
+                        <motion.div
+                            initial={
+                                reduceMotion
+                                    ? { opacity: 1 }
+                                    : {
+                                          opacity: 0,
+                                          x: 16,
+                                          filter: 'blur(8px)',
+                                      }
+                            }
+                            animate={{
+                                opacity: 1,
+                                x: 0,
+                                filter: 'blur(0px)',
+                            }}
+                            transition={{ duration: 0.62, delay: 0.08, ease }}
+                            className="min-h-0"
+                        >
+                            <BcccLayoutPanel
+                                activeArea={activeArea}
+                                viewMode={viewMode}
+                                zoom={layoutZoom}
+                                onSelectArea={setActiveArea}
+                                onViewModeChange={setViewMode}
+                                onZoomChange={changeLayoutZoom}
+                                onPreview={openPreview}
+                            />
+                        </motion.div>
+                    </div>
+                </section>
+
+                <TourAreaPreviewDialog
+                    area={previewArea}
+                    open={Boolean(previewArea)}
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setPreviewArea(null);
+                        }
+                    }}
+                />
+            </PublicLayout>
+        );
+    }
 
     return (
         <PublicLayout>

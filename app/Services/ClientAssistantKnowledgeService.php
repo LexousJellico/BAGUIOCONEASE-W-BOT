@@ -19,8 +19,7 @@ class ClientAssistantKnowledgeService
     public function __construct(
         private readonly BookingService $bookingService,
         private readonly AssistantSystemSearchService $systemSearch,
-    ) {
-    }
+    ) {}
 
     /**
      * Build a compact, trusted knowledge pack for the global assistant.
@@ -50,7 +49,16 @@ class ClientAssistantKnowledgeService
                 'url' => Str::limit((string) ($pageContext['page'] ?? ''), 255, ''),
                 'label' => Str::limit((string) ($pageContext['context'] ?? ''), 160, ''),
             ],
-            'question' => Str::limit($message, 1200, ''),
+            'conversation_context' => collect($pageContext['history'] ?? [])
+                ->filter(fn ($item): bool => is_array($item) && filled($item['text'] ?? null))
+                ->take(-10)
+                ->map(fn (array $item): array => [
+                    'role' => ($item['role'] ?? '') === 'user' ? 'user' : 'assistant',
+                    'text' => Str::limit((string) ($item['text'] ?? ''), 1600, ''),
+                ])
+                ->values()
+                ->all(),
+            'question' => Str::limit($message, 4000, ''),
             'availability' => $this->availabilityFacts($dates),
             'system_search' => $trustedSearch,
             'backend_assistant' => $this->backendAssistantFacts($user, $surface),
@@ -69,9 +77,45 @@ class ClientAssistantKnowledgeService
                 'Do not expose another client\'s private details. Only summarize the authenticated user\'s own bookings/notices when the user is logged in.',
                 'For guests, invite them to log in or submit a booking when private account details are needed.',
                 'For policy/rate uncertainty, tell the user to confirm with BCCC staff through the official booking record.',
-                'Keep answers helpful, simple, professional, and specific to BCCC EASE.',
+                'Keep BCCC answers helpful, simple, professional, and grounded in trusted BCCC EASE information.',
             ],
         ];
+    }
+
+    /**
+     * Decide when a question must stay inside trusted BCCC/system knowledge.
+     *
+     * @param  array<int, string>  $dates
+     * @param  array<string, mixed>  $knowledgePack
+     */
+    public function requiresTrustedBcccKnowledge(string $message, array $dates = [], array $knowledgePack = []): bool
+    {
+        if ($dates !== []) {
+            return true;
+        }
+
+        $lower = mb_strtolower($message);
+        $trustedTerms = [
+            'bccc', 'baguio convention', 'ease system', 'book event', 'my booking', 'my reservation',
+            'how do i book', 'make a booking', 'create a booking', 'book a venue', 'reserve a venue',
+            'booking status', 'booking approval', 'booking request', 'booking draft', 'reservation status',
+            'venue availability', 'date availability', 'available date', 'check availability', 'calendar block', 'blocked date',
+            'payment proof', 'down payment', 'downpayment', 'security bond', 'booking bond', 'refund',
+            'refund policy', 'cancellation', 'facility rate', 'venue rate', 'rental rate', 'final computation',
+            'main hall', 'gallery 2600', 'vip lounge', 'boardroom', 'backstage', 'dressing room',
+            'virtual tour', 'convention layout', 'mice registry', 'client notice', 'my notification',
+            'my account', 'my dashboard', 'account preference', 'approval workflow', 'payment review', 'content manager',
+            'another client', 'database password', 'api key', 'system prompt', 'hidden prompt',
+        ];
+
+        if ($this->mentions($lower, $trustedTerms)) {
+            return true;
+        }
+
+        $sourceCount = (int) data_get($knowledgePack, 'system_search.source_count', 0);
+        $confidence = (int) data_get($knowledgePack, 'system_search.confidence', 0);
+
+        return $sourceCount > 0 && $confidence >= 72;
     }
 
     /**
@@ -115,6 +159,10 @@ class ClientAssistantKnowledgeService
             $sections[] = $this->venueGuide();
         }
 
+        if ($this->mentions($lower, ['virtual tour', 'tour', 'walk-through', 'walkthrough', 'street view', '3d layout'])) {
+            $sections[] = 'Virtual tour guide: open [Virtual Tour](/virtual-tour) to use the split-screen panorama and live area map. Choose an area or a numbered map camera, then drag or touch the panorama to look around freely. The map changes with every area, shows nearby rooms, and tracks the current camera position. Main Hall begins at Ground Hall with choices for Upper Left, Upper Right, Upper Mid, and Stage; its side routes continue through two connected views. VIP Lounge has two connected panorama parts. Use the Move Backward, Move Forward, and fullscreen controls as needed. Open [3D Convention Layout](/convention-layout) for an interactive Baguio Convention & Cultural Center model inspired by the building facade, broad podium, sloped roof, glass entrance, covered drop-off, fountain, landscaping, and roof lantern. Switch to Interior Cutaway to inspect venue layers and public routes, select an area for details, then drag, zoom, or use fullscreen.';
+        }
+
         if ($this->mentions($lower, ['status', 'pending', 'approved', 'declined', 'cancel', 'completed', 'expired', 'notification', 'notice', 'announcement'])) {
             $sections[] = $this->statusGuide($user);
         }
@@ -135,6 +183,8 @@ class ClientAssistantKnowledgeService
         $systemSearch = is_array(data_get($knowledgePack, 'system_search')) ? data_get($knowledgePack, 'system_search') : [];
         $systemSearchAnswer = $this->systemSearchAnswer($systemSearch);
 
+        $answerable = $dates !== [] || $sections !== [] || filled($systemSearchAnswer);
+
         if ($sections === []) {
             $sections[] = $systemSearchAnswer ?: $this->defaultAnswer($user, $knowledgePack);
         } elseif ($systemSearchAnswer && (int) data_get($systemSearch, 'confidence', 0) >= 72) {
@@ -148,6 +198,7 @@ class ClientAssistantKnowledgeService
             'confidence' => (int) data_get($systemSearch, 'confidence', $sections === [] ? 35 : 60),
             'source_count' => (int) data_get($systemSearch, 'source_count', 0),
             'learned' => (int) data_get($systemSearch, 'source_count', 0) > 0,
+            'answerable' => $answerable,
         ];
     }
 
@@ -265,6 +316,8 @@ class ClientAssistantKnowledgeService
                 'Home' => '/',
                 'Facilities' => '/facilities',
                 'Events' => '/events',
+                'Virtual Tour' => '/virtual-tour',
+                '3D Convention Layout' => '/convention-layout',
                 'Calendar' => '/calendar',
                 'Guidelines' => '/guidelines',
                 'FAQs' => '/faqs',
@@ -632,81 +685,81 @@ class ClientAssistantKnowledgeService
         $lower = mb_strtolower($message);
 
         if ($this->mentions($lower, ['today', 'first', 'dashboard', 'start', 'checklist', 'monitor'])) {
-            return "Admin daily checklist:
+            return 'Admin daily checklist:
 • Open Dashboard to review pending bookings, upcoming schedules, unpaid balances, and alerts.
 • Open Bookings for requests needing review or status action.
 • Open Calendar before approving to avoid schedule conflicts.
 • Open Payment Review for submitted proof and bond/down-payment updates.
-• Open Notifications/Inquiries for client messages and items that need response.";
+• Open Notifications/Inquiries for client messages and items that need response.';
         }
 
         if ($this->mentions($lower, ['approve', 'approval', 'decline', 'reject', 'pending', 'under review'])) {
-            return "Booking approval guide:
+            return 'Booking approval guide:
 • Open the matching booking record in Bookings.
 • Check date/time conflicts, selected venue/rentals, client details, requirements, and service computation.
 • Confirm payment/bond requirement if the workflow needs it.
 • Approve only when details are complete and the schedule is valid; otherwise decline/request correction with a clear reason.
-• After action, tell the client to check Notifications/My Bookings for the official update.";
+• After action, tell the client to check Notifications/My Bookings for the official update.';
         }
 
         if ($this->mentions($lower, ['payment', 'proof', 'paid', 'reject', 'approve proof', 'bond', 'balance'])) {
-            return "Payment review guide:
+            return 'Payment review guide:
 • Open Payment Review or the booking payment section.
 • Verify proof image/file, amount, reference number, date, payer, and matching booking.
 • Approve only if the proof matches the official computation. Reject/mark failed if unclear or incorrect and provide a reason.
-• Confirm whether the payment is down payment, full payment, balance, or bond-related, then recheck the booking payment status.";
+• Confirm whether the payment is down payment, full payment, balance, or bond-related, then recheck the booking payment status.';
         }
 
         if ($this->mentions($lower, ['calendar', 'block', 'availability', 'schedule', 'conflict'])) {
-            return "Calendar management guide:
+            return 'Calendar management guide:
 • Open Calendar or Calendar Manage.
 • Check approved bookings, pending requests, blocked dates, and public event schedules.
 • Add blocks only for official unavailable dates, maintenance, office instructions, or reserved periods.
 • Before approving a booking, confirm the selected block/time is still clear.
-• If there is a conflict, keep the official calendar/booking record as the source of truth.";
+• If there is a conflict, keep the official calendar/booking record as the source of truth.';
         }
 
         if ($this->mentions($lower, ['mice', 'report', 'registry', 'tourism', 'export', 'print'])) {
-            return "MICE/report guide:
+            return 'MICE/report guide:
 • Open MICE Registry from Review & Reports.
 • Create or update the event record with correct event type, scope, participants/guests, dates, and classification.
 • Use Print or Export for official reporting copies.
-• Verify details against the booking before submission or printing.";
+• Verify details against the booking before submission or printing.';
         }
 
         if ($this->mentions($lower, ['content', 'website', 'public', 'facility', 'guideline', 'contact', 'inquiry', 'tourism'])) {
-            return "Public website/admin content guide:
+            return 'Public website/admin content guide:
 • Use Content Manager for homepage, facilities, tourism office/team, public events, and visible website sections.
 • Use Guidelines & Contacts for policies, instructions, office contact details, and public booking guidance.
 • Use Public Inquiries to read and respond to messages from the Contact page.
-• After changes, check the public page to confirm the display is correct.";
+• After changes, check the public page to confirm the display is correct.';
         }
 
         if ($this->mentions($lower, ['user', 'role', 'permission', 'account', 'staff', 'manager'])) {
-            return "Users & roles guide:
+            return 'Users & roles guide:
 • Open Users & Roles.
 • Assign Admin, Manager, Staff, or Client roles based on actual responsibility.
 • Give the least permission needed for the job.
 • For suspicious access, ask the user to enable 2FA and review logged-in devices in Account Preferences.
-• Avoid sharing passwords or API keys in chat, screenshots, or source code.";
+• Avoid sharing passwords or API keys in chat, screenshots, or source code.';
         }
 
         return match ($role) {
-            'admin' => "Admin assistant guide:
+            'admin' => 'Admin assistant guide:
 • Dashboard: monitor operations and alerts.
 • Calendar: manage availability and blocks.
 • Bookings: review, approve/decline, update statuses, print documents, and check computation.
 • Payment Review: approve/reject proof and verify bond/balance.
 • Reports/MICE: prepare tourism reporting.
-• Content/Setup: maintain public content, venue areas, rentals, users, and roles.",
-            'manager' => "Manager assistant guide:
+• Content/Setup: maintain public content, venue areas, rentals, users, and roles.',
+            'manager' => 'Manager assistant guide:
 • Review bookings and approve/decline only after checking schedule, requirements, computation, and payment status.
 • Use Payment Review for proofs and MICE Registry for reporting.
-• Use Analytics/Calendar to monitor operations before decisions.",
-            'staff' => "Staff assistant guide:
+• Use Analytics/Calendar to monitor operations before decisions.',
+            'staff' => 'Staff assistant guide:
 • Assist clients with bookings, availability, requirements, and notices.
 • Use Calendar before creating or updating requests.
-• Prepare booking documents and escalate approvals, uncertain payments, or conflicts to manager/admin.",
+• Prepare booking documents and escalate approvals, uncertain payments, or conflicts to manager/admin.',
             default => 'Backend assistant guide: use Dashboard, Calendar, Bookings, Payment Review, Reports, Notifications, and Settings based on your assigned role and permissions.',
         };
     }
@@ -785,10 +838,8 @@ class ClientAssistantKnowledgeService
             return 'I can help backend users with dashboard monitoring, booking approval flow, calendar blocks, payment review, bond/balance checks, MICE reports, content manager, public inquiries, venue/rental setup, users/roles, notifications, and account security. I will guide the workflow and point you to the correct admin page without exposing secrets.';
         }
 
-        return 'I can help with booking steps, guided booking drafts, date availability, venue/rental guidance, requirements, payments, booking statuses, notifications, account security, and the current page. Try “Guide me to book June 12-14, 2026” and I will ask the missing details, prepare a draft/prefilled form link, and guide you until submission review.'.($surface !== 'public' ? ' I can also summarize your own recent bookings/notices safely.' : ' Please log in for private booking records and saved booking drafts.');
+        return 'I can help with booking steps, guided booking drafts, date availability, venue/rental guidance, facilities, the virtual tour, requirements, payments, booking statuses, notifications, account security, and the current page. Try “Guide me to book June 12-14, 2026” and I will ask the missing details, prepare a draft/prefilled form link, and guide you until submission review.'.($surface !== 'public' ? ' I can also summarize your own recent bookings/notices safely.' : ' Please log in for private booking records and saved booking drafts.');
     }
-
-
 
     private function compactAssistantAnswer(string $answer, bool $isBackendSurface): string
     {

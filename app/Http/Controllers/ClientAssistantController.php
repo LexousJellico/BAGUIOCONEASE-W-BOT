@@ -20,16 +20,18 @@ class ClientAssistantController extends Controller
     public function __construct(
         private readonly ClientAssistantKnowledgeService $knowledge,
         private readonly GeminiClientAssistantService $gemini,
-    ) {
-    }
+    ) {}
 
     public function ask(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'message' => ['required', 'string', 'max:1200'],
+            'message' => ['required', 'string', 'max:4000'],
             'page' => ['nullable', 'string', 'max:255'],
             'context' => ['nullable', 'string', 'max:160'],
             'surface' => ['nullable', 'string', 'max:40'],
+            'history' => ['nullable', 'array', 'max:12'],
+            'history.*.role' => ['required_with:history', 'string', 'in:bot,user'],
+            'history.*.text' => ['required_with:history', 'string', 'max:4000'],
         ]);
 
         $user = $request->user();
@@ -42,17 +44,28 @@ class ClientAssistantController extends Controller
             'page' => $page,
             'context' => $context,
             'surface' => $surface,
+            'history' => $data['history'] ?? [],
         ]);
         $systemSearch = is_array(data_get($knowledgePack, 'system_search')) ? data_get($knowledgePack, 'system_search') : [];
         $local = $this->knowledge->localAnswer($user, $message, $dates, $knowledgePack);
-        $geminiAnswer = $this->gemini->generate($message, $knowledgePack);
         $confidence = (int) data_get($systemSearch, 'confidence', $local['confidence'] ?? 45);
         $sourceCount = (int) data_get($systemSearch, 'source_count', $local['source_count'] ?? 0);
+        $requiresTrustedKnowledge = $this->knowledge->requiresTrustedBcccKnowledge($message, $dates, $knowledgePack);
+        $trustedAnswerable = $requiresTrustedKnowledge
+            && ((bool) ($local['answerable'] ?? false) || $sourceCount > 0 || $dates !== []);
+        $allowGeneralKnowledge = ! $requiresTrustedKnowledge && $this->gemini->generalKnowledgeEnabled();
+        $geminiResult = ($trustedAnswerable || $allowGeneralKnowledge)
+            ? $this->gemini->generate($message, $knowledgePack, $allowGeneralKnowledge)
+            : null;
+        $geminiAnswer = trim((string) data_get($geminiResult, 'answer', ''));
+        $generalAnswered = $allowGeneralKnowledge && filled($geminiAnswer);
+        $answerable = $trustedAnswerable || $generalAnswered;
         $sources = collect(data_get($systemSearch, 'sources', []))
             ->take(8)
             ->map(fn ($source) => is_array($source) ? [
                 'type' => $source['type'] ?? 'source',
                 'title' => $source['title'] ?? 'System source',
+                'url' => $source['url'] ?? null,
                 'category' => $source['category'] ?? null,
                 'confidence' => $source['confidence'] ?? null,
             ] : null)
@@ -60,7 +73,44 @@ class ClientAssistantController extends Controller
             ->values()
             ->all();
 
-        if (filled($geminiAnswer)) {
+        if ($generalAnswered) {
+            $sources = collect(data_get($geminiResult, 'sources', []))
+                ->take(4)
+                ->values()
+                ->all();
+            $sourceCount = count($sources);
+            $confidence = (bool) data_get($geminiResult, 'grounded', false) ? 88 : 78;
+        }
+
+        if (! $answerable) {
+            $answer = 'I\'m sorry, I can\'t help you with that.';
+            $mode = 'knowledge_fallback';
+            $response = [
+                'answer' => $answer,
+                'mode' => 'local',
+                'fallback' => true,
+                'suggestions' => $this->knowledge->suggestions($message, $dates, $user, $knowledgePack),
+                'confidence' => $confidence,
+                'source_count' => $sourceCount,
+                'learned' => false,
+                'scope' => $requiresTrustedKnowledge ? 'bccc' : 'general',
+            ];
+        } elseif ($generalAnswered) {
+            $answer = $geminiAnswer;
+            $mode = (bool) data_get($geminiResult, 'grounded', false)
+                ? 'gemini_general_grounded'
+                : 'gemini_general_knowledge';
+            $response = [
+                'answer' => $answer,
+                'mode' => 'gemini',
+                'fallback' => false,
+                'suggestions' => [],
+                'confidence' => $confidence,
+                'source_count' => $sourceCount,
+                'learned' => (bool) data_get($geminiResult, 'grounded', false),
+                'scope' => 'general',
+            ];
+        } elseif (filled($geminiAnswer)) {
             $answer = $geminiAnswer;
             $mode = 'gemini_system_search';
             $response = [
@@ -71,6 +121,7 @@ class ClientAssistantController extends Controller
                 'confidence' => $confidence,
                 'source_count' => $sourceCount,
                 'learned' => $sourceCount > 0,
+                'scope' => 'bccc',
             ];
         } else {
             $answer = (string) ($local['answer'] ?? 'I could not find an exact answer, but I can still guide you to the correct BCCC EASE page.');
@@ -82,6 +133,7 @@ class ClientAssistantController extends Controller
                 'confidence' => $confidence,
                 'source_count' => $sourceCount,
                 'learned' => $sourceCount > 0,
+                'scope' => 'bccc',
             ];
         }
 
@@ -95,7 +147,7 @@ class ClientAssistantController extends Controller
             'confidence' => $confidence,
             'source_count' => $sourceCount,
             'sources' => $sources,
-            'unresolved' => $confidence < 48 || $sourceCount === 0,
+            'unresolved' => ! $answerable || ($requiresTrustedKnowledge && ($confidence < 48 || $sourceCount === 0)),
         ]);
 
         return response()->json([

@@ -76,11 +76,11 @@ export default function TourAreaPreviewDialog({
                         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                             <span className="inline-flex items-center gap-2 rounded-full bg-[#f4dfad] px-3 py-1.5 text-[10px] font-black tracking-[0.14em] text-[#102a27] uppercase">
                                 <Sparkles className="h-3.5 w-3.5" />
-                                Coming Soon
+                                {area.scenes.length}-View Walk-Through
                             </span>
                             <span className="inline-flex items-center gap-2 rounded-full border border-white/18 bg-black/34 px-3 py-1.5 text-[10px] font-black tracking-[0.14em] text-white uppercase backdrop-blur">
                                 <Camera className="h-3.5 w-3.5 text-[#f4dfad]" />
-                                360 Ready Slot
+                                Photo Route
                             </span>
                         </div>
 
@@ -103,7 +103,7 @@ export default function TourAreaPreviewDialog({
                     <div className="bg-[radial-gradient(circle_at_top_right,rgba(244,223,173,0.12),transparent_34%),linear-gradient(180deg,#0b1714,#06110f)] p-5 sm:p-7 lg:max-h-[calc(100svh-1.5rem)] lg:overflow-y-auto">
                         <div className="inline-flex items-center gap-2 rounded-full border border-[#f4dfad]/22 bg-[#f4dfad]/10 px-3 py-1.5 text-[10px] font-black tracking-[0.16em] text-[#f4dfad] uppercase">
                             <PlayCircle className="h-3.5 w-3.5" />
-                            Preview popup prepared
+                            Area route preview
                         </div>
 
                         <h2 className="mt-4 text-3xl leading-tight font-semibold tracking-[-0.02em] text-white">
@@ -114,10 +114,49 @@ export default function TourAreaPreviewDialog({
                             {area.description}
                         </p>
 
+                        <div className="mt-5">
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-2 text-[10px] font-black tracking-[0.18em] text-[#f4dfad] uppercase">
+                                    <Image className="h-3.5 w-3.5" />
+                                    Connected views
+                                </div>
+                                <span className="text-[10px] font-black text-white/48">
+                                    {area.id === 'main-hall'
+                                        ? 'Branching hall route'
+                                        : 'Forward / Back'}
+                                </span>
+                            </div>
+                            <div
+                                className={
+                                    area.scenes.length > 5
+                                        ? 'mt-3 grid grid-cols-4 gap-2 sm:grid-cols-7'
+                                        : 'mt-3 grid grid-cols-5 gap-2'
+                                }
+                            >
+                                {area.scenes.map((scene, index) => (
+                                    <div
+                                        key={scene.id}
+                                        className="group relative aspect-square overflow-hidden rounded-md border border-white/12 bg-black/20"
+                                        title={scene.label}
+                                    >
+                                        <img
+                                            src={scene.image}
+                                            alt=""
+                                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                            loading="lazy"
+                                        />
+                                        <span className="absolute right-1 bottom-1 grid h-5 w-5 place-items-center rounded-full bg-black/70 text-[9px] font-black text-white">
+                                            {index + 1}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                         <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.07] p-4">
                             <div className="flex items-center justify-between gap-4">
                                 <span className="text-[10px] font-black tracking-[0.16em] text-white/52 uppercase">
-                                    Implementation readiness
+                                    Image route readiness
                                 </span>
                                 <span className="rounded-full bg-[#f4dfad] px-2.5 py-1 text-[10px] font-black text-[#102a27]">
                                     {readiness}%
@@ -130,9 +169,10 @@ export default function TourAreaPreviewDialog({
                                 />
                             </div>
                             <p className="mt-3 text-xs leading-6 font-semibold text-white/58">
-                                Structure is ready. Final public release only
-                                needs the approved image set and tour capture
-                                upload.
+                                All {area.scenes.length} image slots are
+                                connected. Replace the placeholder photos with
+                                the approved walk-through set while keeping
+                                their route positions.
                             </p>
                         </div>
 

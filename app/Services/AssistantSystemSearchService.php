@@ -45,21 +45,28 @@ class AssistantSystemSearchService
 
         $sources = collect($sources)
             ->filter(fn (array $source): bool => filled($source['summary'] ?? null))
-            ->map(function (array $source): array {
+            ->map(function (array $source) use ($terms): array {
                 $source['summary'] = Str::limit(trim(preg_replace('/\s+/', ' ', (string) $source['summary']) ?: ''), 950, '...');
                 $source['title'] = Str::limit((string) ($source['title'] ?? 'System source'), 140, '');
                 $source['confidence'] = max(0, min(100, (int) ($source['confidence'] ?? 60)));
                 $source['score'] = (int) ($source['score'] ?? $source['confidence']);
+                $source['term_matches'] = $this->matchingTermCount(implode(' ', [
+                    $source['title'],
+                    $source['summary'],
+                    (string) ($source['category'] ?? ''),
+                ]), $terms);
 
                 return $source;
             })
+            ->filter(fn (array $source): bool => $terms === []
+                || (int) $source['term_matches'] >= (count($terms) >= 3 ? 2 : 1))
             ->sortByDesc(fn (array $source): int => ((int) $source['score'] * 2) + (int) $source['confidence'])
             ->unique(fn (array $source): string => implode('|', [
                 (string) ($source['type'] ?? 'source'),
                 (string) ($source['id'] ?? ''),
                 Str::lower((string) ($source['title'] ?? '')),
             ]))
-            ->take(12)
+            ->take(16)
             ->values()
             ->all();
 
@@ -89,14 +96,14 @@ class AssistantSystemSearchService
         $text = preg_replace('/[^a-z0-9\s#-]+/', ' ', $text) ?: '';
         $tokens = preg_split('/\s+/', $text) ?: [];
         $stop = array_flip([
-            'the', 'and', 'for', 'with', 'that', 'this', 'from', 'into', 'what', 'when', 'where', 'which', 'about', 'how', 'why', 'can', 'could', 'should', 'would', 'please', 'need', 'needs', 'want', 'wants', 'user', 'client', 'system', 'bccc', 'ease', 'booking', 'bookings', 'event', 'events', 'page', 'tell', 'give', 'show', 'explain', 'does', 'have', 'has', 'are', 'was', 'were', 'will', 'all', 'any', 'is', 'to', 'of', 'in', 'on', 'at', 'as', 'or', 'my', 'me', 'i', 'it', 'a', 'an',
+            'the', 'and', 'for', 'with', 'that', 'this', 'from', 'into', 'what', 'when', 'where', 'which', 'about', 'how', 'why', 'can', 'could', 'should', 'would', 'please', 'need', 'needs', 'want', 'wants', 'user', 'client', 'system', 'bccc', 'ease', 'booking', 'bookings', 'event', 'events', 'page', 'tell', 'give', 'show', 'explain', 'complete', 'detail', 'details', 'does', 'have', 'has', 'are', 'was', 'were', 'will', 'all', 'any', 'is', 'to', 'of', 'in', 'on', 'at', 'as', 'or', 'my', 'me', 'i', 'it', 'a', 'an',
         ]);
 
         return collect($tokens)
             ->map(fn (string $token): string => trim($token, " \t\n\r\0\x0B-#"))
             ->filter(fn (string $token): bool => strlen($token) >= 3 && ! isset($stop[$token]))
             ->unique()
-            ->take(14)
+            ->take(20)
             ->values()
             ->all();
     }
@@ -128,7 +135,7 @@ class AssistantSystemSearchService
             })
             ->orderByDesc('confidence')
             ->orderByDesc('updated_at')
-            ->limit(8)
+            ->limit(10)
             ->get();
 
         return $entries->map(function (AssistantKnowledgeEntry $entry) use ($terms): array {
@@ -294,6 +301,18 @@ class AssistantSystemSearchService
     {
         $lower = Str::lower($message);
         $sources = [];
+
+        if ($this->mentions($lower, ['virtual tour', 'tour', 'walk-through', 'walkthrough', 'street view', '3d layout'])) {
+            $sources[] = [
+                'type' => 'public_virtual_tour_guide',
+                'title' => 'BCCC virtual tour and convention layout guide',
+                'summary' => 'The public Virtual Tour uses a split-screen panorama and live area map. The map changes for every selected area, shows nearby rooms, and tracks the current numbered camera position. Main Hall starts at the Ground Hall hub with choices for Upper Left, Upper Right, Upper Mid, and Stage; the left and right routes each continue through two views. VIP Lounge has two connected panorama parts. Visitors can drag or touch to look around, use the bottom movement controls, click map cameras, and open fullscreen. Smooth motion-blur transitions connect each route point. The separate 3D Convention Layout presents an interactive Baguio Convention & Cultural Center model inspired by its facade, broad podium, sloped roof, glass entrance, covered drop-off, fountain, landscaping, and roof lantern. Visitors can switch between the exterior and an interior cutaway, select venue layers, drag, zoom, reset the view, and use fullscreen.',
+                'category' => 'public_navigation',
+                'visibility' => 'public',
+                'confidence' => 96,
+                'score' => 96 + $this->scoreText('virtual tour walk through street view connected 360 route points main hall ground hall upper left upper right upper mid stage move forward backward drag touch panorama smooth transition fullscreen 3d convention layout', $terms),
+            ];
+        }
 
         if ($this->mentions($lower, ['payment', 'pay', 'paid', 'down', 'bond', 'balance', 'unpaid', 'refund', 'cancel', 'penalty', 'discount'])) {
             $notice = BcccBookingPolicyCatalog::finalConfirmationNotice();
@@ -828,6 +847,15 @@ class AssistantSystemSearchService
         }
 
         return $score;
+    }
+
+    private function matchingTermCount(string $text, array $terms): int
+    {
+        $text = Str::lower(Str::ascii($text));
+
+        return collect($terms)
+            ->filter(fn (string $term): bool => str_contains($text, $term))
+            ->count();
     }
 
     private function mentions(string $text, array $needles): bool

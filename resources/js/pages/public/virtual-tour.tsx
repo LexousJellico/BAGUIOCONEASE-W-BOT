@@ -1,15 +1,17 @@
 import TourAreaPreviewDialog from '@/components/public/tour-area-preview-dialog';
 import {
+    TOUR_AREA_MAPS,
     TOUR_AREAS,
     TOUR_LAUNCH_STEPS,
     TOUR_MEDIA_SPECS,
     TOUR_RELEASE_CHECKLIST,
     TOUR_STREET_VIEW_GUIDANCE,
     type TourArea,
+    type TourAreaMap,
 } from '@/data/bccc-tour-areas';
 import PublicLayout from '@/layouts/public-layout';
 import { Head, Link } from '@inertiajs/react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
     ArrowLeft,
     ArrowRight,
@@ -18,35 +20,23 @@ import {
     CalendarDays,
     Camera,
     CheckCircle2,
+    ChevronLeft,
+    ChevronRight,
     Compass,
     FileImage,
     LayoutDashboard,
+    LocateFixed,
     Map,
     MapPinned,
     Maximize2,
     Minimize2,
-    MousePointer2,
     Navigation,
-    RotateCcw,
     Route,
     ScanEye,
     Sparkles,
-    ZoomIn,
-    ZoomOut,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-type ThreeRenderer = import('three').WebGLRenderer;
-type ThreeScene = import('three').Scene;
-type ThreeCamera = import('three').PerspectiveCamera;
-type ThreeMesh = import('three').Mesh;
-type ThreeMaterial = import('three').Material;
-type ThreeTexture = import('three').Texture;
-type ThreeGeometry = import('three').BufferGeometry;
-
-type TourViewCommand = {
-    type: 'reset';
-};
+import * as THREE from 'three';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const VISIT_ROUTE_AREAS = TOUR_AREAS.filter((area) => area.id !== 'whole-tour');
@@ -179,45 +169,24 @@ function useFullscreenViewer() {
     };
 }
 
-function TourScene({
-    activeArea,
-    nextArea,
-    previousArea,
-    onMoveToArea,
+function PanoramaViewer({
+    image,
+    fallbackImage,
+    label,
+    loading,
+    onReady,
+    onFailure,
 }: {
-    activeArea: TourArea;
-    nextArea: TourArea;
-    previousArea: TourArea;
-    onMoveToArea: (area: TourArea) => void;
+    image: string;
+    fallbackImage: string;
+    label: string;
+    loading: boolean;
+    onReady: () => void;
+    onFailure: () => void;
 }) {
     const mountRef = useRef<HTMLDivElement | null>(null);
-    const reduceMotion = Boolean(useReducedMotion());
-    const [fieldOfView, setFieldOfView] = useState(68);
-    const fieldOfViewRef = useRef(fieldOfView);
-    const viewControlRef = useRef<((command: TourViewCommand) => void) | null>(
-        null,
-    );
-
-    useEffect(() => {
-        fieldOfViewRef.current = fieldOfView;
-    }, [fieldOfView]);
-
-    const adjustZoom = (amount: number) => {
-        setFieldOfView((current) =>
-            Math.min(84, Math.max(42, current + amount)),
-        );
-    };
-    const resetView = () => {
-        viewControlRef.current?.({ type: 'reset' });
-        setFieldOfView(68);
-    };
-    const moveToArea = useCallback(
-        (area: TourArea) => {
-            onMoveToArea(area);
-            setFieldOfView(68);
-        },
-        [onMoveToArea],
-    );
+    const materialRef = useRef<THREE.MeshBasicMaterial | null>(null);
+    const viewRef = useRef({ latitude: 0, longitude: 0 });
 
     useEffect(() => {
         const mount = mountRef.current;
@@ -226,368 +195,481 @@ function TourScene({
             return;
         }
 
-        const mountElement = mount;
-        let disposed = false;
-        let frame = 0;
-        let renderer: ThreeRenderer | null = null;
-        let scene: ThreeScene | null = null;
-        let camera: ThreeCamera | null = null;
-        let panorama: ThreeMesh | null = null;
-        let removePointerListeners = () => {};
-        const materials: ThreeMaterial[] = [];
-        const textures: ThreeTexture[] = [];
-        const geometries: ThreeGeometry[] = [];
+        let animationFrame = 0;
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(72, 1, 0.1, 1100);
+        let renderer: THREE.WebGLRenderer;
 
-        async function init() {
-            try {
-                const THREE = await import('three');
-
-                if (disposed) {
-                    return;
-                }
-
-                scene = new THREE.Scene();
-                scene.fog = new THREE.Fog(0x061514, 280, 620);
-
-                camera = new THREE.PerspectiveCamera(
-                    fieldOfViewRef.current,
-                    Math.max(mountElement.clientWidth, 1) /
-                        Math.max(mountElement.clientHeight, 1),
-                    0.1,
-                    1100,
-                );
-                camera.position.set(0, 0, 0.01);
-
-                renderer = new THREE.WebGLRenderer({
-                    antialias: true,
-                    alpha: true,
-                    powerPreference: 'high-performance',
-                });
-                renderer.setPixelRatio(
-                    Math.min(window.devicePixelRatio || 1, 2),
-                );
-                renderer.setSize(
-                    Math.max(mountElement.clientWidth, 1),
-                    Math.max(mountElement.clientHeight, 1),
-                );
-                renderer.domElement.className =
-                    'h-full w-full touch-none outline-none';
-                renderer.domElement.setAttribute(
-                    'aria-label',
-                    `${activeArea.label} street-view style panorama preview`,
-                );
-                renderer.domElement.setAttribute('role', 'img');
-                renderer.domElement.style.cursor = 'grab';
-                mountElement.appendChild(renderer.domElement);
-
-                const loader = new THREE.TextureLoader();
-                const texture = loader.load(activeArea.image);
-                texture.colorSpace = THREE.SRGBColorSpace;
-                textures.push(texture);
-
-                const material = new THREE.MeshBasicMaterial({
-                    map: texture,
-                    side: THREE.BackSide,
-                });
-                materials.push(material);
-
-                const geometry = new THREE.SphereGeometry(500, 96, 56);
-                geometries.push(geometry);
-
-                panorama = new THREE.Mesh(geometry, material);
-                scene.add(panorama);
-
-                const compassGeometry = new THREE.RingGeometry(58, 60, 96);
-                geometries.push(compassGeometry);
-                const compassMaterial = new THREE.MeshBasicMaterial({
-                    color: 0xf4dfad,
-                    transparent: true,
-                    opacity: 0.26,
-                    side: THREE.DoubleSide,
-                });
-                materials.push(compassMaterial);
-                const compass = new THREE.Mesh(
-                    compassGeometry,
-                    compassMaterial,
-                );
-                compass.rotation.x = Math.PI / 2;
-                compass.position.y = -46;
-                scene.add(compass);
-
-                let lon = -92;
-                let lat = -2;
-                let startLon = lon;
-                let startLat = lat;
-                let startX = 0;
-                let startY = 0;
-                let dragging = false;
-                const target = new THREE.Vector3();
-
-                viewControlRef.current = (command) => {
-                    if (command.type === 'reset') {
-                        lon = -92;
-                        lat = -2;
-                    }
-                };
-
-                const updateCameraTarget = () => {
-                    if (!camera) {
-                        return;
-                    }
-
-                    lat = Math.max(-72, Math.min(72, lat));
-                    const phi = THREE.MathUtils.degToRad(90 - lat);
-                    const theta = THREE.MathUtils.degToRad(lon);
-
-                    target.x = 500 * Math.sin(phi) * Math.cos(theta);
-                    target.y = 500 * Math.cos(phi);
-                    target.z = 500 * Math.sin(phi) * Math.sin(theta);
-                    camera.lookAt(target);
-                };
-
-                const handlePointerDown = (event: PointerEvent) => {
-                    dragging = true;
-                    startX = event.clientX;
-                    startY = event.clientY;
-                    startLon = lon;
-                    startLat = lat;
-                    renderer?.domElement.style.setProperty(
-                        'cursor',
-                        'grabbing',
-                    );
-                    renderer?.domElement.setPointerCapture(event.pointerId);
-                };
-
-                const handlePointerMove = (event: PointerEvent) => {
-                    if (!dragging) {
-                        return;
-                    }
-
-                    lon = startLon - (event.clientX - startX) * 0.11;
-                    lat = startLat + (event.clientY - startY) * 0.11;
-                };
-
-                const handlePointerUp = (event: PointerEvent) => {
-                    dragging = false;
-                    renderer?.domElement.style.setProperty('cursor', 'grab');
-                    try {
-                        renderer?.domElement.releasePointerCapture(
-                            event.pointerId,
-                        );
-                    } catch {
-                        // Pointer capture can already be released by the browser.
-                    }
-                };
-
-                const handleWheel = (event: WheelEvent) => {
-                    event.preventDefault();
-                    setFieldOfView((current) =>
-                        Math.min(
-                            84,
-                            Math.max(42, current + Math.sign(event.deltaY) * 4),
-                        ),
-                    );
-                };
-                const handleKeyDown = (event: KeyboardEvent) => {
-                    if (
-                        event.key === 'ArrowLeft' ||
-                        event.key === 'ArrowDown'
-                    ) {
-                        event.preventDefault();
-                        moveToArea(previousArea);
-                    }
-
-                    if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
-                        event.preventDefault();
-                        moveToArea(nextArea);
-                    }
-                };
-
-                renderer.domElement.tabIndex = 0;
-                renderer.domElement.addEventListener(
-                    'pointerdown',
-                    handlePointerDown,
-                );
-                renderer.domElement.addEventListener('wheel', handleWheel, {
-                    passive: false,
-                });
-                renderer.domElement.addEventListener('keydown', handleKeyDown);
-                window.addEventListener('pointermove', handlePointerMove);
-                window.addEventListener('pointerup', handlePointerUp);
-
-                removePointerListeners = () => {
-                    renderer?.domElement.removeEventListener(
-                        'pointerdown',
-                        handlePointerDown,
-                    );
-                    renderer?.domElement.removeEventListener(
-                        'wheel',
-                        handleWheel,
-                    );
-                    renderer?.domElement.removeEventListener(
-                        'keydown',
-                        handleKeyDown,
-                    );
-                    window.removeEventListener(
-                        'pointermove',
-                        handlePointerMove,
-                    );
-                    window.removeEventListener('pointerup', handlePointerUp);
-                };
-
-                const handleResize = () => {
-                    if (!renderer || !camera) {
-                        return;
-                    }
-
-                    camera.aspect =
-                        Math.max(mountElement.clientWidth, 1) /
-                        Math.max(mountElement.clientHeight, 1);
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(
-                        Math.max(mountElement.clientWidth, 1),
-                        Math.max(mountElement.clientHeight, 1),
-                    );
-                };
-
-                window.addEventListener('resize', handleResize);
-
-                const clock = new THREE.Clock();
-
-                const render = () => {
-                    if (!renderer || !scene || !camera || disposed) {
-                        return;
-                    }
-
-                    const elapsed = clock.getElapsedTime();
-                    if (!dragging && !reduceMotion) {
-                        lon += Math.sin(elapsed * 0.12) * 0.003;
-                    }
-
-                    camera.fov = fieldOfViewRef.current;
-                    camera.updateProjectionMatrix();
-                    updateCameraTarget();
-
-                    renderer.render(scene, camera);
-                    frame = window.requestAnimationFrame(render);
-                };
-
-                render();
-
-                removePointerListeners = (() => {
-                    const removeBaseListeners = removePointerListeners;
-
-                    return () => {
-                        removeBaseListeners();
-                        window.removeEventListener('resize', handleResize);
-                    };
-                })();
-            } catch {
-                mountElement.dataset.webglUnavailable = 'true';
-            }
+        try {
+            renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                alpha: false,
+                powerPreference: 'high-performance',
+            });
+        } catch {
+            onFailure();
+            return;
         }
 
-        void init();
+        const geometry = new THREE.SphereGeometry(500, 64, 40);
+        const material = new THREE.MeshBasicMaterial({ color: 0x081b19 });
+        const sphere = new THREE.Mesh(geometry, material);
+        const target = new THREE.Vector3();
+        const drag = {
+            active: false,
+            pointerId: -1,
+            x: 0,
+            y: 0,
+            latitude: 0,
+            longitude: 0,
+        };
 
-        return () => {
-            disposed = true;
-            window.cancelAnimationFrame(frame);
-            removePointerListeners();
-            viewControlRef.current = null;
+        geometry.scale(-1, 1, 1);
+        scene.add(sphere);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setClearColor(0x061514);
+        renderer.domElement.setAttribute('aria-label', 'Virtual tour panorama');
+        renderer.domElement.setAttribute('role', 'img');
+        mount.appendChild(renderer.domElement);
+        materialRef.current = material;
 
-            materials.forEach((material) => material.dispose());
-            textures.forEach((texture) => texture.dispose());
-            geometries.forEach((geometry) => geometry.dispose());
+        const resize = () => {
+            const width = Math.max(mount.clientWidth, 1);
+            const height = Math.max(mount.clientHeight, 1);
 
-            if (renderer?.domElement.parentNode) {
-                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height, false);
+        };
+
+        const render = () => {
+            const latitude = Math.max(
+                -78,
+                Math.min(78, viewRef.current.latitude),
+            );
+            const phi = THREE.MathUtils.degToRad(90 - latitude);
+            const theta = THREE.MathUtils.degToRad(viewRef.current.longitude);
+
+            target.set(
+                500 * Math.sin(phi) * Math.cos(theta),
+                500 * Math.cos(phi),
+                500 * Math.sin(phi) * Math.sin(theta),
+            );
+            camera.lookAt(target);
+            renderer.render(scene, camera);
+            animationFrame = window.requestAnimationFrame(render);
+        };
+
+        const handlePointerDown = (event: PointerEvent) => {
+            drag.active = true;
+            drag.pointerId = event.pointerId;
+            drag.x = event.clientX;
+            drag.y = event.clientY;
+            drag.latitude = viewRef.current.latitude;
+            drag.longitude = viewRef.current.longitude;
+            renderer.domElement.setPointerCapture(event.pointerId);
+            renderer.domElement.dataset.dragging = 'true';
+        };
+
+        const handlePointerMove = (event: PointerEvent) => {
+            if (!drag.active || event.pointerId !== drag.pointerId) {
+                return;
             }
 
-            renderer?.dispose();
-            scene?.clear();
-            panorama?.clear();
+            viewRef.current.longitude =
+                drag.longitude - (event.clientX - drag.x) * 0.14;
+            viewRef.current.latitude =
+                drag.latitude + (event.clientY - drag.y) * 0.12;
         };
-    }, [activeArea, moveToArea, nextArea, previousArea, reduceMotion]);
+
+        const endPointerDrag = (event: PointerEvent) => {
+            if (event.pointerId !== drag.pointerId) {
+                return;
+            }
+
+            drag.active = false;
+            drag.pointerId = -1;
+            delete renderer.domElement.dataset.dragging;
+        };
+
+        const handleWheel = (event: WheelEvent) => {
+            event.preventDefault();
+            camera.fov = Math.max(
+                44,
+                Math.min(88, camera.fov + event.deltaY * 0.035),
+            );
+            camera.updateProjectionMatrix();
+        };
+
+        const resizeObserver = new ResizeObserver(resize);
+        resizeObserver.observe(mount);
+        renderer.domElement.addEventListener('pointerdown', handlePointerDown);
+        renderer.domElement.addEventListener('pointermove', handlePointerMove);
+        renderer.domElement.addEventListener('pointerup', endPointerDrag);
+        renderer.domElement.addEventListener('pointercancel', endPointerDrag);
+        renderer.domElement.addEventListener('wheel', handleWheel, {
+            passive: false,
+        });
+        resize();
+        render();
+
+        return () => {
+            window.cancelAnimationFrame(animationFrame);
+            resizeObserver.disconnect();
+            renderer.domElement.removeEventListener(
+                'pointerdown',
+                handlePointerDown,
+            );
+            renderer.domElement.removeEventListener(
+                'pointermove',
+                handlePointerMove,
+            );
+            renderer.domElement.removeEventListener(
+                'pointerup',
+                endPointerDrag,
+            );
+            renderer.domElement.removeEventListener(
+                'pointercancel',
+                endPointerDrag,
+            );
+            renderer.domElement.removeEventListener('wheel', handleWheel);
+            material.map?.dispose();
+            material.dispose();
+            geometry.dispose();
+            renderer.dispose();
+            renderer.domElement.remove();
+            materialRef.current = null;
+        };
+    }, [onFailure]);
+
+    useEffect(() => {
+        const canvas = mountRef.current?.querySelector('canvas');
+        canvas?.setAttribute('aria-label', `${label} panorama`);
+    }, [label]);
+
+    useEffect(() => {
+        const material = materialRef.current;
+
+        if (!material) {
+            return;
+        }
+
+        let cancelled = false;
+        const loader = new THREE.TextureLoader();
+        const loadTexture = (source: string, isFallback = false) => {
+            loader.load(
+                source,
+                (texture) => {
+                    if (cancelled) {
+                        texture.dispose();
+                        return;
+                    }
+
+                    texture.colorSpace = THREE.SRGBColorSpace;
+                    texture.anisotropy = 4;
+                    material.map?.dispose();
+                    material.map = texture;
+                    material.color.setHex(0xffffff);
+                    material.needsUpdate = true;
+                    onReady();
+                },
+                undefined,
+                () => {
+                    if (!isFallback && source !== fallbackImage) {
+                        loadTexture(fallbackImage, true);
+                        return;
+                    }
+
+                    onFailure();
+                },
+            );
+        };
+
+        loadTexture(image);
+
+        return () => {
+            cancelled = true;
+        };
+    }, [fallbackImage, image, onFailure, onReady]);
 
     return (
-        <div className="bccc-virtual-tour-viewport absolute inset-0">
-            <div
-                ref={mountRef}
-                className="absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,rgba(244,223,173,0.16),transparent_34%),linear-gradient(135deg,#061514,#10372f_48%,#040707)]"
+        <div
+            ref={mountRef}
+            className={cx(
+                'bccc-tour-panorama absolute inset-0',
+                loading && 'is-loading',
+            )}
+        />
+    );
+}
+
+function TourScene({
+    activeArea,
+    activeStopIndex,
+    onMoveToStop,
+}: {
+    activeArea: TourArea;
+    activeStopIndex: number;
+    onMoveToStop: (index: number) => void;
+}) {
+    const reduceMotion = Boolean(useReducedMotion());
+    const [panoramaReady, setPanoramaReady] = useState(false);
+    const [panoramaFailed, setPanoramaFailed] = useState(false);
+    const [moveDirection, setMoveDirection] = useState(1);
+    const stopIndex = Math.min(
+        Math.max(activeStopIndex, 0),
+        activeArea.scenes.length - 1,
+    );
+    const activeStop = activeArea.scenes[stopIndex];
+    const connections = activeStop.connections ?? [];
+    const backwardConnection = connections.find(
+        (connection) => connection.kind === 'backward',
+    );
+    const forwardConnection = connections.find(
+        (connection) => connection.kind === 'forward',
+    );
+    const choiceConnections = connections.filter(
+        (connection) => connection.kind === 'choice',
+    );
+
+    const moveToStop = useCallback(
+        (index: number, direction?: 'backward' | 'forward' | 'choice') => {
+            const nextIndex = Math.min(
+                Math.max(index, 0),
+                activeArea.scenes.length - 1,
+            );
+
+            if (nextIndex !== stopIndex) {
+                setMoveDirection(
+                    direction === 'backward'
+                        ? -1
+                        : direction === 'forward' || direction === 'choice'
+                          ? 1
+                          : nextIndex > stopIndex
+                            ? 1
+                            : -1,
+                );
+                setPanoramaReady(false);
+                setPanoramaFailed(false);
+                onMoveToStop(nextIndex);
+            }
+        },
+        [activeArea.scenes.length, onMoveToStop, stopIndex],
+    );
+
+    const moveThroughConnection = useCallback(
+        (connection: (typeof connections)[number] | undefined) => {
+            if (!connection) {
+                return;
+            }
+
+            const nextIndex = activeArea.scenes.findIndex(
+                (scene) => scene.id === connection.targetId,
+            );
+
+            if (nextIndex >= 0) {
+                moveToStop(nextIndex, connection.kind);
+            }
+        },
+        [activeArea.scenes, moveToStop],
+    );
+
+    const handlePanoramaReady = useCallback(() => {
+        setPanoramaReady(true);
+        setPanoramaFailed(false);
+    }, []);
+    const handlePanoramaFailure = useCallback(() => {
+        setPanoramaFailed(true);
+    }, []);
+
+    useEffect(() => {
+        setPanoramaReady(false);
+        setPanoramaFailed(false);
+    }, [activeArea.id, activeStop.id]);
+
+    useEffect(() => {
+        activeArea.scenes.forEach((scene) => {
+            const image = new Image();
+            image.src = scene.image;
+        });
+    }, [activeArea]);
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            moveThroughConnection(backwardConnection);
+        }
+
+        if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            moveThroughConnection(forwardConnection);
+        }
+
+        if (event.key === 'Home') {
+            event.preventDefault();
+            moveToStop(0, 'backward');
+        }
+
+        const choiceNumber = Number(event.key);
+        if (
+            Number.isInteger(choiceNumber) &&
+            choiceNumber >= 1 &&
+            choiceNumber <= choiceConnections.length
+        ) {
+            event.preventDefault();
+            moveThroughConnection(choiceConnections[choiceNumber - 1]);
+        }
+    };
+
+    return (
+        <div
+            className="bccc-virtual-tour-viewport absolute inset-0 overflow-hidden bg-[#061514] outline-none"
+            role="region"
+            aria-label={`${activeArea.label} immersive 360 virtual walk-through`}
+            tabIndex={0}
+            onKeyDown={handleKeyDown}
+        >
+            <PanoramaViewer
+                image={activeStop.image}
+                fallbackImage={activeArea.image}
+                label={`${activeArea.label}: ${activeStop.label}`}
+                loading={!panoramaReady}
+                onReady={handlePanoramaReady}
+                onFailure={handlePanoramaFailure}
             />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.76),rgba(0,0,0,0.34)_38%,rgba(0,0,0,0.1)_62%,rgba(0,0,0,0.58))]" />
+
+            <AnimatePresence initial={false}>
+                {!panoramaReady || panoramaFailed ? (
+                    <motion.img
+                        key={activeStop.id}
+                        src={activeStop.image}
+                        alt=""
+                        className="pointer-events-none absolute inset-0 h-full w-full object-cover select-none"
+                        draggable={false}
+                        initial={
+                            reduceMotion
+                                ? { opacity: 1 }
+                                : {
+                                      opacity: 1,
+                                      scale: moveDirection > 0 ? 1.08 : 0.94,
+                                      filter: 'blur(18px)',
+                                  }
+                        }
+                        animate={{
+                            opacity: panoramaFailed ? 1 : 0.84,
+                            scale: 1.02,
+                            filter: panoramaFailed ? 'blur(0px)' : 'blur(8px)',
+                        }}
+                        exit={
+                            reduceMotion
+                                ? { opacity: 0 }
+                                : {
+                                      opacity: 0,
+                                      scale: moveDirection > 0 ? 1.15 : 0.88,
+                                      filter: 'blur(24px)',
+                                  }
+                        }
+                        transition={{
+                            duration: reduceMotion ? 0.1 : 0.68,
+                            ease,
+                        }}
+                    />
+                ) : null}
+            </AnimatePresence>
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.5),transparent_36%,transparent_68%,rgba(0,0,0,0.38))]" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="pointer-events-none absolute top-4 left-4 rounded-full border border-white/14 bg-black/32 px-3 py-2 text-[10px] font-black tracking-[0.16em] text-white/78 uppercase backdrop-blur-xl">
-                Street-view lens
-            </div>
-            <div className="pointer-events-none absolute top-1/2 left-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/18">
-                <span className="absolute top-1/2 left-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#f4dfad]" />
+            <div className="pointer-events-none absolute top-4 left-4 max-w-[calc(100%-9rem)] rounded-lg border border-white/14 bg-black/38 px-3 py-2 backdrop-blur-xl">
+                <div className="flex items-center gap-2 text-[10px] font-black tracking-[0.16em] text-[#f4dfad] uppercase">
+                    <LocateFixed className="h-3.5 w-3.5" />
+                    {activeArea.shortLabel}
+                </div>
+                <p className="mt-1 truncate text-xs font-bold text-white/80">
+                    {activeStop.label} · View {stopIndex + 1} of{' '}
+                    {activeArea.scenes.length}
+                </p>
             </div>
 
-            <div className="absolute top-4 right-4 left-4 flex items-start justify-end gap-3 sm:left-auto">
-                <div className="rounded-lg border border-white/12 bg-black/42 p-3 backdrop-blur-xl max-sm:hidden">
-                    <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-2 text-[10px] font-black tracking-[0.16em] text-[#f4dfad] uppercase">
-                            <MousePointer2 className="h-3.5 w-3.5" />
-                            Interactive preview
-                        </div>
-                        <span className="rounded-full border border-white/10 bg-white/8 px-2.5 py-1 text-[10px] font-black text-white/54">
-                            {activeArea.shortLabel}
+            <div className="bccc-tour-look-hint pointer-events-none absolute top-4 left-1/2 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-white/12 bg-black/34 px-3 py-2 text-[9px] font-black tracking-[0.14em] text-white/68 uppercase backdrop-blur-xl sm:flex">
+                <Compass className="h-3.5 w-3.5 text-[#f4dfad]" />
+                Drag to look around
+            </div>
+
+            {choiceConnections.length > 0 ? (
+                <div className="bccc-street-view-route-controls bccc-street-view-route-choices absolute right-3 bottom-4 left-3 z-20 mx-auto max-w-4xl rounded-xl border border-white/12 bg-black/64 p-2 shadow-[0_20px_70px_rgba(0,0,0,0.42)] backdrop-blur-2xl">
+                    <div className="flex items-center justify-between gap-3 px-2 py-1">
+                        <span className="text-[9px] font-black tracking-[0.16em] text-[#f4dfad] uppercase">
+                            Choose your next hall view
+                        </span>
+                        <span className="hidden text-[8px] font-bold tracking-[0.1em] text-white/42 uppercase sm:block">
+                            Ground Hall navigation hub
                         </span>
                     </div>
+                    <div className="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                        {choiceConnections.map((connection, index) => (
+                            <button
+                                key={connection.targetId}
+                                type="button"
+                                onClick={() =>
+                                    moveThroughConnection(connection)
+                                }
+                                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#f4dfad]/22 bg-[#f4dfad]/12 px-3 text-[9px] font-black tracking-[0.12em] text-[#f4dfad] uppercase transition hover:border-[#f4dfad] hover:bg-[#f4dfad] hover:text-[#123f37]"
+                            >
+                                <Navigation className="h-3.5 w-3.5" />
+                                {connection.label}
+                                <span className="sr-only">
+                                    Keyboard shortcut {index + 1}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
                 </div>
-                <div className="bccc-tour-scene-toolbar flex shrink-0 items-center gap-2 rounded-full border border-white/12 bg-black/44 p-1.5 backdrop-blur-xl">
+            ) : (
+                <div className="bccc-street-view-route-controls absolute right-3 bottom-4 left-3 z-20 mx-auto flex max-w-2xl items-center gap-2 rounded-xl border border-white/12 bg-black/58 p-2 shadow-[0_20px_70px_rgba(0,0,0,0.42)] backdrop-blur-2xl">
                     <button
                         type="button"
-                        onClick={() => adjustZoom(5)}
-                        className="grid h-9 w-9 place-items-center rounded-full text-white/74 transition hover:bg-white/14 hover:text-white"
-                        title="Zoom out"
+                        onClick={() =>
+                            moveThroughConnection(backwardConnection)
+                        }
+                        disabled={!backwardConnection}
+                        className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/7 px-3 text-center text-[9px] font-black tracking-[0.12em] text-white/78 uppercase transition hover:border-white/24 hover:bg-white/14 hover:text-white disabled:cursor-not-allowed disabled:opacity-28 sm:text-[10px]"
                     >
-                        <ZoomOut className="h-4 w-4" />
-                        <span className="sr-only">Zoom out</span>
+                        <ChevronLeft className="h-4 w-4 shrink-0" />
+                        <span>
+                            Move backward
+                            {backwardConnection ? (
+                                <small className="mt-0.5 block text-[8px] tracking-[0.08em] text-white/45">
+                                    {backwardConnection.label}
+                                </small>
+                            ) : null}
+                        </span>
                     </button>
-                    <span className="min-w-16 text-center text-[10px] font-black tracking-[0.14em] text-white/54 uppercase">
-                        {Math.round(126 - fieldOfView)}%
-                    </span>
+                    <div className="pointer-events-none flex min-w-20 flex-col items-center justify-center px-1 text-center sm:min-w-24 sm:px-2">
+                        <span className="text-[9px] font-black tracking-[0.18em] text-[#f4dfad] uppercase">
+                            {String(stopIndex + 1).padStart(2, '0')} /{' '}
+                            {String(activeArea.scenes.length).padStart(2, '0')}
+                        </span>
+                        <span className="mt-1 hidden text-[8px] font-bold tracking-[0.1em] text-white/42 uppercase sm:block">
+                            Look around freely
+                        </span>
+                    </div>
                     <button
                         type="button"
-                        onClick={() => adjustZoom(-5)}
-                        className="grid h-9 w-9 place-items-center rounded-full text-white/74 transition hover:bg-white/14 hover:text-white"
-                        title="Zoom in"
+                        onClick={() => moveThroughConnection(forwardConnection)}
+                        disabled={!forwardConnection}
+                        className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-lg bg-[#f4dfad] px-3 text-center text-[9px] font-black tracking-[0.12em] text-[#123f37] uppercase transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40 sm:text-[10px]"
                     >
-                        <ZoomIn className="h-4 w-4" />
-                        <span className="sr-only">Zoom in</span>
-                    </button>
-                    <button
-                        type="button"
-                        onClick={resetView}
-                        className="grid h-9 w-9 place-items-center rounded-full text-white/74 transition hover:bg-white/14 hover:text-white"
-                        title="Reset zoom"
-                    >
-                        <RotateCcw className="h-4 w-4" />
-                        <span className="sr-only">Reset zoom</span>
+                        <span>
+                            Move forward
+                            {forwardConnection ? (
+                                <small className="mt-0.5 block text-[8px] tracking-[0.08em] text-[#123f37]/55">
+                                    {forwardConnection.label}
+                                </small>
+                            ) : null}
+                        </span>
+                        <ChevronRight className="h-4 w-4 shrink-0" />
                     </button>
                 </div>
-            </div>
-            <div className="bccc-street-view-route-controls absolute right-3 bottom-4 left-3 z-20 flex items-center justify-center gap-2 rounded-full border border-white/12 bg-black/44 p-1.5 backdrop-blur-xl sm:right-auto sm:left-1/2 sm:-translate-x-1/2">
-                <button
-                    type="button"
-                    onClick={() => moveToArea(previousArea)}
-                    className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-full px-4 text-[10px] font-black tracking-[0.14em] text-white/70 uppercase transition hover:bg-white/12 hover:text-white sm:flex-none"
-                >
-                    <ArrowLeft className="h-4 w-4" />
-                    {previousArea.shortLabel}
-                </button>
-                <span className="h-7 w-px bg-white/14" />
-                <button
-                    type="button"
-                    onClick={() => moveToArea(nextArea)}
-                    className="inline-flex min-h-10 flex-[1.25] items-center justify-center gap-2 rounded-full bg-[#f4dfad] px-4 text-[10px] font-black tracking-[0.14em] text-[#123f37] uppercase transition hover:bg-white sm:flex-none"
-                >
-                    Next {nextArea.shortLabel}
-                    <ArrowRight className="h-4 w-4" />
-                </button>
-            </div>
+            )}
         </div>
     );
 }
@@ -752,9 +834,280 @@ function RouteMiniMap({
     );
 }
 
+function AreaFloorMap({
+    activeArea,
+    activeStopIndex,
+    onMoveToStop,
+    onSelectArea,
+}: {
+    activeArea: TourArea;
+    activeStopIndex: number;
+    onMoveToStop: (index: number) => void;
+    onSelectArea: (area: TourArea) => void;
+}) {
+    const areaMap: TourAreaMap = TOUR_AREA_MAPS[activeArea.id];
+    const activeStop =
+        activeArea.scenes[activeStopIndex] ?? activeArea.scenes[0];
+    const nodeLookup = useMemo(
+        () =>
+            new globalThis.Map(
+                areaMap.nodes.map((node) => [node.sceneId, node] as const),
+            ),
+        [areaMap.nodes],
+    );
+    const connectionLines = useMemo(() => {
+        const seen = new Set<string>();
+
+        return activeArea.scenes.flatMap((scene) => {
+            const start = nodeLookup.get(scene.id);
+
+            if (!start) {
+                return [];
+            }
+
+            return (scene.connections ?? []).flatMap((connection) => {
+                const end = nodeLookup.get(connection.targetId);
+                const key = [scene.id, connection.targetId].sort().join(':');
+
+                if (!end || seen.has(key)) {
+                    return [];
+                }
+
+                seen.add(key);
+
+                return [{ key, start, end }];
+            });
+        });
+    }, [activeArea.scenes, nodeLookup]);
+
+    const moveToScene = (sceneId: string) => {
+        const nextIndex = activeArea.scenes.findIndex(
+            (scene) => scene.id === sceneId,
+        );
+
+        if (nextIndex >= 0) {
+            onMoveToStop(nextIndex);
+        }
+    };
+
+    const selectSurroundingArea = (areaId: string | undefined) => {
+        const area = TOUR_AREAS.find((candidate) => candidate.id === areaId);
+
+        if (area) {
+            onSelectArea(area);
+        }
+    };
+
+    return (
+        <aside className="bccc-live-tour-map flex min-h-0 flex-col overflow-hidden border border-white/10 bg-[#0b1c19] text-white shadow-[0_24px_80px_rgba(0,0,0,0.3)]">
+            <div className="border-b border-white/10 px-4 py-4 sm:px-5">
+                <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                        <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.18em] text-[#f4dfad] uppercase">
+                            <Map className="h-3.5 w-3.5" />
+                            Live area map
+                        </div>
+                        <h2 className="mt-2 truncate text-xl font-semibold text-white">
+                            {areaMap.title}
+                        </h2>
+                        <p className="mt-1 text-xs font-semibold text-white/48">
+                            {areaMap.subtitle}
+                        </p>
+                    </div>
+                    <span className="shrink-0 rounded-full border border-[#f4dfad]/24 bg-[#f4dfad]/10 px-3 py-1.5 text-[9px] font-black tracking-[0.12em] text-[#f4dfad] uppercase">
+                        {areaMap.level}
+                    </span>
+                </div>
+            </div>
+
+            <div className="min-h-0 flex-1 p-3 sm:p-4">
+                <div className="bccc-area-map-canvas relative h-full min-h-[15rem] overflow-hidden rounded-xl border border-white/12 bg-[#dfe9e5]">
+                    {areaMap.backgroundImage ? (
+                        <img
+                            src={areaMap.backgroundImage}
+                            alt={`${activeArea.label} location map`}
+                            className="absolute inset-0 h-full w-full object-cover"
+                        />
+                    ) : (
+                        <svg
+                            viewBox="0 0 100 100"
+                            className="absolute inset-0 h-full w-full"
+                            aria-label={`${activeArea.label} floor layout`}
+                            role="img"
+                        >
+                            <defs>
+                                <pattern
+                                    id={`grid-${activeArea.id}`}
+                                    width="5"
+                                    height="5"
+                                    patternUnits="userSpaceOnUse"
+                                >
+                                    <path
+                                        d="M 5 0 L 0 0 0 5"
+                                        fill="none"
+                                        stroke="rgba(20,63,56,0.08)"
+                                        strokeWidth="0.35"
+                                    />
+                                </pattern>
+                            </defs>
+                            <rect width="100" height="100" fill="#e9f0ed" />
+                            <rect
+                                width="100"
+                                height="100"
+                                fill={`url(#grid-${activeArea.id})`}
+                            />
+
+                            {areaMap.rooms.map((room) => (
+                                <g
+                                    key={room.id}
+                                    role={room.areaId ? 'button' : undefined}
+                                    tabIndex={room.areaId ? 0 : undefined}
+                                    className={cx(
+                                        'bccc-map-room',
+                                        room.kind === 'active' &&
+                                            'is-active-room',
+                                        room.kind === 'surrounding' &&
+                                            'is-surrounding-room',
+                                        room.kind === 'feature' &&
+                                            'is-feature-room',
+                                        room.areaId && 'is-clickable-room',
+                                    )}
+                                    onClick={() =>
+                                        selectSurroundingArea(room.areaId)
+                                    }
+                                    onKeyDown={(event) => {
+                                        if (
+                                            room.areaId &&
+                                            (event.key === 'Enter' ||
+                                                event.key === ' ')
+                                        ) {
+                                            event.preventDefault();
+                                            selectSurroundingArea(room.areaId);
+                                        }
+                                    }}
+                                >
+                                    <rect
+                                        x={room.x}
+                                        y={room.y}
+                                        width={room.width}
+                                        height={room.height}
+                                        rx="1.4"
+                                    />
+                                    <text
+                                        x={room.x + room.width / 2}
+                                        y={room.y + room.height / 2}
+                                        textAnchor="middle"
+                                        dominantBaseline="middle"
+                                    >
+                                        {room.label}
+                                    </text>
+                                </g>
+                            ))}
+
+                            {connectionLines.map(({ key, start, end }) => (
+                                <line
+                                    key={key}
+                                    x1={start.x}
+                                    y1={start.y}
+                                    x2={end.x}
+                                    y2={end.y}
+                                    className="bccc-map-route-line"
+                                />
+                            ))}
+                        </svg>
+                    )}
+
+                    {areaMap.backgroundImage ? (
+                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(6,21,20,0.04),rgba(6,21,20,0.22))]" />
+                    ) : null}
+
+                    {areaMap.nodes.map((node, index) => {
+                        const scene = activeArea.scenes.find(
+                            (candidate) => candidate.id === node.sceneId,
+                        );
+                        const selected = scene?.id === activeStop.id;
+
+                        return (
+                            <button
+                                key={node.sceneId}
+                                type="button"
+                                onClick={() => moveToScene(node.sceneId)}
+                                aria-pressed={selected}
+                                title={scene?.label}
+                                className={cx(
+                                    'bccc-map-camera-node absolute z-10 grid h-9 w-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border text-[10px] font-black transition',
+                                    selected
+                                        ? 'is-current border-white bg-[#176456] text-white'
+                                        : 'border-white/80 bg-white text-[#176456] hover:border-[#176456] hover:bg-[#f4dfad]',
+                                )}
+                                style={{
+                                    left: `${node.x}%`,
+                                    top: `${node.y}%`,
+                                }}
+                            >
+                                {index + 1}
+                                <span className="sr-only">
+                                    Open {scene?.label}
+                                </span>
+                            </button>
+                        );
+                    })}
+
+                    <div className="absolute top-3 right-3 rounded-lg border border-[#143f38]/12 bg-white/88 px-3 py-2 text-[9px] font-black tracking-[0.12em] text-[#143f38] uppercase shadow-lg backdrop-blur">
+                        <span className="flex items-center gap-1.5">
+                            <Navigation className="h-3 w-3" />
+                            North
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="border-t border-white/10 p-3 sm:p-4">
+                <div className="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/[0.06] px-3 py-2.5">
+                    <div className="min-w-0">
+                        <p className="text-[8px] font-black tracking-[0.16em] text-[#f4dfad] uppercase">
+                            You are here
+                        </p>
+                        <p className="mt-1 truncate text-xs font-black text-white">
+                            {activeArea.label} · {activeStop.label}
+                        </p>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-[#f4dfad] px-2.5 py-1 text-[9px] font-black text-[#123f37]">
+                        {activeStopIndex + 1}/{activeArea.scenes.length}
+                    </span>
+                </div>
+
+                <div className="mt-3 flex items-center gap-2 text-[8px] font-black tracking-[0.13em] text-white/42 uppercase">
+                    <Route className="h-3.5 w-3.5 text-[#9fe8dc]" />
+                    Select an area or click a map camera
+                </div>
+                <div className="mt-2 grid max-h-28 grid-cols-3 gap-1.5 overflow-y-auto pr-1 [scrollbar-width:thin]">
+                    {TOUR_AREAS.map((area) => (
+                        <button
+                            key={`map-area-${area.id}`}
+                            type="button"
+                            onClick={() => onSelectArea(area)}
+                            aria-pressed={area.id === activeArea.id}
+                            className={cx(
+                                'min-h-9 truncate rounded-md border px-2 text-[8px] font-black tracking-[0.08em] uppercase transition',
+                                area.id === activeArea.id
+                                    ? 'border-[#f4dfad] bg-[#f4dfad] text-[#123f37]'
+                                    : 'border-white/10 bg-white/[0.05] text-white/58 hover:border-white/24 hover:bg-white/10 hover:text-white',
+                            )}
+                        >
+                            {area.shortLabel}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        </aside>
+    );
+}
+
 export default function VirtualTourPage() {
     const reduceMotion = useReducedMotion();
     const [activeArea, setActiveArea] = useState<TourArea>(TOUR_AREAS[0]);
+    const [activeStopIndex, setActiveStopIndex] = useState(0);
     const [previewArea, setPreviewArea] = useState<TourArea | null>(null);
     const {
         isViewerExpanded: isTourViewerExpanded,
@@ -768,14 +1121,107 @@ export default function VirtualTourPage() {
     const previousArea =
         TOUR_AREAS[(activeIndex - 1 + TOUR_AREAS.length) % TOUR_AREAS.length];
     const nextArea = TOUR_AREAS[(activeIndex + 1) % TOUR_AREAS.length];
-    const openPreview = (area: TourArea) => {
+    const selectArea = useCallback((area: TourArea) => {
         setActiveArea(area);
+        setActiveStopIndex(0);
+    }, []);
+    const openPreview = (area: TourArea) => {
+        selectArea(area);
         setPreviewArea(area);
     };
 
+    if (TOUR_AREA_MAPS[activeArea.id]) {
+        return (
+            <PublicLayout>
+                <Head title="Virtual Tour" />
+
+                <section className="bccc-virtual-tour-page bccc-focused-tour-page bg-[#061514] text-white">
+                    <div className="bccc-focused-tour-workspace grid gap-3 p-3 lg:grid-cols-[minmax(0,1.75fr)_minmax(21rem,0.75fr)] lg:gap-4 lg:p-4">
+                        <motion.div
+                            ref={tourShellRef}
+                            initial={
+                                reduceMotion
+                                    ? { opacity: 1 }
+                                    : {
+                                          opacity: 0,
+                                          scale: 0.99,
+                                          filter: 'blur(8px)',
+                                      }
+                            }
+                            animate={{
+                                opacity: 1,
+                                scale: 1,
+                                filter: 'blur(0px)',
+                            }}
+                            transition={{ duration: 0.62, ease }}
+                            className={cx(
+                                'bccc-windowed-tour-shell bccc-focused-tour-view relative min-h-0 overflow-hidden rounded-xl border border-white/12 bg-black/30 shadow-[0_26px_90px_rgba(0,0,0,0.38)]',
+                                isTourViewerExpanded && 'is-viewer-expanded',
+                            )}
+                        >
+                            <TourScene
+                                activeArea={activeArea}
+                                activeStopIndex={activeStopIndex}
+                                onMoveToStop={setActiveStopIndex}
+                            />
+                            <button
+                                type="button"
+                                onClick={toggleTourFullscreen}
+                                aria-pressed={isTourViewerExpanded}
+                                className="bccc-viewer-fullscreen-button absolute top-4 right-4 z-30 grid h-11 w-11 place-items-center rounded-full border border-white/14 bg-black/46 text-white/78 backdrop-blur-xl transition hover:border-[#f4dfad]/50 hover:bg-[#f4dfad] hover:text-[#123f37]"
+                                title={
+                                    isTourViewerExpanded
+                                        ? 'Exit fullscreen'
+                                        : 'Open fullscreen'
+                                }
+                            >
+                                {isTourViewerExpanded ? (
+                                    <Minimize2 className="h-4 w-4" />
+                                ) : (
+                                    <Maximize2 className="h-4 w-4" />
+                                )}
+                                <span className="sr-only">
+                                    {isTourViewerExpanded
+                                        ? 'Exit fullscreen'
+                                        : 'Open fullscreen'}
+                                </span>
+                            </button>
+                        </motion.div>
+
+                        <motion.div
+                            initial={
+                                reduceMotion
+                                    ? { opacity: 1 }
+                                    : {
+                                          opacity: 0,
+                                          x: 16,
+                                          filter: 'blur(8px)',
+                                      }
+                            }
+                            animate={{
+                                opacity: 1,
+                                x: 0,
+                                filter: 'blur(0px)',
+                            }}
+                            transition={{ duration: 0.62, delay: 0.08, ease }}
+                            className="min-h-0"
+                        >
+                            <AreaFloorMap
+                                activeArea={activeArea}
+                                activeStopIndex={activeStopIndex}
+                                onMoveToStop={setActiveStopIndex}
+                                onSelectArea={selectArea}
+                            />
+                        </motion.div>
+                    </div>
+                </section>
+            </PublicLayout>
+        );
+    }
+
     return (
         <PublicLayout>
-            <Head title="3D Tour Visit - Coming Soon" />
+            <Head title="Virtual Tour" />
 
             <section className="bccc-virtual-tour-page bccc-luxury-preview-page relative min-h-[calc(100svh-var(--bccc-public-header-h))] overflow-hidden bg-[#061514] text-white">
                 <div className="bccc-luxury-preview-stage relative z-10 grid min-h-[calc(100svh-var(--bccc-public-header-h))] gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,0.92fr)_minmax(22rem,34rem)] lg:px-8 lg:py-10 xl:px-12">
@@ -795,7 +1241,7 @@ export default function VirtualTourPage() {
                         >
                             <div className="bccc-luxury-preview-kicker">
                                 <Sparkles className="h-3.5 w-3.5" />
-                                Premium 360 Visit Preview
+                                Interactive Venue Walk-Through
                             </div>
 
                             <h1 className="mt-5 max-w-5xl text-[clamp(3rem,8vw,7.6rem)] leading-[0.9] font-semibold tracking-normal text-balance text-white">
@@ -803,20 +1249,20 @@ export default function VirtualTourPage() {
                             </h1>
 
                             <p className="mt-5 max-w-3xl text-sm leading-7 text-white/76 sm:text-base sm:leading-8">
-                                A refined coming-soon preview for a future
-                                street-view style visit of the Baguio Convention
-                                and Cultural Center, from exterior arrival to
-                                the main hall and support areas.
+                                Explore the Baguio Convention and Cultural
+                                Center through connected panorama stops. Move
+                                forward or backward inside each area, then
+                                choose another destination from the route.
                             </p>
 
                             <div className="bccc-luxury-preview-stats mt-7 grid max-w-2xl gap-3 sm:grid-cols-3">
                                 <div>
                                     <strong>{TOUR_AREAS.length}</strong>
-                                    <span>planned areas</span>
+                                    <span>tour areas</span>
                                 </div>
                                 <div>
-                                    <strong>360</strong>
-                                    <span>view movement</span>
+                                    <strong>7</strong>
+                                    <span>hall perspectives</span>
                                 </div>
                                 <div>
                                     <strong>1</strong>
@@ -869,9 +1315,8 @@ export default function VirtualTourPage() {
                         >
                             <TourScene
                                 activeArea={activeArea}
-                                nextArea={nextArea}
-                                previousArea={previousArea}
-                                onMoveToArea={setActiveArea}
+                                activeStopIndex={activeStopIndex}
+                                onMoveToStop={setActiveStopIndex}
                             />
                             <button
                                 type="button"
@@ -948,13 +1393,13 @@ export default function VirtualTourPage() {
 
                         <RouteMiniMap
                             activeArea={activeArea}
-                            onSelect={setActiveArea}
+                            onSelect={selectArea}
                         />
 
                         <div className="mt-4 grid grid-cols-2 gap-2">
                             <button
                                 type="button"
-                                onClick={() => setActiveArea(previousArea)}
+                                onClick={() => selectArea(previousArea)}
                                 className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-white/12 bg-black/18 px-3 text-[10px] font-black tracking-[0.12em] text-white/72 uppercase transition hover:border-white/28 hover:bg-white/12 hover:text-white"
                             >
                                 <ArrowLeft className="h-3.5 w-3.5" />
@@ -962,7 +1407,7 @@ export default function VirtualTourPage() {
                             </button>
                             <button
                                 type="button"
-                                onClick={() => setActiveArea(nextArea)}
+                                onClick={() => selectArea(nextArea)}
                                 className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-[#f4dfad]/28 bg-[#f4dfad]/12 px-3 text-[10px] font-black tracking-[0.12em] text-[#f4dfad] uppercase transition hover:bg-[#f4dfad] hover:text-[#123f37]"
                             >
                                 {nextArea.shortLabel}
@@ -1014,7 +1459,7 @@ export default function VirtualTourPage() {
                                     key={area.id}
                                     area={area}
                                     selected={area.id === activeArea.id}
-                                    onSelect={setActiveArea}
+                                    onSelect={selectArea}
                                     onPreview={openPreview}
                                 />
                             ))}
@@ -1032,15 +1477,16 @@ export default function VirtualTourPage() {
                                 One-page route
                             </div>
                             <h2 className="mt-4 max-w-3xl text-4xl leading-tight font-semibold text-[#143f38] sm:text-5xl dark:text-white">
-                                Planned tour areas in one guided public display.
+                                Every destination in one guided public route.
                             </h2>
                         </div>
 
                         <p className="max-w-3xl text-sm leading-7 text-[#53645f] dark:text-white/64">
-                            The final feature is planned to work like a public
-                            street-view style visit: choose an area, move the
-                            view around, then continue to another connected
-                            point without leaving the page.
+                            Choose an area, look around each immersive panorama,
+                            and continue through connected route points without
+                            leaving the page. Main Hall begins with four
+                            directional choices at Ground Hall; other views use
+                            the bottom move backward and move forward controls.
                         </p>
                     </div>
 
@@ -1106,7 +1552,7 @@ export default function VirtualTourPage() {
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/74 via-black/14 to-transparent" />
                                     <span className="absolute top-3 left-3 rounded-full bg-[#f4dfad] px-3 py-1.5 text-[10px] font-black tracking-[0.12em] text-[#123f37] uppercase">
-                                        Soon
+                                        {area.scenes.length} Views
                                     </span>
                                     <span className="absolute right-3 bottom-3 rounded-full border border-white/18 bg-black/34 px-3 py-1.5 text-[10px] font-black tracking-[0.12em] text-white uppercase backdrop-blur">
                                         {String(index + 1).padStart(2, '0')}
@@ -1149,8 +1595,8 @@ export default function VirtualTourPage() {
                             Launch preparation
                         </h2>
                         <p className="mt-3 text-sm leading-7 text-[#53645f] dark:text-white/62">
-                            These steps keep the future 3D tour realistic,
-                            accurate, and safe for public viewing.
+                            These steps keep every connected photo route
+                            realistic, accurate, and safe for public viewing.
                         </p>
                     </div>
 

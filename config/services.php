@@ -44,6 +44,10 @@ return [
     'gemini' => [
         'api_key' => env('GEMINI_API_KEY'),
         'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+        'general_knowledge' => env('GEMINI_GENERAL_KNOWLEDGE', true),
+        'general_model' => env('GEMINI_GENERAL_MODEL', 'gemini-2.5-pro'),
+        'google_search' => env('GEMINI_GOOGLE_SEARCH', true),
+        'max_output_tokens' => env('GEMINI_MAX_OUTPUT_TOKENS', 4096),
         'endpoint' => env('GEMINI_API_ENDPOINT', 'https://generativelanguage.googleapis.com/v1beta'),
         'timeout' => env('GEMINI_API_TIMEOUT', 15),
     ],

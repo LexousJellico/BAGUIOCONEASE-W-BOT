@@ -13,10 +13,10 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\BookingDraftController;
 use App\Http\Controllers\BookingOperationsController;
 use App\Http\Controllers\BookingPrintableController;
-use App\Http\Controllers\ClientAssistantController;
 use App\Http\Controllers\CalendarAnalyticsController;
 use App\Http\Controllers\CalendarBlockController;
 use App\Http\Controllers\CalendarManagementController;
+use App\Http\Controllers\ClientAssistantController;
 use App\Http\Controllers\MiceRegistryController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentReviewController;
@@ -25,6 +25,7 @@ use App\Http\Controllers\PublicInquiryController;
 use App\Http\Controllers\PublicSiteController;
 use App\Http\Controllers\PublicSiteMetricController;
 use App\Http\Controllers\RoleRedirectController;
+use App\Http\Controllers\Security\CsrfTokenController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ServiceTypeController;
 use App\Http\Controllers\UserController;
@@ -40,6 +41,10 @@ use Inertia\Inertia;
 | Public Marketing Routes
 |--------------------------------------------------------------------------
 */
+
+Route::get('/csrf-token', CsrfTokenController::class)
+    ->middleware('throttle:60,1')
+    ->name('security.csrf-token');
 
 Route::post('/public/availability-check', [PublicAvailabilityController::class, 'check'])
     ->middleware('throttle:30,1')

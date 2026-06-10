@@ -18,6 +18,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { useEffect, type ComponentType, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
+import { installCsrfFetchProtection } from './lib/csrf-fetch';
 
 type PageLayout = (page: ReactNode) => ReactNode;
 
@@ -28,6 +29,7 @@ type InertiaPageComponent = ComponentType<Record<string, unknown>> & {
 
 const appName = import.meta.env.VITE_APP_NAME || 'BCCC EASE';
 
+installCsrfFetchProtection();
 initializeTheme();
 
 router.on('success', () => {

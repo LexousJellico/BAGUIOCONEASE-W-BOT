@@ -3,6 +3,7 @@
 namespace App\Http\Responses;
 
 use App\Models\User;
+use App\Services\AssistantChatSessionService;
 use App\Services\LoginDeviceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -11,9 +12,10 @@ use Laravel\Fortify\Contracts\TwoFactorLoginResponse as TwoFactorLoginResponseCo
 
 class TwoFactorLoginResponse implements TwoFactorLoginResponseContract
 {
-    public function __construct(private readonly LoginDeviceService $devices)
-    {
-    }
+    public function __construct(
+        private readonly LoginDeviceService $devices,
+        private readonly AssistantChatSessionService $chatSessions,
+    ) {}
 
     public function toResponse($request): RedirectResponse
     {
@@ -30,6 +32,7 @@ class TwoFactorLoginResponse implements TwoFactorLoginResponseContract
                 $user->forceFill(['last_login_at' => now()])->saveQuietly();
             }
 
+            $this->chatSessions->claimRememberedGuestConversation($request, $user);
             $this->devices->recordSuccessfulLogin($request, $user, (bool) $request->session()->pull('login.remember', false));
         }
 

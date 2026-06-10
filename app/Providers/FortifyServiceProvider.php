@@ -2,13 +2,13 @@
 
 namespace App\Providers;
 
+use App\Http\Responses\TwoFactorLoginResponse;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
-use App\Http\Responses\TwoFactorLoginResponse;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Fortify\Contracts\TwoFactorLoginResponse as TwoFactorLoginResponseContract;
 use Inertia\Inertia;
+use Laravel\Fortify\Contracts\TwoFactorLoginResponse as TwoFactorLoginResponseContract;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -21,6 +21,7 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Fortify::loginView(fn () => Inertia::render('auth/login'));
+        Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/two-factor-challenge'));
         Fortify::registerView(fn () => Inertia::render('auth/register'));
         Fortify::requestPasswordResetLinkView(fn () => Inertia::render('auth/forgot-password'));
         Fortify::resetPasswordView(fn (Request $request) => Inertia::render('auth/reset-password', [

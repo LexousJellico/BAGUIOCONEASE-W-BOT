@@ -26,7 +26,7 @@ const assistantStateEndpoint = '/system-assistant/state';
 const assistantBookingDraftEndpoint = '/system-assistant/booking-draft';
 const assistantStoragePrefix = 'bccc-ease-assistant-chat:v3:';
 const guestStorageKey = `${assistantStoragePrefix}guest`;
-const publicChatTtlMs = 15 * 60 * 1000;
+const chatRetentionMs = 6 * 60 * 60 * 1000;
 const spamMuteMs = 10 * 60 * 1000;
 const maxStoredMessages = 60;
 
@@ -451,6 +451,12 @@ function freshWelcome(
             text: introText(role, pageContext),
             mode: 'system',
         },
+        {
+            id: messageId('assistant-retention-notice'),
+            role: 'bot',
+            text: 'Important notice: This conversation is saved for 6 hours, including when you sign in on this browser, then it is automatically deleted. Never share passwords, OTPs, payment card details, or other highly sensitive information. Please confirm important AI answers with official BCCC records or staff.',
+            mode: 'system',
+        },
     ];
 }
 
@@ -547,11 +553,104 @@ function normalizeStoredMessages(messages: unknown): ChatMessage[] {
         .slice(-maxStoredMessages);
 }
 
+function claimGuestStoredAssistantChat(
+    storageKey: string,
+    role: PublicAssistantRole,
+    pageContext: string,
+) {
+    if (storageKey === guestStorageKey) {
+        return;
+    }
+
+    const storage = safeStorage();
+
+    if (!storage) {
+        return;
+    }
+
+    try {
+        const guest = JSON.parse(
+            storage.getItem(guestStorageKey) || 'null',
+        ) as Partial<StoredAssistantChat> | null;
+
+        if (
+            !guest ||
+            typeof guest !== 'object' ||
+            (typeof guest.expiresAt === 'number' &&
+                guest.expiresAt <= Date.now())
+        ) {
+            storage.removeItem(guestStorageKey);
+            return;
+        }
+
+        const guestMessages = normalizeStoredMessages(guest.messages);
+
+        if (guestMessages.length === 0) {
+            storage.removeItem(guestStorageKey);
+            return;
+        }
+
+        const current = JSON.parse(
+            storage.getItem(storageKey) || 'null',
+        ) as Partial<StoredAssistantChat> | null;
+        const currentMessages = normalizeStoredMessages(current?.messages);
+        const guestUpdatedAt = Number(guest.updatedAt) || 0;
+        const currentUpdatedAt = Number(current?.updatedAt) || 0;
+        const latest = guestUpdatedAt >= currentUpdatedAt ? guest : current;
+        const orderedMessages =
+            guestUpdatedAt >= currentUpdatedAt
+                ? [...currentMessages, ...guestMessages]
+                : [...guestMessages, ...currentMessages];
+        const seen = new Set<string>();
+        const messages = orderedMessages
+            .filter((message) => {
+                if (seen.has(message.id)) {
+                    return false;
+                }
+
+                seen.add(message.id);
+                return true;
+            })
+            .slice(-maxStoredMessages);
+        const suggestions = Array.isArray(latest?.suggestions)
+            ? latest.suggestions
+                  .filter(
+                      (item): item is string =>
+                          typeof item === 'string' && item.trim() !== '',
+                  )
+                  .slice(0, 4)
+            : starterSuggestionsFor(role);
+
+        storage.setItem(
+            storageKey,
+            JSON.stringify({
+                messages,
+                suggestions:
+                    suggestions.length > 0
+                        ? suggestions
+                        : starterSuggestionsFor(role),
+                open: Boolean(latest?.open),
+                role,
+                pageContext,
+                guide: normalizeStoredGuide(latest?.guide),
+                spamGuard: normalizeSpamGuard(latest?.spamGuard),
+                updatedAt: Date.now(),
+                expiresAt: Date.now() + chatRetentionMs,
+            } satisfies StoredAssistantChat),
+        );
+        storage.removeItem(guestStorageKey);
+    } catch {
+        storage.removeItem(guestStorageKey);
+    }
+}
+
 function loadStoredAssistantChat(
     storageKey: string,
     role: PublicAssistantRole,
     pageContext: string,
 ): StoredAssistantChat {
+    claimGuestStoredAssistantChat(storageKey, role, pageContext);
+
     const fallback: StoredAssistantChat = {
         messages: freshWelcome(role, pageContext),
         suggestions: starterSuggestionsFor(role),
@@ -561,7 +660,7 @@ function loadStoredAssistantChat(
         guide: null,
         spamGuard: defaultSpamGuard(),
         updatedAt: Date.now(),
-        expiresAt: role === 'public' ? Date.now() + publicChatTtlMs : null,
+        expiresAt: Date.now() + chatRetentionMs,
     };
 
     const storage = safeStorage();
@@ -579,12 +678,11 @@ function loadStoredAssistantChat(
             return fallback;
         }
 
-        const isGuestExpired =
-            role === 'public' &&
+        const isExpired =
             typeof parsed.expiresAt === 'number' &&
             parsed.expiresAt <= Date.now();
 
-        if (isGuestExpired) {
+        if (isExpired) {
             storage.removeItem(storageKey);
             return fallback;
         }
@@ -616,7 +714,7 @@ function loadStoredAssistantChat(
             guide: normalizeStoredGuide(parsed.guide),
             spamGuard: normalizeSpamGuard(parsed.spamGuard),
             updatedAt: Number(parsed.updatedAt) || Date.now(),
-            expiresAt: role === 'public' ? Date.now() + publicChatTtlMs : null,
+            expiresAt: Date.now() + chatRetentionMs,
         };
     } catch {
         storage.removeItem(storageKey);
@@ -649,7 +747,7 @@ function saveStoredAssistantChat(
         guide,
         spamGuard,
         updatedAt: Date.now(),
-        expiresAt: role === 'public' ? Date.now() + publicChatTtlMs : null,
+        expiresAt: Date.now() + chatRetentionMs,
     };
 
     try {
@@ -657,18 +755,6 @@ function saveStoredAssistantChat(
     } catch {
         // Storage quota or private browsing can fail safely. Chat remains in memory.
     }
-}
-
-function clearAssistantStorage() {
-    const storage = safeStorage();
-
-    if (!storage) {
-        return;
-    }
-
-    Object.keys(storage)
-        .filter((key) => key.startsWith(assistantStoragePrefix))
-        .forEach((key) => storage.removeItem(key));
 }
 
 async function fetchServerAssistantState(): Promise<ServerAssistantState | null> {
@@ -725,22 +811,6 @@ async function saveServerAssistantState(
         });
     } catch {
         // Local storage remains the fast fallback when the server state endpoint is unavailable.
-    }
-}
-
-function clearServerAssistantState() {
-    try {
-        void fetch(assistantStateEndpoint, {
-            method: 'DELETE',
-            headers: {
-                Accept: 'application/json',
-                'X-CSRF-TOKEN': csrfToken(),
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-            keepalive: true,
-        });
-    } catch {
-        // Logout/navigation must continue even if cleanup cannot finish.
     }
 }
 
@@ -1394,25 +1464,7 @@ export default function ClientBookingAssistant() {
     ]);
 
     useEffect(() => {
-        const removeListener = router.on('before', (event) => {
-            const detail = (
-                event as unknown as {
-                    detail?: { visit?: { method?: string; url?: unknown } };
-                }
-            ).detail;
-            const visit = detail?.visit;
-            const method = String(visit?.method ?? '').toLowerCase();
-            const url = String(visit?.url ?? '');
-
-            if (
-                method === 'post' &&
-                url.replace(/\/+$/, '').endsWith('/logout')
-            ) {
-                clearAssistantStorage();
-                clearServerAssistantState();
-                return;
-            }
-
+        const removeListener = router.on('before', () => {
             const current = latestStateRef.current;
             saveStoredAssistantChat(
                 current.storageKey,
@@ -1457,10 +1509,6 @@ export default function ClientBookingAssistant() {
     }, []);
 
     useEffect(() => {
-        if (role !== 'public') {
-            return undefined;
-        }
-
         const interval = window.setInterval(() => {
             const storage = safeStorage();
             if (!storage) {
@@ -2099,6 +2147,14 @@ export default function ClientBookingAssistant() {
                                 <X className="h-4.5 w-4.5" />
                             </button>
                         </header>
+
+                        <div
+                            className="bccc-client-assistant-notice"
+                            role="note"
+                        >
+                            Chats are kept for 6 hours. Do not share passwords,
+                            OTPs, or payment details.
+                        </div>
 
                         <div className="bccc-client-assistant-messages">
                             {messages.map((message) => (

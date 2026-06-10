@@ -1,9 +1,10 @@
 <?php
 
+use App\Http\Controllers\Settings\LoginDeviceController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\TwoFactorAuthenticationController;
-use App\Http\Controllers\Settings\LoginDeviceController;
+use App\Http\Middleware\RequirePasswordConfirmationForTwoFactorSettings;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -31,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('appearance.edit');
 
     Route::get('settings/two-factor', [TwoFactorAuthenticationController::class, 'show'])
+        ->middleware(RequirePasswordConfirmationForTwoFactorSettings::class)
         ->name('two-factor.show');
 
     Route::delete('settings/devices/{device}', [LoginDeviceController::class, 'destroy'])

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Services\AssistantChatSessionService;
 use App\Services\LoginDeviceService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,9 +17,10 @@ use Laravel\Fortify\Features;
 
 class AuthenticatedSessionController extends Controller
 {
-    public function __construct(private readonly LoginDeviceService $devices)
-    {
-    }
+    public function __construct(
+        private readonly LoginDeviceService $devices,
+        private readonly AssistantChatSessionService $chatSessions,
+    ) {}
 
     public function create(): Response
     {
@@ -31,6 +33,7 @@ class AuthenticatedSessionController extends Controller
 
     public function store(LoginRequest $request): RedirectResponse
     {
+        $this->chatSessions->rememberGuestConversation($request);
         $user = $request->validateCredentials();
 
         if (
@@ -65,6 +68,7 @@ class AuthenticatedSessionController extends Controller
             'auth.two_factor_user_id' => null,
             'auth.two_factor_confirmed_at' => null,
         ]);
+        $this->chatSessions->claimRememberedGuestConversation($request, $user);
 
         $this->devices->recordSuccessfulLogin($request, $user, $request->boolean('remember'));
 

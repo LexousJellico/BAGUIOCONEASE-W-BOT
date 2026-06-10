@@ -37,27 +37,25 @@ export type TourAreaMap = {
     backgroundImage?: string;
 };
 
-type TourImageSet = readonly [string, string, string, string, string];
+type TourImageSet = readonly string[];
 
-const TOUR_STOP_LABELS = [
-    'Arrival view',
-    'Approach view',
-    'Center view',
-    'Feature view',
-    'Exit view',
-] as const;
+function buildTourStops(
+    areaId: string,
+    images: TourImageSet,
+    labels: readonly string[] = [],
+): TourSceneStop[] {
+    const stopLabel = (index: number) => labels[index] ?? `View ${index + 1}`;
 
-function buildTourStops(areaId: string, images: TourImageSet): TourSceneStop[] {
     return images.map((image, index) => ({
         id: `${areaId}-stop-${index + 1}`,
-        label: TOUR_STOP_LABELS[index],
+        label: stopLabel(index),
         image,
         connections: [
             ...(index > 0
                 ? [
                       {
                           targetId: `${areaId}-stop-${index}`,
-                          label: TOUR_STOP_LABELS[index - 1],
+                          label: stopLabel(index - 1),
                           kind: 'backward' as const,
                       },
                   ]
@@ -66,7 +64,7 @@ function buildTourStops(areaId: string, images: TourImageSet): TourSceneStop[] {
                 ? [
                       {
                           targetId: `${areaId}-stop-${index + 2}`,
-                          label: TOUR_STOP_LABELS[index + 1],
+                          label: stopLabel(index + 1),
                           kind: 'forward' as const,
                       },
                   ]
@@ -110,11 +108,11 @@ export const TOUR_AREAS: TourArea[] = [
         category: 'Full Route',
         image: '/marketing/images/hero/bccc.png',
         scenes: buildTourStops('whole-tour', [
-            '/marketing/images/facilities/hall_mid.jpeg',
-            '/marketing/images/hero/noon.png',
-            '/marketing/images/hero/welcome.png',
-            '/marketing/images/facilities/lobby.png',
-            '/marketing/images/facilities/darkmain.JPG',
+            '/marketing/images/facilities/front.jpeg',
+            '/marketing/images/facilities/front2.jpeg',
+            '/marketing/images/facilities/frontmid.jpeg',
+            '/marketing/images/facilities/frontleft.jpeg',
+            '/marketing/images/facilities/frontright.jpeg',
         ]),
         description:
             'A complete path from outdoor arrival through the primary public interior areas of BCCC.',
@@ -152,13 +150,15 @@ export const TOUR_AREAS: TourArea[] = [
         shortLabel: 'Grounds',
         category: 'Exterior',
         image: '/marketing/images/facilities/parking.jpg',
-        scenes: buildTourStops('grounds-parking', [
-            '/marketing/images/facilities/parking.jpg',
-            '/marketing/images/hero/bccc.png',
-            '/marketing/images/hero/noon2.jpg',
-            '/marketing/images/hero/noon.png',
-            '/marketing/images/hero/welcome.png',
-        ]),
+        scenes: buildTourStops(
+            'grounds-parking',
+            [
+                '/marketing/images/facilities/parking1.jpeg',
+                '/marketing/images/facilities/parking2.jpeg',
+                '/marketing/images/facilities/parking%203.jpeg',
+            ],
+            ['Parking View 1', 'Parking View 2', 'Parking View 3'],
+        ),
         description:
             'Arrival points, open grounds, parking orientation, and exterior circulation views.',
         captureNote: 'Ordered outdoor photo stops for arrival planning.',
@@ -191,16 +191,18 @@ export const TOUR_AREAS: TourArea[] = [
     {
         id: 'foyer-lobby',
         label: 'Foyer & Lobby',
-        shortLabel: 'Lobby',
+        shortLabel: 'Foyer & Lobby',
         category: 'Interior',
         image: '/marketing/images/facilities/lobby.png',
-        scenes: buildTourStops('foyer-lobby', [
-            '/marketing/images/facilities/foyer.jpeg',
-            '/marketing/images/facilities/foyer1.jpeg',
-            '/marketing/images/facilities/foyer2.jpeg',
-            '/marketing/images/facilities/lightmain.JPG',
-            '/marketing/images/facilities/darkmain.JPG',
-        ]),
+        scenes: buildTourStops(
+            'foyer-lobby',
+            [
+                '/marketing/images/facilities/foyer.jpeg',
+                '/marketing/images/facilities/foyer1.jpeg',
+                '/marketing/images/facilities/foyer2.jpeg',
+            ],
+            ['Foyer & Lobby 1', 'Foyer & Lobby 2', 'Foyer & Lobby 3'],
+        ),
         description:
             'The public entry flow, reception feel, visitor movement, and pre-function space.',
         captureNote: 'Lobby panorama nodes with entry and wayfinding markers.',
@@ -231,61 +233,19 @@ export const TOUR_AREAS: TourArea[] = [
         },
     },
     {
-        id: 'gallery-2600',
-        label: 'Gallery 2600',
-        shortLabel: 'Gallery',
-        category: 'Exhibit Area',
-        image: '/marketing/images/facilities/gallery.jpg',
-        scenes: buildTourStops('gallery-2600', [
-            '/marketing/images/facilities/gallery.jpg',
-            '/marketing/images/facilities/lobby.png',
-            '/marketing/images/events/labor.jpg',
-            '/marketing/images/events/wofex.jpg',
-            '/marketing/images/events/tpb.jpg',
-        ]),
-        description:
-            'A flexible gallery setting for exhibit viewing, public displays, and reception overflow.',
-        captureNote:
-            'Gallery walk-through points for exhibit and reception setup.',
-        layoutNote:
-            'Flexible public exhibit area connected to the foyer and lobby flow.',
-        preview: {
-            headline: 'Exhibit-ready preview for Gallery 2600.',
-            lead: 'This popup is prepared to show a future gallery walkthrough with exhibit positioning, visitor movement, and reception overflow views.',
-            readiness: 84,
-            routeNodes: [
-                'Gallery entry from lobby',
-                'Central exhibit viewing zone',
-                'Return path to public circulation',
-            ],
-            mediaNeeds: [
-                'Gallery panorama without temporary clutter',
-                'Sample exhibit layout reference',
-                'Hotspots for entry and exit points',
-            ],
-        },
-        footprint: {
-            x: -6.6,
-            z: -1.6,
-            width: 3.6,
-            depth: 3.1,
-            height: 0.86,
-            color: 0x9fb8ad,
-        },
-    },
-    {
         id: 'basement',
         label: 'Basement',
         shortLabel: 'Basement',
         category: 'Support Area',
         image: '/marketing/images/facilities/basement.png',
-        scenes: buildTourStops('basement', [
-            '/marketing/images/facilities/basement.png',
-            '/marketing/images/facilities/techbooth.jpg',
-            '/marketing/images/facilities/parking.jpg',
-            '/marketing/images/facilities/darkmain.JPG',
-            '/marketing/images/facilities/gallery.jpg',
-        ]),
+        scenes: buildTourStops(
+            'basement',
+            [
+                '/marketing/images/facilities/basement.png',
+                '/marketing/images/facilities/basement.png',
+            ],
+            ['Basement View 1', 'Basement View 2'],
+        ),
         description:
             'Lower-level area preview for logistical planning and staff-guided orientation.',
         captureNote:
@@ -294,18 +254,13 @@ export const TOUR_AREAS: TourArea[] = [
             'Lower support zone shown as a recessed footprint below the public floor level.',
         preview: {
             headline: 'Controlled lower-level orientation preview.',
-            lead: 'The basement view is prepared as a limited public orientation layer, ready for approved imagery and guided route points only.',
+            lead: 'Move between the two approved Basement views for a simple lower-level orientation.',
             readiness: 78,
             routeNodes: [
                 'Approved lower-level entry point',
                 'Orientation view for logistics planning',
-                'Return route to staff-guided circulation',
             ],
-            mediaNeeds: [
-                'Approved basement image set',
-                'Restricted-area privacy pass',
-                'Staff-only route labels',
-            ],
+            mediaNeeds: ['Basement View 1', 'Basement View 2'],
         },
         footprint: {
             x: -0.2,
@@ -382,13 +337,14 @@ export const TOUR_AREAS: TourArea[] = [
         shortLabel: 'Boardroom',
         category: 'Meeting Area',
         image: '/marketing/images/facilities/boardroom.jpg',
-        scenes: buildTourStops('boardroom', [
-            '/marketing/images/facilities/br1.jpeg',
-            '/marketing/images/facilities/br2.jpeg',
-            '/marketing/images/facilities/lightvip.JPG',
-            '/marketing/images/facilities/lobby.png',
-            '/marketing/images/facilities/techbooth.jpg',
-        ]),
+        scenes: buildTourStops(
+            'boardroom',
+            [
+                '/marketing/images/facilities/br1.jpeg',
+                '/marketing/images/facilities/br2.jpeg',
+            ],
+            ['Boardroom View 1', 'Boardroom View 2'],
+        ),
         description:
             'A meeting-focused room preview for planning formal discussions and coordination sessions.',
         captureNote:
@@ -396,18 +352,13 @@ export const TOUR_AREAS: TourArea[] = [
         layoutNote: 'Formal meeting area adjacent to executive support spaces.',
         preview: {
             headline: 'Meeting-room preview for formal coordination.',
-            lead: 'Prepared to show boardroom scale, table orientation, and entry points for organizers planning meetings or coordination sessions.',
+            lead: 'Move between two Boardroom views showing the meeting-room scale and table orientation.',
             readiness: 83,
             routeNodes: [
                 'Room entry and front orientation',
                 'Table and seating center view',
-                'Presentation wall reference',
             ],
-            mediaNeeds: [
-                'Boardroom panorama from table center',
-                'Seating layout image',
-                'Presentation-side hotspot',
-            ],
+            mediaNeeds: ['Boardroom View 1', 'Boardroom View 2'],
         },
         footprint: {
             x: 6.7,
@@ -568,49 +519,6 @@ export const TOUR_AREAS: TourArea[] = [
             color: 0x176456,
         },
     },
-    {
-        id: 'backstage-dressing',
-        label: 'Backstage & Dressing Room',
-        shortLabel: 'Backstage',
-        category: 'Production Area',
-        image: '/marketing/images/facilities/techbooth.jpg',
-        scenes: buildTourStops('backstage-dressing', [
-            '/marketing/images/facilities/techbooth.jpg',
-            '/marketing/images/facilities/darkmain.JPG',
-            '/marketing/images/facilities/ledwall.jpg',
-            '/marketing/images/facilities/basement.png',
-            '/marketing/images/facilities/boardroom.jpg',
-        ]),
-        description:
-            'A controlled orientation for production access, preparation flow, and dressing-room coordination.',
-        captureNote:
-            'Restricted previews will show only approved backstage movement zones.',
-        layoutNote:
-            'Production support zone behind the main hall for controlled staff and performer movement.',
-        preview: {
-            headline: 'Production support preview for approved access.',
-            lead: 'Backstage and dressing-room preview content is prepared for controlled imagery, helping organizers understand production movement without exposing restricted details.',
-            readiness: 77,
-            routeNodes: [
-                'Approved backstage connector',
-                'Preparation and dressing orientation',
-                'Return route toward main hall support',
-            ],
-            mediaNeeds: [
-                'Approved backstage image',
-                'Restricted-detail masking pass',
-                'Production movement hotspot',
-            ],
-        },
-        footprint: {
-            x: 7.9,
-            z: 1.1,
-            width: 2.2,
-            depth: 4.6,
-            height: 1.2,
-            color: 0x835f73,
-        },
-    },
 ];
 
 export const TOUR_AREA_MAPS: Record<string, TourAreaMap> = {
@@ -636,10 +544,8 @@ export const TOUR_AREA_MAPS: Record<string, TourAreaMap> = {
         rooms: [],
         nodes: [
             { sceneId: 'grounds-parking-stop-1', x: 44, y: 51 },
-            { sceneId: 'grounds-parking-stop-2', x: 47, y: 49 },
-            { sceneId: 'grounds-parking-stop-3', x: 50, y: 47 },
-            { sceneId: 'grounds-parking-stop-4', x: 53, y: 49 },
-            { sceneId: 'grounds-parking-stop-5', x: 56, y: 51 },
+            { sceneId: 'grounds-parking-stop-2', x: 50, y: 47 },
+            { sceneId: 'grounds-parking-stop-3', x: 56, y: 51 },
         ],
     },
     'foyer-lobby': {
@@ -655,16 +561,6 @@ export const TOUR_AREA_MAPS: Record<string, TourAreaMap> = {
                 width: 50,
                 height: 50,
                 kind: 'active',
-            },
-            {
-                id: 'gallery',
-                label: 'Gallery 2600',
-                x: 3,
-                y: 25,
-                width: 18,
-                height: 50,
-                areaId: 'gallery-2600',
-                kind: 'surrounding',
             },
             {
                 id: 'hall',
@@ -688,52 +584,8 @@ export const TOUR_AREA_MAPS: Record<string, TourAreaMap> = {
         ],
         nodes: [
             { sceneId: 'foyer-lobby-stop-1', x: 49, y: 71 },
-            { sceneId: 'foyer-lobby-stop-2', x: 39, y: 58 },
-            { sceneId: 'foyer-lobby-stop-3', x: 50, y: 48 },
-            { sceneId: 'foyer-lobby-stop-4', x: 61, y: 38 },
-            { sceneId: 'foyer-lobby-stop-5', x: 70, y: 29 },
-        ],
-    },
-    'gallery-2600': {
-        title: 'Gallery 2600 Floor Map',
-        subtitle: 'Exhibit room and its public surroundings',
-        level: 'Ground floor',
-        rooms: [
-            {
-                id: 'gallery',
-                label: 'Gallery 2600',
-                x: 18,
-                y: 18,
-                width: 58,
-                height: 64,
-                kind: 'active',
-            },
-            {
-                id: 'lobby',
-                label: 'Foyer & Lobby',
-                x: 80,
-                y: 28,
-                width: 17,
-                height: 44,
-                areaId: 'foyer-lobby',
-                kind: 'surrounding',
-            },
-            {
-                id: 'public-path',
-                label: 'Public Approach',
-                x: 3,
-                y: 36,
-                width: 11,
-                height: 28,
-                kind: 'feature',
-            },
-        ],
-        nodes: [
-            { sceneId: 'gallery-2600-stop-1', x: 69, y: 50 },
-            { sceneId: 'gallery-2600-stop-2', x: 59, y: 50 },
-            { sceneId: 'gallery-2600-stop-3', x: 47, y: 50 },
-            { sceneId: 'gallery-2600-stop-4', x: 35, y: 50 },
-            { sceneId: 'gallery-2600-stop-5', x: 24, y: 50 },
+            { sceneId: 'foyer-lobby-stop-2', x: 50, y: 48 },
+            { sceneId: 'foyer-lobby-stop-3', x: 61, y: 33 },
         ],
     },
     basement: {
@@ -766,16 +618,12 @@ export const TOUR_AREA_MAPS: Record<string, TourAreaMap> = {
                 y: 54,
                 width: 13,
                 height: 26,
-                areaId: 'backstage-dressing',
                 kind: 'surrounding',
             },
         ],
         nodes: [
-            { sceneId: 'basement-stop-1', x: 74, y: 50 },
-            { sceneId: 'basement-stop-2', x: 62, y: 50 },
-            { sceneId: 'basement-stop-3', x: 50, y: 50 },
-            { sceneId: 'basement-stop-4', x: 38, y: 50 },
-            { sceneId: 'basement-stop-5', x: 25, y: 50 },
+            { sceneId: 'basement-stop-1', x: 68, y: 50 },
+            { sceneId: 'basement-stop-2', x: 34, y: 50 },
         ],
     },
     'vip-lounge': {
@@ -879,11 +727,8 @@ export const TOUR_AREA_MAPS: Record<string, TourAreaMap> = {
             },
         ],
         nodes: [
-            { sceneId: 'boardroom-stop-1', x: 27, y: 50 },
-            { sceneId: 'boardroom-stop-2', x: 38, y: 50 },
-            { sceneId: 'boardroom-stop-3', x: 50, y: 50 },
-            { sceneId: 'boardroom-stop-4', x: 62, y: 50 },
-            { sceneId: 'boardroom-stop-5', x: 74, y: 50 },
+            { sceneId: 'boardroom-stop-1', x: 35, y: 50 },
+            { sceneId: 'boardroom-stop-2', x: 65, y: 50 },
         ],
     },
     'main-hall': {
@@ -936,16 +781,6 @@ export const TOUR_AREA_MAPS: Record<string, TourAreaMap> = {
                 height: 14,
                 kind: 'feature',
             },
-            {
-                id: 'backstage',
-                label: 'Backstage',
-                x: 70,
-                y: 82,
-                width: 27,
-                height: 12,
-                areaId: 'backstage-dressing',
-                kind: 'surrounding',
-            },
         ],
         nodes: [
             { sceneId: 'main-hall-ground', x: 50, y: 51 },
@@ -955,48 +790,6 @@ export const TOUR_AREA_MAPS: Record<string, TourAreaMap> = {
             { sceneId: 'main-hall-upper-left-2', x: 12, y: 35 },
             { sceneId: 'main-hall-stage', x: 50, y: 87 },
             { sceneId: 'main-hall-upper-mid', x: 50, y: 11 },
-        ],
-    },
-    'backstage-dressing': {
-        title: 'Backstage & Dressing Map',
-        subtitle: 'Approved production route behind the Main Hall',
-        level: 'Production level',
-        rooms: [
-            {
-                id: 'backstage',
-                label: 'Backstage',
-                x: 20,
-                y: 20,
-                width: 48,
-                height: 60,
-                kind: 'active',
-            },
-            {
-                id: 'dressing',
-                label: 'Dressing Room',
-                x: 4,
-                y: 24,
-                width: 12,
-                height: 52,
-                kind: 'feature',
-            },
-            {
-                id: 'main-hall',
-                label: 'Main Hall & Stage',
-                x: 72,
-                y: 20,
-                width: 25,
-                height: 60,
-                areaId: 'main-hall',
-                kind: 'surrounding',
-            },
-        ],
-        nodes: [
-            { sceneId: 'backstage-dressing-stop-1', x: 62, y: 50 },
-            { sceneId: 'backstage-dressing-stop-2', x: 54, y: 50 },
-            { sceneId: 'backstage-dressing-stop-3', x: 45, y: 50 },
-            { sceneId: 'backstage-dressing-stop-4', x: 36, y: 50 },
-            { sceneId: 'backstage-dressing-stop-5', x: 27, y: 50 },
         ],
     },
 };
@@ -1016,7 +809,7 @@ export type TourInfoCard = {
 export const TOUR_RELEASE_CHECKLIST: TourInfoCard[] = [
     {
         title: 'Media library',
-        detail: 'Each area has connected walk-through image slots. Main Hall uses seven named views with a branching route; other areas keep their ordered route.',
+        detail: 'The tour inventory matches the available media: Parking and Foyer & Lobby use three views, Basement, VIP Lounge, and Boardroom use two, and Main Hall keeps seven named views.',
     },
     {
         title: 'Connected navigation',
@@ -1043,7 +836,7 @@ export const TOUR_STREET_VIEW_GUIDANCE: TourInfoCard[] = [
     },
     {
         title: 'Keep restricted areas controlled',
-        detail: 'Backstage, basement, and VIP areas should only expose approved viewing angles with privacy-safe framing.',
+        detail: 'Basement and VIP areas should only expose approved viewing angles with privacy-safe framing.',
     },
     {
         title: 'Match the layout page',
@@ -1092,7 +885,7 @@ export const LAYOUT_IMPLEMENTATION_SUGGESTIONS: TourInfoCard[] = [
     },
     {
         title: 'Link blueprint pins to tour nodes',
-        detail: 'Selecting Main Hall, Boardroom, or Lobby in the model should open the matching street-view panorama on the tour page.',
+        detail: 'Selecting Main Hall, Boardroom, or Foyer & Lobby in the model should open the matching street-view panorama on the tour page.',
     },
     {
         title: 'Keep two model layers',

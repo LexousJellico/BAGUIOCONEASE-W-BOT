@@ -24,6 +24,8 @@ import {
     Maximize2,
     Minimize2,
     Minus,
+    MousePointer2,
+    Move3d,
     Plus,
     RotateCcw,
     Route,
@@ -31,7 +33,14 @@ import {
     ScanEye,
     Sparkles,
 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+    type CSSProperties,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 
 type ThreeRenderer = import('three').WebGLRenderer;
 type ThreeScene = import('three').Scene;
@@ -63,8 +72,7 @@ type LayoutSceneCommand =
 const LAYOUT_AREAS = TOUR_AREAS;
 const MODEL_AREAS = TOUR_AREAS.filter((area) => area.id !== 'whole-tour');
 const WHOLE_TOUR = TOUR_AREAS[0];
-const DEFAULT_LAYOUT_AREA =
-    TOUR_AREAS.find((area) => area.id === 'main-hall') ?? WHOLE_TOUR;
+const DEFAULT_LAYOUT_AREA = WHOLE_TOUR;
 const ease = [0.22, 1, 0.36, 1] as const;
 
 function cx(...classes: Array<string | false | null | undefined>) {
@@ -863,7 +871,7 @@ function LayoutScene({
                         );
                         marker.position.set(
                             footprint.x,
-                            viewMode === 'exterior' ? 0.22 : height + 0.25,
+                            viewMode === 'exterior' ? 7.95 : height + 0.25,
                             footprint.z,
                         );
                         modelGroup?.add(marker);
@@ -873,17 +881,17 @@ function LayoutScene({
                                 [
                                     new THREE.Vector3(
                                         footprint.x,
-                                        0.28,
+                                        8.01,
                                         footprint.z,
                                     ),
                                     new THREE.Vector3(
                                         footprint.x,
-                                        7.05,
+                                        8.58,
                                         footprint.z,
                                     ),
                                 ],
                                 0xf4dfad,
-                                0.72,
+                                0.62,
                             );
                         }
                     }
@@ -908,7 +916,7 @@ function LayoutScene({
                         label.position.set(
                             footprint.x,
                             viewMode === 'exterior'
-                                ? 7.45
+                                ? 8.95
                                 : height + (selected ? 0.84 : 0.58),
                             footprint.z,
                         );
@@ -1096,9 +1104,22 @@ function LayoutScene({
                             Math.max(0.62, zoomLevelRef.current - 0.12),
                         );
                     }
+
+                    if (event.key === '0' || event.key === 'Home') {
+                        event.preventDefault();
+                        sceneControlRef.current?.({ type: 'reset' });
+                        onZoomChange(1);
+                    }
                 };
 
                 renderer.domElement.tabIndex = 0;
+                renderer.domElement.setAttribute(
+                    'aria-label',
+                    viewMode === 'interior'
+                        ? 'Interactive BCCC interior cutaway model. Drag to orbit, use the mouse wheel to zoom, and hold Shift while dragging to pan.'
+                        : 'Interactive BCCC exterior model. Drag to orbit, use the mouse wheel to zoom, and hold Shift while dragging to pan.',
+                );
+                renderer.domElement.setAttribute('role', 'img');
                 renderer.domElement.addEventListener(
                     'pointerdown',
                     handlePointerDown,
@@ -1246,7 +1267,8 @@ function LayoutScene({
             />
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.74),rgba(0,0,0,0.22)_44%,rgba(0,0,0,0.58))]" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/82 via-black/20 to-transparent" />
-            <div className="pointer-events-none absolute top-4 left-4 rounded-full border border-[#9fe8dc]/18 bg-[#041116]/58 px-3 py-2 text-[10px] font-black tracking-[0.16em] text-[#9fe8dc] uppercase backdrop-blur-xl">
+            <div className="bccc-layout-mode-badge pointer-events-none absolute top-4 left-4 inline-flex items-center gap-2 rounded-full border border-[#9fe8dc]/18 bg-[#041116]/58 px-3 py-2 text-[10px] font-black tracking-[0.16em] text-[#9fe8dc] uppercase backdrop-blur-xl">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#9fe8dc] shadow-[0_0_12px_rgba(159,232,220,0.9)]" />
                 {viewMode === 'interior'
                     ? 'BCCC Interior Cutaway'
                     : 'BCCC Exterior Model'}
@@ -1306,6 +1328,21 @@ function LayoutScene({
 
             <div className="pointer-events-none absolute right-4 bottom-4 rounded-full border border-white/12 bg-black/42 px-3 py-2 text-[10px] font-black tracking-[0.14em] text-white/62 uppercase backdrop-blur-xl max-sm:hidden">
                 {activeArea.shortLabel} / {Math.round(zoomLevel * 100)}%
+            </div>
+
+            <div className="bccc-layout-interaction-hint pointer-events-none absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-white/12 bg-black/44 p-1.5 text-[8px] font-black tracking-[0.1em] text-white/58 uppercase backdrop-blur-xl">
+                <span>
+                    <MousePointer2 className="h-3 w-3" />
+                    Drag to orbit
+                </span>
+                <span>
+                    <Move3d className="h-3 w-3" />
+                    Shift + drag to pan
+                </span>
+                <span>
+                    <Plus className="h-3 w-3" />
+                    Scroll to zoom
+                </span>
             </div>
         </div>
     );
@@ -1452,15 +1489,25 @@ function BcccLayoutPanel({
     onZoomChange: (zoom: number) => void;
     onPreview: (area: TourArea) => void;
 }) {
+    const activeLayerNumber = Math.max(
+        1,
+        LAYOUT_AREAS.findIndex((area) => area.id === activeArea.id) + 1,
+    );
+    const guidance = LAYOUT_VIEW_GUIDANCE[viewMode];
+
     return (
         <aside className="bccc-bccc-layout-panel flex h-full min-h-0 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0a1c18] text-white shadow-[0_24px_80px_rgba(0,0,0,0.34)]">
-            <div className="relative overflow-hidden border-b border-white/10">
+            <div className="bccc-layout-panel-hero relative overflow-hidden border-b border-white/10">
                 <img
                     src="/marketing/images/hero/bccc.png"
                     alt="Baguio Convention and Cultural Center exterior reference"
-                    className="h-36 w-full object-cover object-center opacity-58"
+                    className="h-[7.75rem] w-full object-cover object-center opacity-62"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a1c18] via-[#0a1c18]/42 to-black/12" />
+                <div className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-white/14 bg-black/34 px-2.5 py-1 text-[7px] font-black tracking-[0.12em] text-white/66 uppercase backdrop-blur-xl">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#9fe8dc]" />
+                    Interactive model
+                </div>
                 <div className="absolute inset-x-0 bottom-0 p-4">
                     <div className="flex items-center gap-2 text-[9px] font-black tracking-[0.18em] text-[#f4dfad] uppercase">
                         <Building2 className="h-3.5 w-3.5" />
@@ -1472,8 +1519,8 @@ function BcccLayoutPanel({
                 </div>
             </div>
 
-            <div className="border-b border-white/10 p-3.5">
-                <div className="grid grid-cols-2 gap-2">
+            <div className="bccc-layout-selected-card border-b border-white/10 p-3.5">
+                <div className="grid grid-cols-2 gap-2 rounded-xl border border-white/10 bg-black/16 p-1">
                     {(
                         [
                             ['exterior', 'Exterior'],
@@ -1486,10 +1533,10 @@ function BcccLayoutPanel({
                             onClick={() => onViewModeChange(mode)}
                             aria-pressed={viewMode === mode}
                             className={cx(
-                                'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-3 text-[9px] font-black tracking-[0.12em] uppercase transition',
+                                'bccc-layout-mode-button inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border px-3 text-[9px] font-black tracking-[0.12em] uppercase transition',
                                 viewMode === mode
-                                    ? 'border-[#f4dfad] bg-[#f4dfad] text-[#102a27]'
-                                    : 'border-white/10 bg-white/[0.055] text-white/58 hover:border-white/24 hover:bg-white/10 hover:text-white',
+                                    ? 'is-active border-[#f4dfad] bg-[#f4dfad] text-[#102a27]'
+                                    : 'border-transparent bg-transparent text-white/52 hover:border-white/12 hover:bg-white/8 hover:text-white',
                             )}
                         >
                             {mode === 'exterior' ? (
@@ -1502,7 +1549,19 @@ function BcccLayoutPanel({
                     ))}
                 </div>
 
-                <div className="mt-3 flex items-center gap-2">
+                <div className="mt-2.5 flex items-start gap-2 rounded-lg border border-white/8 bg-white/[0.035] px-3 py-2">
+                    <Route className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#9fe8dc]" />
+                    <div className="min-w-0">
+                        <p className="text-[8px] font-black tracking-[0.12em] text-white/70 uppercase">
+                            {guidance.title}
+                        </p>
+                        <p className="mt-0.5 line-clamp-1 text-[9px] leading-4 font-semibold text-white/38">
+                            {guidance.detail}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="mt-2.5 flex items-center gap-2">
                     <button
                         type="button"
                         onClick={() => onZoomChange(zoom - 0.14)}
@@ -1519,16 +1578,25 @@ function BcccLayoutPanel({
                                 {Math.round(zoom * 100)}%
                             </span>
                         </div>
-                        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-                            <div
-                                className="h-full rounded-full bg-[linear-gradient(90deg,#9fe8dc,#f4dfad)]"
-                                style={{
-                                    width: `${Math.round(
+                        <input
+                            type="range"
+                            min="0.62"
+                            max="2.2"
+                            step="0.01"
+                            value={zoom}
+                            onChange={(event) =>
+                                onZoomChange(Number(event.target.value))
+                            }
+                            aria-label="Model zoom"
+                            className="bccc-layout-zoom-range mt-2 block w-full"
+                            style={
+                                {
+                                    '--bccc-zoom-progress': `${Math.round(
                                         ((zoom - 0.62) / (2.2 - 0.62)) * 100,
                                     )}%`,
-                                }}
-                            />
-                        </div>
+                                } as CSSProperties
+                            }
+                        />
                     </div>
                     <button
                         type="button"
@@ -1548,15 +1616,21 @@ function BcccLayoutPanel({
                         <p className="text-[8px] font-black tracking-[0.16em] text-[#f4dfad] uppercase">
                             Selected building layer
                         </p>
-                        <h3 className="mt-1.5 truncate text-lg font-semibold text-white">
+                        <motion.h3
+                            key={activeArea.id}
+                            initial={{ opacity: 0, y: 4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.22 }}
+                            className="mt-1.5 truncate text-lg font-semibold text-white"
+                        >
                             {activeArea.label}
-                        </h3>
+                        </motion.h3>
                     </div>
                     <span className="shrink-0 rounded-full border border-[#9fe8dc]/20 bg-[#9fe8dc]/10 px-2.5 py-1 text-[8px] font-black tracking-[0.1em] text-[#9fe8dc] uppercase">
                         {activeArea.category}
                     </span>
                 </div>
-                <p className="mt-2 line-clamp-2 text-xs leading-5 font-semibold text-white/52">
+                <p className="mt-2 line-clamp-1 text-xs leading-5 font-semibold text-white/52">
                     {activeArea.layoutNote}
                 </p>
                 <button
@@ -1576,7 +1650,8 @@ function BcccLayoutPanel({
                         Building layers
                     </div>
                     <span className="rounded-full border border-white/10 bg-white/[0.055] px-2.5 py-1 text-[8px] font-black text-white/48">
-                        {LAYOUT_AREAS.length}
+                        {String(activeLayerNumber).padStart(2, '0')} /{' '}
+                        {String(LAYOUT_AREAS.length).padStart(2, '0')}
                     </span>
                 </div>
                 <div className="mt-3 grid max-h-full grid-cols-2 gap-1.5 overflow-y-auto pr-1 [scrollbar-width:thin]">
@@ -1587,9 +1662,9 @@ function BcccLayoutPanel({
                             onClick={() => onSelectArea(area)}
                             aria-pressed={area.id === activeArea.id}
                             className={cx(
-                                'min-h-11 rounded-lg border px-2.5 text-left text-[8px] font-black tracking-[0.08em] uppercase transition',
+                                'bccc-layout-layer-button relative min-h-11 overflow-hidden rounded-lg border px-2.5 text-left text-[8px] font-black tracking-[0.08em] uppercase transition',
                                 area.id === activeArea.id
-                                    ? 'border-[#f4dfad] bg-[#f4dfad] text-[#102a27]'
+                                    ? 'is-active border-[#f4dfad] bg-[#f4dfad] text-[#102a27]'
                                     : 'border-white/10 bg-white/[0.05] text-white/56 hover:border-white/24 hover:bg-white/10 hover:text-white',
                             )}
                         >

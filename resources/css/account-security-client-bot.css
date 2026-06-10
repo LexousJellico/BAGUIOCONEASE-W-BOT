@@ -1821,3 +1821,104 @@ body:has(.bccc-client-assistant[data-assistant-open='true']) .bccc-availability-
         padding-block: 0.5rem !important;
     }
 }
+
+/* Final compact assistant sizing and retention notice */
+.bccc-client-assistant-panel {
+    width: min(22.5rem, calc(100vw - 2rem)) !important;
+    height: min(31rem, calc(100dvh - 5.5rem)) !important;
+    max-height: min(31rem, calc(100dvh - 5.5rem)) !important;
+    min-height: min(23rem, calc(100dvh - 5.5rem)) !important;
+}
+
+.bccc-client-assistant-notice {
+    display: block !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgb(37 99 235 / 0.12) !important;
+    border-radius: 0 !important;
+    background: rgb(37 99 235 / 0.06) !important;
+    padding: 0.42rem 0.78rem !important;
+    color: #475569 !important;
+    font-size: 0.66rem !important;
+    font-weight: 650 !important;
+    line-height: 1.35 !important;
+}
+
+.dark .bccc-client-assistant-notice {
+    border-bottom-color: rgb(147 197 253 / 0.12) !important;
+    background: rgb(59 130 246 / 0.08) !important;
+    color: #cbd5e1 !important;
+}
+
+.bccc-client-assistant-header {
+    min-height: 3.55rem !important;
+    gap: 0.58rem !important;
+    padding: 0.58rem 0.7rem !important;
+}
+
+.bccc-client-assistant-messages {
+    padding: 0.72rem 0.68rem !important;
+}
+
+.bccc-client-assistant-suggestions {
+    padding: 0.48rem 0.62rem !important;
+}
+
+.bccc-client-assistant-form {
+    padding: 0.58rem 0.68rem !important;
+}
+
+@media (min-width: 1600px) {
+    .bccc-client-assistant-panel {
+        width: 24rem !important;
+        height: min(34rem, calc(100dvh - 6rem)) !important;
+        max-height: min(34rem, calc(100dvh - 6rem)) !important;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1599px) {
+    .bccc-client-assistant-panel {
+        width: min(22rem, calc(100vw - 2rem)) !important;
+        height: min(29.5rem, calc(100dvh - 5.25rem)) !important;
+        max-height: min(29.5rem, calc(100dvh - 5.25rem)) !important;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .bccc-client-assistant-panel {
+        width: min(22rem, calc(100vw - 1.5rem)) !important;
+        height: min(31rem, calc(100dvh - 5rem)) !important;
+        max-height: min(31rem, calc(100dvh - 5rem)) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .bccc-client-assistant-panel {
+        width: calc(100vw - 0.7rem) !important;
+        height: min(32rem, calc(100dvh - 4.45rem)) !important;
+        max-height: min(32rem, calc(100dvh - 4.45rem)) !important;
+        min-height: min(21rem, calc(100dvh - 4.45rem)) !important;
+    }
+
+    .bccc-client-assistant-notice {
+        padding: 0.38rem 0.6rem !important;
+        font-size: 0.62rem !important;
+    }
+}
+
+@media (max-height: 620px) {
+    .bccc-client-assistant-panel {
+        height: calc(100dvh - 3.7rem) !important;
+        max-height: calc(100dvh - 3.7rem) !important;
+        min-height: 17rem !important;
+    }
+
+    .bccc-client-assistant-notice {
+        display: none !important;
+    }
+
+    .bccc-client-assistant-suggestions {
+        display: none !important;
+    }
+}

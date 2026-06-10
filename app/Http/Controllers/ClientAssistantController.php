@@ -7,6 +7,7 @@ use App\Models\AssistantKnowledgeEntry;
 use App\Models\AssistantQuestionLog;
 use App\Models\BookingDraft;
 use App\Models\User;
+use App\Services\AssistantChatSessionService;
 use App\Services\ClientAssistantKnowledgeService;
 use App\Services\GeminiClientAssistantService;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +21,7 @@ class ClientAssistantController extends Controller
     public function __construct(
         private readonly ClientAssistantKnowledgeService $knowledge,
         private readonly GeminiClientAssistantService $gemini,
+        private readonly AssistantChatSessionService $chatSessions,
     ) {}
 
     public function ask(Request $request): JsonResponse
@@ -188,8 +190,6 @@ class ClientAssistantController extends Controller
         ]);
 
         $session = $this->currentChatSession($request, true);
-        $isPublic = ! $request->user();
-
         $session->forceFill([
             'role' => Str::limit((string) ($data['role'] ?? ($request->user() ? 'user' : 'public')), 40, ''),
             'surface' => $this->normalizeSurface((string) ($data['surface'] ?? ($request->user() ? 'client' : 'public'))),
@@ -200,7 +200,7 @@ class ClientAssistantController extends Controller
             'guide' => is_array($data['guide'] ?? null) ? $data['guide'] : null,
             'spam_guard' => is_array($data['spam_guard'] ?? null) ? $data['spam_guard'] : null,
             'last_activity_at' => now(),
-            'expires_at' => $isPublic ? now()->addMinutes(15) : null,
+            'expires_at' => $this->chatSessions->expiresAt(),
         ])->save();
 
         return response()->json([
@@ -396,11 +396,7 @@ class ClientAssistantController extends Controller
 
     private function assistantSessionKey(Request $request): string
     {
-        if ($request->user()) {
-            return 'user:'.$request->user()->id;
-        }
-
-        return 'guest:'.hash('sha256', (string) $request->session()->getId());
+        return $this->chatSessions->keyForRequest($request);
     }
 
     private function currentChatSession(Request $request, bool $create): ?AssistantChatSession
@@ -437,7 +433,7 @@ class ClientAssistantController extends Controller
                 'messages' => [],
                 'suggestions' => [],
                 'last_activity_at' => now(),
-                'expires_at' => $request->user() ? null : now()->addMinutes(15),
+                'expires_at' => $this->chatSessions->expiresAt(),
             ]
         );
     }

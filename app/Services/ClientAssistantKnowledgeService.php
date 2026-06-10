@@ -102,7 +102,7 @@ class ClientAssistantKnowledgeService
             'venue availability', 'date availability', 'available date', 'check availability', 'calendar block', 'blocked date',
             'payment proof', 'down payment', 'downpayment', 'security bond', 'booking bond', 'refund',
             'refund policy', 'cancellation', 'facility rate', 'venue rate', 'rental rate', 'final computation',
-            'main hall', 'gallery 2600', 'vip lounge', 'boardroom', 'backstage', 'dressing room',
+            'main hall', 'gallery 2600', 'vip lounge', 'boardroom', 'foyer and lobby',
             'virtual tour', 'convention layout', 'mice registry', 'client notice', 'my notification',
             'my account', 'my dashboard', 'account preference', 'approval workflow', 'payment review', 'content manager',
             'another client', 'database password', 'api key', 'system prompt', 'hidden prompt',
@@ -160,7 +160,7 @@ class ClientAssistantKnowledgeService
         }
 
         if ($this->mentions($lower, ['virtual tour', 'tour', 'walk-through', 'walkthrough', 'street view', '3d layout'])) {
-            $sections[] = 'Virtual tour guide: open [Virtual Tour](/virtual-tour) to use the split-screen panorama and live area map. Choose an area or a numbered map camera, then drag or touch the panorama to look around freely. The map changes with every area, shows nearby rooms, and tracks the current camera position. Main Hall begins at Ground Hall with choices for Upper Left, Upper Right, Upper Mid, and Stage; its side routes continue through two connected views. VIP Lounge has two connected panorama parts. Use the Move Backward, Move Forward, and fullscreen controls as needed. Open [3D Convention Layout](/convention-layout) for an interactive Baguio Convention & Cultural Center model inspired by the building facade, broad podium, sloped roof, glass entrance, covered drop-off, fountain, landscaping, and roof lantern. Switch to Interior Cutaway to inspect venue layers and public routes, select an area for details, then drag, zoom, or use fullscreen.';
+            $sections[] = 'Virtual tour guide: open [Virtual Tour](/virtual-tour) to use the split-screen panorama and live area map. Choose an area or a numbered map camera, then drag or touch the panorama to look around freely. The map changes with every area, shows nearby rooms, and tracks the current camera position. Grounds & Parking and Foyer & Lobby each have three views; Basement, VIP Lounge, and Boardroom each have two. Main Hall begins at Ground Hall with choices for Upper Left, Upper Right, Upper Mid, and Stage; its side routes continue through two connected views. Gallery 2600 and Backstage are not included as tour destinations. Use the Move Backward, Move Forward, and fullscreen controls as needed. Open [3D Convention Layout](/convention-layout) to inspect the matching public venue layers, then drag, zoom, reset the view, or use fullscreen.';
         }
 
         if ($this->mentions($lower, ['status', 'pending', 'approved', 'declined', 'cancel', 'completed', 'expired', 'notification', 'notice', 'announcement'])) {

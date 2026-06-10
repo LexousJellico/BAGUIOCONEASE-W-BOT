@@ -15,7 +15,7 @@
         <link rel="apple-touch-icon" href="{{ asset('marketing/images/logo/bccc-seal.png') }}">
         <meta name="theme-color" content="#14100a">
 
-        <script>
+        <script nonce="{{ request()->attributes->get('csp_nonce') }}">
             window.BCCC_EASE = {
                 appName: @json(config('app.name', 'BCCC EASE')),
                 appUrl: @json(config('app.url')),

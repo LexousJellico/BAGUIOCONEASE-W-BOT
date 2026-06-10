@@ -3215,6 +3215,18 @@ body:has(.bccc-availability-dock) .bccc-public-hero-copy {
 
 .bccc-focused-layout-page {
     min-height: calc(100svh - 78px);
+    background:
+        radial-gradient(
+            circle at 16% 12%,
+            rgba(31, 111, 97, 0.26),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 88% 82%,
+            rgba(244, 223, 173, 0.1),
+            transparent 30%
+        ),
+        #07110f;
 }
 
 .bccc-focused-tour-workspace {
@@ -3223,6 +3235,7 @@ body:has(.bccc-availability-dock) .bccc-public-hero-copy {
 }
 
 .bccc-focused-layout-workspace {
+    position: relative;
     height: calc(100svh - 78px);
     min-height: 42rem;
 }
@@ -3241,6 +3254,188 @@ body:has(.bccc-availability-dock) .bccc-public-hero-copy {
 
 .bccc-bccc-layout-panel {
     border-radius: 0.85rem;
+    background:
+        linear-gradient(180deg, rgba(16, 47, 41, 0.34), transparent 34%),
+        #0a1c18 !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 28px 90px rgba(0, 0, 0, 0.36) !important;
+}
+
+.bccc-focused-layout-view {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 30px 100px rgba(0, 0, 0, 0.44) !important;
+}
+
+.bccc-layout-panel-hero img {
+    transform: scale(1.015);
+    transition:
+        transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 500ms ease;
+}
+
+.bccc-bccc-layout-panel:hover .bccc-layout-panel-hero img {
+    transform: scale(1.04);
+    opacity: 0.7;
+}
+
+.bccc-layout-mode-badge {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 14px 40px rgba(0, 0, 0, 0.25);
+}
+
+.bccc-layout-mode-badge > span {
+    animation: bccc-layout-status-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes bccc-layout-status-pulse {
+    0%,
+    100% {
+        opacity: 0.55;
+        transform: scale(0.85);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.bccc-layout-interaction-hint {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 16px 44px rgba(0, 0, 0, 0.26);
+}
+
+.bccc-layout-interaction-hint > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 999px;
+    padding: 0.35rem 0.55rem;
+}
+
+.bccc-layout-interaction-hint > span + span {
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bccc-layout-mode-button,
+.bccc-layout-layer-button {
+    position: relative;
+    isolation: isolate;
+}
+
+.bccc-layout-mode-button {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.bccc-layout-mode-button.is-active {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.55),
+        0 8px 24px rgba(244, 223, 173, 0.12);
+}
+
+.bccc-layout-selected-card {
+    background:
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(159, 232, 220, 0.08),
+            transparent 44%
+        ),
+        rgba(255, 255, 255, 0.012);
+}
+
+.bccc-layout-layer-button {
+    transition:
+        transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 180ms ease,
+        background-color 180ms ease,
+        color 180ms ease;
+}
+
+.bccc-layout-layer-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(180deg, #9fe8dc, #f4dfad);
+    opacity: 0;
+    transition: opacity 180ms ease;
+}
+
+.bccc-layout-layer-button:hover {
+    transform: translateY(-1px);
+}
+
+.bccc-layout-layer-button:hover::after,
+.bccc-layout-layer-button.is-active::after {
+    opacity: 1;
+}
+
+.bccc-layout-zoom-range {
+    height: 0.9rem;
+    margin-inline: 0;
+    appearance: none;
+    cursor: pointer;
+    background: transparent;
+}
+
+.bccc-layout-zoom-range::-webkit-slider-runnable-track {
+    height: 0.3rem;
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        #9fe8dc 0,
+        #f4dfad var(--bccc-zoom-progress),
+        rgba(255, 255, 255, 0.1) var(--bccc-zoom-progress),
+        rgba(255, 255, 255, 0.1) 100%
+    );
+}
+
+.bccc-layout-zoom-range::-webkit-slider-thumb {
+    width: 0.8rem;
+    height: 0.8rem;
+    margin-top: -0.25rem;
+    appearance: none;
+    border: 2px solid #102a27;
+    border-radius: 999px;
+    background: #f4dfad;
+    box-shadow: 0 0 0 3px rgba(244, 223, 173, 0.16);
+}
+
+.bccc-layout-zoom-range::-moz-range-track {
+    height: 0.3rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.bccc-layout-zoom-range::-moz-range-progress {
+    height: 0.3rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #9fe8dc, #f4dfad);
+}
+
+.bccc-layout-zoom-range::-moz-range-thumb {
+    width: 0.8rem;
+    height: 0.8rem;
+    border: 2px solid #102a27;
+    border-radius: 999px;
+    background: #f4dfad;
+    box-shadow: 0 0 0 3px rgba(244, 223, 173, 0.16);
+}
+
+.bccc-layout-zoom-range:focus-visible {
+    outline: 2px solid rgba(159, 232, 220, 0.8);
+    outline-offset: 3px;
+    border-radius: 999px;
+}
+
+.bccc-convention-layout-scene canvas:focus-visible {
+    outline: 2px solid rgba(159, 232, 220, 0.72);
+    outline-offset: -5px;
 }
 
 .bccc-area-map-canvas {
@@ -3574,6 +3769,10 @@ body.bccc-viewer-is-expanded {
         height: min(50rem, calc(100svh - 2rem)) !important;
         min-height: 44rem !important;
     }
+
+    .bccc-layout-interaction-hint > span:nth-child(2) {
+        display: none;
+    }
 }
 
 @media (max-width: 767px) {
@@ -3607,6 +3806,10 @@ body.bccc-viewer-is-expanded {
     .bccc-bccc-layout-panel {
         height: 46rem !important;
         min-height: 46rem !important;
+    }
+
+    .bccc-layout-interaction-hint {
+        display: none !important;
     }
 
     .bccc-scene-orbit-controls {
@@ -3700,5 +3903,16 @@ body.bccc-viewer-is-expanded {
         border-radius: 0.6rem;
         font-size: 0.55rem;
         letter-spacing: 0.1em;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bccc-layout-mode-badge > span {
+        animation: none;
+    }
+
+    .bccc-layout-panel-hero img,
+    .bccc-layout-layer-button {
+        transition: none;
     }
 }

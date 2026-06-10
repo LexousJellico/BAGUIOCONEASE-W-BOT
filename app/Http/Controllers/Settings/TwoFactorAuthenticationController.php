@@ -3,20 +3,20 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Settings\TwoFactorAuthenticationRequest;
 use App\Services\LoginDeviceService;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
 
 class TwoFactorAuthenticationController extends Controller
 {
-    public function __construct(private readonly LoginDeviceService $devices)
-    {
-    }
+    public function __construct(private readonly LoginDeviceService $devices) {}
 
-    public function show(Request $request): Response
+    public function show(TwoFactorAuthenticationRequest $request): Response
     {
+        $request->ensureStateIsValid();
+
         $user = $request->user();
         $twoFactorEnabled = method_exists($user, 'hasEnabledTwoFactorAuthentication')
             ? $user->hasEnabledTwoFactorAuthentication()

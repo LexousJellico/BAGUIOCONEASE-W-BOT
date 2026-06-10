@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\AssistantChatSessionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,8 @@ use Throwable;
 
 class GoogleAuthController extends Controller
 {
+    public function __construct(private readonly AssistantChatSessionService $chatSessions) {}
+
     public function redirect(): RedirectResponse
     {
         if (! $this->googleIsConfigured()) {
@@ -29,6 +32,8 @@ class GoogleAuthController extends Controller
 
     public function callback(): RedirectResponse
     {
+        $this->chatSessions->rememberGuestConversation(request());
+
         if (! $this->googleIsConfigured()) {
             return redirect()
                 ->route('login')
@@ -112,6 +117,7 @@ class GoogleAuthController extends Controller
 
         Auth::login($user, true);
         request()->session()->regenerate();
+        $this->chatSessions->claimRememberedGuestConversation(request(), $user);
 
         return redirect()
             ->intended($this->resolvePostLoginTarget($user))
@@ -148,7 +154,7 @@ class GoogleAuthController extends Controller
         $parts = array_values(array_filter(explode(' ', $clean), fn ($part) => $part !== ''));
 
         if (count($parts) === 1) {
-            return [$parts[0], null, 'User', trim($parts[0] . ' User')];
+            return [$parts[0], null, 'User', trim($parts[0].' User')];
         }
 
         $firstName = array_shift($parts) ?: 'Google';

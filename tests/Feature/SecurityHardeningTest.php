@@ -1,8 +1,13 @@
 <?php
 
+use App\Mail\RegistrationVerificationMail;
 use Illuminate\Http\Middleware\TrustHosts;
 use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Role;
 
 test('csrf refresh endpoint returns an uncached token and secure response headers', function () {
     $response = $this->getJson(route('security.csrf-token'));
@@ -33,7 +38,84 @@ test('csrf refresh endpoint returns an uncached token and secure response header
         ->toContain("object-src 'none'")
         ->toContain("frame-ancestors 'self'")
         ->toContain("script-src 'self' 'nonce-")
-        ->toContain("script-src-attr 'none'");
+        ->toContain("script-src-attr 'none'")
+        ->toContain('https://fonts.googleapis.com')
+        ->toContain('https://fonts.gstatic.com');
+});
+
+test('sensitive pages are private and excluded from search indexing', function () {
+    $response = $this->get(route('login'));
+
+    $response
+        ->assertOk()
+        ->assertHeader('Pragma', 'no-cache')
+        ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+
+    expect($response->headers->get('Cache-Control'))
+        ->toContain('no-store')
+        ->toContain('private');
+});
+
+test('public pages remain indexable', function () {
+    Route::get('/_test/public-indexable', fn () => response('ok'));
+
+    $this->get('/_test/public-indexable')
+        ->assertOk()
+        ->assertHeaderMissing('X-Robots-Tag');
+});
+
+test('registration verification codes are hashed in cache', function () {
+    Mail::fake();
+    $email = 'security-code@example.com';
+
+    $this->postJson(route('register.send-verification'), [
+        'name' => 'Security Code Test',
+        'email' => $email,
+    ])->assertOk();
+
+    $sentCode = null;
+    Mail::assertSent(RegistrationVerificationMail::class, function (RegistrationVerificationMail $mail) use (&$sentCode) {
+        $sentCode = $mail->code;
+
+        return true;
+    });
+
+    $emailKey = hash('sha256', $email);
+    $storedCode = Cache::get("register_code_{$emailKey}");
+
+    expect($sentCode)->toBeString()->toHaveLength(6)
+        ->and($storedCode)->toBeString()->not->toBe($sentCode)
+        ->and(Hash::check($sentCode, $storedCode))->toBeTrue()
+        ->and(Cache::get("register_code_{$email}"))->toBeNull();
+});
+
+test('a valid emailed verification code can complete registration', function () {
+    Mail::fake();
+    Role::findOrCreate('user', 'web');
+    $email = 'verified-registration@example.com';
+
+    $this->postJson(route('register.send-verification'), [
+        'name' => 'Verified Registration',
+        'email' => $email,
+    ])->assertOk();
+
+    $sentCode = null;
+    Mail::assertSent(RegistrationVerificationMail::class, function (RegistrationVerificationMail $mail) use (&$sentCode) {
+        $sentCode = $mail->code;
+
+        return true;
+    });
+
+    $this->post(route('register.store'), [
+        'name' => 'Verified Registration',
+        'email' => $email,
+        'password' => 'Strong-Password-2026',
+        'password_confirmation' => 'Strong-Password-2026',
+        'verification_code' => $sentCode,
+    ])->assertRedirect(route('verification.notice', absolute: false));
+
+    $this->assertAuthenticated();
+    expect(Cache::get('register_code_'.hash('sha256', $email)))->toBeNull();
 });
 
 test('json csrf mismatches return a safe retryable response', function () {

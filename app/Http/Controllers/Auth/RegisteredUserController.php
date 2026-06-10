@@ -47,33 +47,33 @@ class RegisteredUserController extends Controller
         ]);
 
         $email = $request->email;
-        $code = Cache::get("register_code_{$email}");
-        $attempts = Cache::get("register_attempts_{$email}", 0);
+        $emailKey = hash('sha256', $email);
+        $code = Cache::get("register_code_{$emailKey}");
+        $attempts = Cache::get("register_attempts_{$emailKey}", 0);
 
-        if (! $code) {
+        if (! is_string($code) || ! Hash::isHashed($code)) {
             throw ValidationException::withMessages([
                 'verification_code' => 'The verification code has expired or was not requested.',
             ]);
         }
 
         if ($attempts >= 3) {
-            Cache::forget("register_code_{$email}");
-            Cache::forget("register_attempts_{$email}");
+            Cache::forget("register_code_{$emailKey}");
+            Cache::forget("register_attempts_{$emailKey}");
             throw ValidationException::withMessages([
                 'verification_code' => 'Too many failed attempts. Please request a new code.',
             ]);
         }
 
-        if ($code !== $request->verification_code) {
-            Cache::increment("register_attempts_{$email}");
+        if (! Hash::check((string) $request->verification_code, $code)) {
+            Cache::increment("register_attempts_{$emailKey}");
             throw ValidationException::withMessages([
                 'verification_code' => 'The verification code is incorrect.',
             ]);
         }
 
-        // Code is correct, clear from cache
-        Cache::forget("register_code_{$email}");
-        Cache::forget("register_attempts_{$email}");
+        Cache::forget("register_code_{$emailKey}");
+        Cache::forget("register_attempts_{$emailKey}");
 
         $user = User::create([
             'name' => (string) $request->name,

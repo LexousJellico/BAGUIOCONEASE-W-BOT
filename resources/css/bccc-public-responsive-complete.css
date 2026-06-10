@@ -30,7 +30,7 @@ html,
 body,
 #app {
     width: 100%;
-    min-width: 320px;
+    min-width: 0;
     max-width: 100%;
     overflow-x: clip;
 }
@@ -3799,13 +3799,13 @@ body.bccc-viewer-is-expanded {
     }
 
     .bccc-live-tour-map {
-        height: 42rem !important;
-        min-height: 42rem !important;
+        height: clamp(30rem, 72svh, 38rem) !important;
+        min-height: 30rem !important;
     }
 
     .bccc-bccc-layout-panel {
-        height: 46rem !important;
-        min-height: 46rem !important;
+        height: clamp(32rem, 78svh, 42rem) !important;
+        min-height: 32rem !important;
     }
 
     .bccc-layout-interaction-hint {
@@ -3879,6 +3879,16 @@ body.bccc-viewer-is-expanded {
         min-height: 22rem;
     }
 
+    .bccc-live-tour-map {
+        height: clamp(27rem, 70svh, 34rem) !important;
+        min-height: 27rem !important;
+    }
+
+    .bccc-bccc-layout-panel {
+        height: clamp(29rem, 74svh, 37rem) !important;
+        min-height: 29rem !important;
+    }
+
     .bccc-street-view-route-controls {
         right: 0.5rem !important;
         bottom: 0.5rem !important;
@@ -3914,5 +3924,101 @@ body.bccc-viewer-is-expanded {
     .bccc-layout-panel-hero img,
     .bccc-layout-layer-button {
         transition: none;
+    }
+}
+
+/* Global responsive and accessibility guardrails. */
+html,
+body,
+#app,
+[data-page-root],
+main,
+section,
+article,
+aside,
+header,
+footer,
+nav,
+form,
+fieldset {
+    min-width: 0;
+    max-width: 100%;
+}
+
+img,
+video,
+svg,
+canvas,
+iframe {
+    max-width: 100%;
+}
+
+input,
+select,
+textarea,
+button {
+    max-width: 100%;
+}
+
+.bccc-table-scroll,
+.bccc-booking-show-table-scroll,
+[class*='table-scroll'] {
+    max-width: 100%;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+[role='dialog'],
+[role='alertdialog'] {
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+}
+
+@media (max-width: 767px) {
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+
+    .backend-main,
+    .backend-app-content {
+        max-width: 100%;
+        overflow-x: clip;
+    }
+
+    .backend-notification-menu {
+        width: min(25rem, calc(100vw - 1rem)) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    [role='dialog'],
+    [role='alertdialog'] {
+        max-width: calc(100vw - 0.5rem);
+        max-height: calc(100dvh - 0.5rem);
+    }
+}
+
+@media (max-height: 700px) and (orientation: landscape) {
+    .bccc-live-tour-map,
+    .bccc-bccc-layout-panel {
+        height: calc(100svh - 1rem) !important;
+        min-height: 24rem !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
     }
 }

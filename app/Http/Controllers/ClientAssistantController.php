@@ -185,8 +185,8 @@ class ClientAssistantController extends Controller
             'messages' => ['nullable', 'array', 'max:60'],
             'suggestions' => ['nullable', 'array', 'max:6'],
             'suggestions.*' => ['nullable', 'string', 'max:160'],
-            'guide' => ['nullable', 'array'],
-            'spam_guard' => ['nullable', 'array'],
+            'guide' => ['nullable', 'array', 'max:30'],
+            'spam_guard' => ['nullable', 'array', 'max:20'],
         ]);
 
         $session = $this->currentChatSession($request, true);

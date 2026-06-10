@@ -136,10 +136,10 @@
 
     body {
         @apply bg-background text-foreground;
-        min-width: 320px;
+        min-width: 0;
         background: #f5f7fa;
         color: #111827;
-        overflow-x: hidden;
+        overflow-x: clip;
         text-rendering: geometricPrecision;
         -webkit-font-smoothing: antialiased;
     }

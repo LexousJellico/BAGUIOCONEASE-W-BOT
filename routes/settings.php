@@ -18,6 +18,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('profile.update');
 
     Route::delete('settings/profile', [ProfileController::class, 'destroy'])
+        ->middleware('throttle:3,10')
         ->name('profile.destroy');
 
     Route::get('settings/password', [PasswordController::class, 'edit'])
@@ -36,5 +37,6 @@ Route::middleware(['auth'])->group(function () {
         ->name('two-factor.show');
 
     Route::delete('settings/devices/{device}', [LoginDeviceController::class, 'destroy'])
+        ->middleware('throttle:10,1')
         ->name('settings.devices.destroy');
 });

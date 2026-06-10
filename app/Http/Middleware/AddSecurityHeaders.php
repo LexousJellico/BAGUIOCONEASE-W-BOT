@@ -34,6 +34,12 @@ class AddSecurityHeaders
         $response->headers->set('Content-Security-Policy', $this->contentSecurityPolicy($request, $nonce));
         $response->headers->remove('X-Powered-By');
 
+        if ($this->isSensitiveRequest($request)) {
+            $response->headers->set('Cache-Control', 'no-store, private');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+        }
+
         if (app()->isProduction() && $request->isSecure()) {
             $response->headers->set(
                 'Strict-Transport-Security',
@@ -61,13 +67,38 @@ class AddSecurityHeaders
             ."form-action 'self'; "
             ."script-src 'self' 'nonce-{$nonce}'{$unsafeEval}{$localHttp}; "
             ."script-src-attr 'none'; "
-            ."style-src 'self' 'unsafe-inline'{$localHttp}; "
+            ."style-src 'self' 'unsafe-inline' https://fonts.googleapis.com{$localHttp}; "
             ."img-src 'self' data: blob: https:; "
-            ."font-src 'self' data:{$localHttp}; "
+            ."font-src 'self' data: https://fonts.gstatic.com{$localHttp}; "
             ."connect-src 'self'{$localHttp}{$localSockets}; "
             ."media-src 'self' blob: https:; "
             ."worker-src 'self' blob:; "
             ."frame-src 'self' https://www.google.com https://maps.google.com; "
             ."manifest-src 'self'{$upgradeInsecureRequests}";
+    }
+
+    private function isSensitiveRequest(Request $request): bool
+    {
+        return $request->user() !== null || $request->is(
+            'login',
+            'register',
+            'register/*',
+            'forgot-password',
+            'reset-password',
+            'reset-password/*',
+            'confirm-password',
+            'verify-email',
+            'verify-email/*',
+            'admin',
+            'admin/*',
+            'manager',
+            'manager/*',
+            'staff',
+            'staff/*',
+            'settings',
+            'settings/*',
+            'two-factor-challenge',
+            'user/two-factor-*',
+        );
     }
 }

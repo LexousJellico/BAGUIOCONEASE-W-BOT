@@ -5,6 +5,10 @@
 
     RewriteEngine On
 
+    # Refuse obsolete request methods that can expose request details.
+    RewriteCond %{REQUEST_METHOD} ^(?:TRACE|TRACK)$ [NC]
+    RewriteRule .* - [R=405,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -23,6 +27,12 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+ServerSignature Off
+
+<FilesMatch "(^\.env|^\.git|^artisan$|^composer\.(json|lock)$|^package(-lock)?\.json$|^phpunit\.xml$|^vite\.config\.)">
+    Require all denied
+</FilesMatch>
 
 <IfModule mod_headers.c>
     Header always unset X-Powered-By

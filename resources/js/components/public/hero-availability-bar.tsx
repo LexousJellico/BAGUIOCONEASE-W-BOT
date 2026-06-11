@@ -28,6 +28,10 @@ import {
     type PublicDayStatus,
 } from '@/lib/public-availability';
 import type { VenueOption } from '@/types/public-content';
+import {
+    announceFloatingControlOpen,
+    onFloatingControlOpen,
+} from '@/lib/floating-controls';
 import { Link } from '@inertiajs/react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
@@ -127,8 +131,44 @@ function asRangePayload(
     };
 }
 
-function useAvailabilityDockLayout() {
+function useAvailabilityDockLayout(active: boolean) {
     const dockRef = useRef<HTMLElement | null>(null);
+
+    useEffect(() => {
+        const root = document.documentElement;
+        const dock = dockRef.current;
+
+        if (!active || !dock) {
+            root.style.removeProperty('--bccc-availability-dock-clearance');
+
+            return undefined;
+        }
+
+        const updateHeight = () => {
+            const dockBounds = dock.getBoundingClientRect();
+
+            root.style.setProperty(
+                '--bccc-availability-dock-clearance',
+                `${Math.ceil(window.innerHeight - dockBounds.top)}px`,
+            );
+        };
+
+        updateHeight();
+
+        const observer =
+            typeof ResizeObserver === 'undefined'
+                ? null
+                : new ResizeObserver(updateHeight);
+
+        observer?.observe(dock);
+        window.addEventListener('resize', updateHeight);
+
+        return () => {
+            observer?.disconnect();
+            window.removeEventListener('resize', updateHeight);
+            root.style.removeProperty('--bccc-availability-dock-clearance');
+        };
+    }, [active]);
 
     return {
         dockRef,
@@ -478,6 +518,25 @@ export default function HeroAvailabilityBar({ venueOptions }: Props) {
     }
 
     useEffect(() => {
+        if (mounted && !collapsed) {
+            announceFloatingControlOpen('availability');
+        }
+    }, [collapsed, mounted]);
+
+    useEffect(
+        () =>
+            onFloatingControlOpen((control) => {
+                if (control !== 'availability') {
+                    setCollapsed(true);
+                    setScheduleOpen(false);
+                    setRangeAnchor(null);
+                    window.localStorage.setItem('bccc.availabilityDock.collapsed', '1');
+                }
+            }),
+        [],
+    );
+
+    useEffect(() => {
         if (!scheduleOpen) {
             return;
         }
@@ -546,7 +605,7 @@ export default function HeroAvailabilityBar({ venueOptions }: Props) {
         };
     }, [scheduleOpen]);
 
-    const { dockRef } = useAvailabilityDockLayout();
+    const { dockRef } = useAvailabilityDockLayout(!collapsed);
 
     const selectedVenue = useMemo(
         () => options.find((item) => item.value === venue) ?? null,

@@ -1,4 +1,8 @@
 import { getBackendRole, type BackendRole } from '@/lib/backend-navigation';
+import {
+    announceFloatingControlOpen,
+    onFloatingControlOpen,
+} from '@/lib/floating-controls';
 import { router, usePage } from '@inertiajs/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -1555,7 +1559,21 @@ export default function ClientBookingAssistant() {
         window.setTimeout(() => inputRef.current?.focus(), 120);
     }, [open]);
 
+    useEffect(
+        () =>
+            onFloatingControlOpen((control) => {
+                if (control !== 'assistant') {
+                    setOpen(false);
+                }
+            }),
+        [],
+    );
+
     const persistOpenState = (nextOpen: boolean) => {
+        if (nextOpen) {
+            announceFloatingControlOpen('assistant');
+        }
+
         setOpen(nextOpen);
         saveStoredAssistantChat(
             storageKey,

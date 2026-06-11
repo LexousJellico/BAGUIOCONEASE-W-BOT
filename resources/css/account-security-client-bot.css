@@ -1922,3 +1922,114 @@ body:has(.bccc-client-assistant[data-assistant-open='true']) .bccc-availability-
         display: none !important;
     }
 }
+
+/* Unified public floating controls: Info, Availability, then Chat. */
+:root {
+    --bccc-public-fab-edge: max(1rem, env(safe-area-inset-right));
+    --bccc-public-fab-bottom: max(1rem, env(safe-area-inset-bottom));
+    --bccc-public-fab-size: 3.2rem;
+    --bccc-public-fab-gap: 0.65rem;
+    --bccc-availability-dock-clearance: 0px;
+}
+
+body:has(.bccc-public-shell) .bccc-client-assistant,
+body:has(.bccc-public-shell) .bccc-availability-collapsed-toggle,
+body:has(.bccc-public-shell) .bccc-floating-quick-links {
+    right: var(--bccc-public-fab-edge) !important;
+    transition:
+        right 0.2s ease,
+        bottom 0.22s ease,
+        opacity 0.18s ease,
+        transform 0.18s ease !important;
+}
+
+body:has(.bccc-public-shell) .bccc-client-assistant {
+    bottom: var(--bccc-public-fab-bottom) !important;
+}
+
+body:has(.bccc-public-shell) .bccc-availability-collapsed-toggle {
+    bottom: calc(
+        var(--bccc-public-fab-bottom) + var(--bccc-public-fab-size) +
+            var(--bccc-public-fab-gap)
+    ) !important;
+}
+
+body:has(.bccc-public-shell) .bccc-floating-quick-links {
+    bottom: calc(
+        var(--bccc-public-fab-bottom) +
+            ((var(--bccc-public-fab-size) + var(--bccc-public-fab-gap)) * 2)
+    ) !important;
+    gap: 0 !important;
+}
+
+body:has(.bccc-public-shell) .bccc-client-assistant-tab,
+body:has(.bccc-public-shell) .bccc-availability-collapsed-toggle,
+body:has(.bccc-public-shell) .bccc-floating-quick-links > button {
+    width: var(--bccc-public-fab-size) !important;
+    height: var(--bccc-public-fab-size) !important;
+    min-width: var(--bccc-public-fab-size) !important;
+    min-height: var(--bccc-public-fab-size) !important;
+}
+
+body:has(.bccc-public-shell) .bccc-floating-quick-links-panel {
+    position: absolute !important;
+    right: calc(var(--bccc-public-fab-size) + var(--bccc-public-fab-gap)) !important;
+    bottom: 0 !important;
+    align-items: stretch !important;
+    margin: 0 !important;
+}
+
+body:has(.bccc-public-shell) .bccc-floating-quick-links-panel a {
+    width: min(17rem, calc(100vw - 5.5rem)) !important;
+}
+
+/* When availability is expanded, lift the other two controls above its actual height. */
+body:has(.bccc-public-shell):has(.bccc-availability-dock:not(.bccc-availability-collapsed-toggle))
+    .bccc-client-assistant {
+    bottom: calc(
+        var(--bccc-availability-dock-clearance) + var(--bccc-public-fab-gap)
+    ) !important;
+}
+
+body:has(.bccc-public-shell):has(.bccc-availability-dock:not(.bccc-availability-collapsed-toggle))
+    .bccc-floating-quick-links {
+    bottom: calc(
+        var(--bccc-availability-dock-clearance) + var(--bccc-public-fab-size) +
+            (var(--bccc-public-fab-gap) * 2)
+    ) !important;
+}
+
+body:has(.bccc-public-shell) .bccc-availability-dock {
+    z-index: 2147482700 !important;
+}
+
+body:has(.bccc-public-shell) .bccc-client-assistant,
+body:has(.bccc-public-shell) .bccc-floating-quick-links,
+body:has(.bccc-public-shell) .bccc-availability-collapsed-toggle {
+    z-index: 2147483000 !important;
+}
+
+@media (max-width: 640px) {
+    :root {
+        --bccc-public-fab-edge: max(0.7rem, env(safe-area-inset-right));
+        --bccc-public-fab-bottom: max(0.7rem, env(safe-area-inset-bottom));
+        --bccc-public-fab-size: 3rem;
+        --bccc-public-fab-gap: 0.55rem;
+    }
+
+    body:has(.bccc-public-shell) .bccc-floating-quick-links-panel a {
+        width: min(15.5rem, calc(100vw - 4.75rem)) !important;
+    }
+
+    body:has(.bccc-public-shell):has(.bccc-availability-dock:not(.bccc-availability-collapsed-toggle))
+        .bccc-floating-quick-links {
+        display: none !important;
+    }
+}
+
+@media (max-height: 620px) and (orientation: landscape) {
+    body:has(.bccc-public-shell):has(.bccc-availability-dock:not(.bccc-availability-collapsed-toggle))
+        .bccc-floating-quick-links {
+        display: none !important;
+    }
+}

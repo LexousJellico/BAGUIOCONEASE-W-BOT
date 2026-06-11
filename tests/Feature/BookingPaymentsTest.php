@@ -4,13 +4,21 @@ use App\Http\Resources\BookingResource;
 use App\Models\Booking;
 use App\Models\Service;
 use App\Models\User;
-use Illuminate\Support\Carbon;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 it('persists payments and exposes them via booking resource', function () {
     // Arrange: authenticated user
     $user = User::factory()->create();
+    $manager = Role::findOrCreate('manager', 'web');
+    $manager->givePermissionTo([
+        Permission::findOrCreate('bookings.view', 'web'),
+        Permission::findOrCreate('payments.manage', 'web'),
+    ]);
+    $user->assignRole($manager);
     test()->actingAs($user);
-    test()->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
+    test()->withoutMiddleware(VerifyCsrfToken::class);
 
     // Arrange: a service and a booking
     $service = Service::factory()->create([
@@ -45,13 +53,15 @@ it('persists payments and exposes them via booking resource', function () {
     ]);
 
     // Assert redirect back
-    $response->assertStatus(302);
+    $response
+        ->assertStatus(302)
+        ->assertSessionHasNoErrors();
 
     // Assert DB row persisted
     test()->assertDatabaseHas('booking_payments', [
         'booking_id' => $booking->id,
         'payment_method' => 'cash',
-        'status' => 'confirmed',
+        'status' => 'approved',
         // Note: decimals are stored as string in many drivers
         'amount' => 150.50,
     ]);
@@ -65,7 +75,7 @@ it('persists payments and exposes them via booking resource', function () {
         ->and(count($asArray['payments']))->toBeGreaterThanOrEqual(1);
 
     // Find our payment in resource
-    $found = collect($asArray['payments'])->firstWhere('status', 'confirmed');
+    $found = collect($asArray['payments'])->firstWhere('status', 'approved');
     expect($found)->not->toBeNull();
 
     // Totals include payments_total >= amount we just added
@@ -75,16 +85,22 @@ it('persists payments and exposes them via booking resource', function () {
 
 it('updates a payment and reflects changes in resource', function () {
     // Arrange: authenticated user
-    $user = \App\Models\User::factory()->create();
+    $user = User::factory()->create();
+    $manager = Role::findOrCreate('manager', 'web');
+    $manager->givePermissionTo([
+        Permission::findOrCreate('bookings.view', 'web'),
+        Permission::findOrCreate('payments.manage', 'web'),
+    ]);
+    $user->assignRole($manager);
     test()->actingAs($user);
-    test()->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
+    test()->withoutMiddleware(VerifyCsrfToken::class);
 
     // Arrange: a service and a booking
-    $service = \App\Models\Service::factory()->create([
+    $service = Service::factory()->create([
         'price' => 200,
     ]);
 
-    $booking = \App\Models\Booking::create([
+    $booking = Booking::create([
         'service_id' => $service->id,
         'company_name' => 'Widgets Inc',
         'client_name' => 'Jane Roe',
@@ -120,26 +136,28 @@ it('updates a payment and reflects changes in resource', function () {
     ]);
 
     // Assert redirect back
-    $response->assertStatus(302);
+    $response
+        ->assertStatus(302)
+        ->assertSessionHasNoErrors();
 
     // Assert DB updated
     test()->assertDatabaseHas('booking_payments', [
         'id' => $payment->id,
         'booking_id' => $booking->id,
         'payment_method' => 'gcash',
-        'status' => 'confirmed',
+        'status' => 'approved',
         'amount' => 250.75,
         // can't assert exact reference due to uniqid; just ensure updated status/method/amount
     ]);
 
     // Assert resource reflects updated values
     $fresh = $booking->fresh()->load(['payments', 'bookingServices', 'service']);
-    $asArray = (new \App\Http\Resources\BookingResource($fresh))->resolve(request());
+    $asArray = (new BookingResource($fresh))->resolve(request());
 
     $found = collect($asArray['payments'])->firstWhere('id', $payment->id);
     expect($found)->not->toBeNull();
     expect($found['payment_method'])->toBe('gcash');
-    expect($found['status'])->toBe('confirmed');
+    expect($found['status'])->toBe('approved');
     expect((float) $found['amount'])->toBe(250.75);
     expect(isset($found['transaction_reference']))->toBeTrue();
 });

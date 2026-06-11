@@ -34,6 +34,8 @@ initializeTheme();
 
 router.on('success', () => {
     if (typeof window === 'undefined') return;
+    if (window.__bcccLiveRefreshInProgress) return;
+
     // Backend/admin pages and newly opened forms should always start at the top so the fixed header never hides the first fields.
     window.requestAnimationFrame(() =>
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' }),
@@ -137,12 +139,12 @@ function BcccRuntimeUiStack() {
         <>
             <RouteLoadingOverlay
                 logoSrc="/marketing/images/logo/bccc-seal.png"
-                label="Loading..."
-                sublabel="Preparing your experience"
-                minimumVisibleMs={1500}
+                label="Loading page..."
+                sublabel="Almost ready"
+                delay={180}
+                minimumVisibleMs={320}
             />
 
-            <ActionFeedbackPopup />
             <PencilBookedSuccessPopup />
             <GlobalConfirmDialog />
             <RuntimeErrorOverlay />
@@ -201,13 +203,7 @@ createInertiaApp({
                         <PageTransition pageKey={name}>
                             {pageWithLayout}
                         </PageTransition>
-
-                        <StartupLoadingOverlay
-                            logoSrc="/marketing/images/logo/bccc-seal.png"
-                            minimumMs={1500}
-                        />
-
-                        <BcccRuntimeUiStack />
+                        <ActionFeedbackPopup />
                         <ClientBookingAssistant />
                     </>
                 );
@@ -239,13 +235,6 @@ createInertiaApp({
                 return (
                     <AppErrorBoundary pageName={name}>
                         <MissingPageFallback pageName={name} />
-
-                        <StartupLoadingOverlay
-                            logoSrc="/marketing/images/logo/bccc-seal.png"
-                            minimumMs={1500}
-                        />
-
-                        <BcccRuntimeUiStack />
                     </AppErrorBoundary>
                 );
             }
@@ -258,6 +247,11 @@ createInertiaApp({
         createRoot(el).render(
             <>
                 <App {...props} />
+                <StartupLoadingOverlay
+                    logoSrc="/marketing/images/logo/bccc-seal.png"
+                    minimumMs={650}
+                />
+                <BcccRuntimeUiStack />
                 <AppNoticeCenter />
                 <CalendarWheelScrollBridge />
             </>,

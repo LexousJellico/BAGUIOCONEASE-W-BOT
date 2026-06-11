@@ -459,6 +459,9 @@ export function BcccFullScreenLoader({
                 'dark:bg-[#0b0e13]/76 dark:backdrop-blur-2xl',
                 className,
             )}
+            role="status"
+            aria-live="polite"
+            aria-label={`${label} ${sublabel}`}
             initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, filter: 'blur(8px)' }}

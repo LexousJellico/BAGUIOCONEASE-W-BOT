@@ -1,7 +1,7 @@
 import { AppContent } from '@/components/app-content';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppSidebarHeader } from '@/components/app-sidebar-header';
-import BackendRouteLoader from '@/components/ui/backend-route-loader';
+import WorkspaceLiveSync from '@/components/system/workspace-live-sync';
 import type { BreadcrumbItem } from '@/types';
 import { AnimatePresence } from 'framer-motion';
 import {
@@ -25,7 +25,13 @@ function getInitialSidebarState() {
         return false;
     }
 
-    const stored = window.localStorage.getItem('bccc-sidebar-collapsed');
+    let stored: string | null = null;
+
+    try {
+        stored = window.localStorage.getItem('bccc-sidebar-collapsed');
+    } catch {
+        // Restricted browser storage should not prevent the workspace from loading.
+    }
 
     if (stored === 'true') {
         return true;
@@ -130,10 +136,14 @@ export default function AppSidebarLayout({
         setHoverOpen(false);
 
         if (typeof window !== 'undefined') {
-            window.localStorage.setItem(
-                'bccc-sidebar-collapsed',
-                value ? 'true' : 'false',
-            );
+            try {
+                window.localStorage.setItem(
+                    'bccc-sidebar-collapsed',
+                    value ? 'true' : 'false',
+                );
+            } catch {
+                // Keep the in-memory preference when persistent storage is unavailable.
+            }
         }
     }, []);
 
@@ -248,7 +258,7 @@ export default function AppSidebarLayout({
                 </div>
             </div>
 
-            <BackendRouteLoader />
+            <WorkspaceLiveSync />
         </div>
     );
 }

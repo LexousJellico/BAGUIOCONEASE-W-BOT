@@ -1,4 +1,8 @@
 import type { SiteSettings } from '@/layouts/public-layout';
+import {
+    announceFloatingControlOpen,
+    onFloatingControlOpen,
+} from '@/lib/floating-controls';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
     ArrowUpRight,
@@ -8,7 +12,7 @@ import {
     Palette,
     X,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type Props = {
     siteSettings?: SiteSettings | null;
@@ -19,6 +23,24 @@ const ease = [0.22, 1, 0.36, 1] as const;
 export default function FloatingQuickLinks({ siteSettings }: Props) {
     const reduceMotion = useReducedMotion();
     const [open, setOpen] = useState(false);
+
+    const updateOpen = (next: boolean) => {
+        setOpen(next);
+
+        if (next) {
+            announceFloatingControlOpen('info');
+        }
+    };
+
+    useEffect(
+        () =>
+            onFloatingControlOpen((control) => {
+                if (control !== 'info') {
+                    setOpen(false);
+                }
+            }),
+        [],
+    );
 
     const links = useMemo(() => {
         const visitaUrl =
@@ -67,9 +89,10 @@ export default function FloatingQuickLinks({ siteSettings }: Props) {
     return (
         <div
             className="bccc-floating-quick-links fixed right-4 bottom-24 z-[99970] flex flex-col items-end gap-3 sm:right-6 sm:bottom-28"
-            onMouseEnter={() => setOpen(true)}
+            data-quick-links-open={open ? 'true' : 'false'}
+            onMouseEnter={() => updateOpen(true)}
             onMouseLeave={() => setOpen(false)}
-            onFocus={() => setOpen(true)}
+            onFocus={() => updateOpen(true)}
             onBlur={(event) => {
                 if (
                     !event.currentTarget.contains(
@@ -190,7 +213,7 @@ export default function FloatingQuickLinks({ siteSettings }: Props) {
 
             <motion.button
                 type="button"
-                onClick={() => setOpen((value) => !value)}
+                onClick={() => updateOpen(!open)}
                 className="group relative grid h-14 w-14 place-items-center rounded-full border border-[#b08d48]/30 bg-[#2f2517] text-white shadow-[0_24px_70px_rgba(47,37,23,0.32)] transition duration-300 hover:-translate-y-1 hover:bg-[#4b3a22] dark:border-white/15 dark:bg-white dark:text-[#17120b]"
                 aria-label="Open VISITA and Arts quick links"
                 aria-expanded={open}

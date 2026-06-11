@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Closure;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,10 +28,23 @@ class NewPasswordController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $request->merge([
+            'email' => mb_strtolower(trim((string) $request->input('email'))),
+        ]);
+
         $request->validate([
             'token' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => [
+                'required',
+                'confirmed',
+                Rules\Password::defaults()->letters(),
+                function (string $attribute, mixed $value, Closure $fail): void {
+                    if (is_string($value) && ! preg_match('/[\pN\pS\pP]/u', $value)) {
+                        $fail(__('The password must contain at least one number or symbol.'));
+                    }
+                },
+            ],
         ]);
 
         $status = Password::reset(

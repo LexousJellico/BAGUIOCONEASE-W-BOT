@@ -14,8 +14,8 @@ use App\Support\BcccBookingPolicyCatalog;
 use App\Support\BookingScheduleCatalog;
 use App\Support\BookingStatusCatalog;
 use App\Support\DressingRoomCatalog;
-use App\Support\VenuePackageCatalog;
 use App\Support\VenueAreaCatalog;
+use App\Support\VenuePackageCatalog;
 use App\Support\WorkspaceAccess;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -104,7 +104,7 @@ class BookingService implements BookingServiceInterface
         }
 
         $columns = array_map(
-            fn (string $column) => 'bookings.' . $column,
+            fn (string $column) => 'bookings.'.$column,
             array_values(array_diff(Schema::getColumnListing('bookings'), ['survey_proof_image']))
         );
 
@@ -158,13 +158,13 @@ class BookingService implements BookingServiceInterface
 
         $now = Carbon::now();
 
-        $bucketSql = "
+        $bucketSql = '
             CASE
                 WHEN bookings.booking_date_from <= ? AND bookings.booking_date_to > ? THEN 0
                 WHEN bookings.booking_date_from > ? THEN 1
                 ELSE 2
             END
-        ";
+        ';
 
         $applyUnviewedFirst = function () use ($query): void {
             $userId = auth()->id();
@@ -213,7 +213,7 @@ class BookingService implements BookingServiceInterface
                 ->orderByDesc('bookings.id'),
 
             'ending_soon' => $query
-                ->orderByRaw($bucketSql . ' ASC', [$now, $now, $now])
+                ->orderByRaw($bucketSql.' ASC', [$now, $now, $now])
                 ->orderByRaw(
                     'CASE WHEN bookings.booking_date_from <= ? AND bookings.booking_date_to > ? THEN bookings.booking_date_to END ASC',
                     [$now, $now]
@@ -243,7 +243,7 @@ class BookingService implements BookingServiceInterface
                         ELSE 99
                     END ASC
                 ")
-                ->orderByRaw($bucketSql . ' ASC', [$now, $now, $now])
+                ->orderByRaw($bucketSql.' ASC', [$now, $now, $now])
                 ->orderByRaw(
                     'CASE WHEN bookings.booking_date_from <= ? AND bookings.booking_date_to > ? THEN bookings.booking_date_to END ASC',
                     [$now, $now]
@@ -260,7 +260,7 @@ class BookingService implements BookingServiceInterface
                 ->orderByDesc('bookings.id'),
 
             default => $query
-                ->orderByRaw($bucketSql . ' ASC', [$now, $now, $now])
+                ->orderByRaw($bucketSql.' ASC', [$now, $now, $now])
                 ->orderByRaw(
                     'CASE WHEN bookings.booking_date_from <= ? AND bookings.booking_date_to > ? THEN bookings.booking_date_to END ASC',
                     [$now, $now]
@@ -402,7 +402,6 @@ class BookingService implements BookingServiceInterface
                     'company_name',
                     'client_contact_number',
                     'client_email',
-                    'survey_email',
                     'survey_proof_image_path',
                     'survey_proof_image_mime',
                     'survey_proof_image_name',
@@ -605,7 +604,7 @@ class BookingService implements BookingServiceInterface
                 });
             })
             ->when(! empty($filters['q']), function (Builder $q) use ($filters) {
-                $term = '%' . trim((string) $filters['q']) . '%';
+                $term = '%'.trim((string) $filters['q']).'%';
 
                 $q->where(function (Builder $q2) use ($term) {
                     $q2->where('client_name', 'like', $term)
@@ -699,10 +698,8 @@ class BookingService implements BookingServiceInterface
 
     protected function normalizeContactFields(array &$data): void
     {
-        foreach (['client_email', 'survey_email'] as $field) {
-            if (isset($data[$field])) {
-                $data[$field] = strtolower(trim((string) $data[$field])) ?: null;
-            }
+        if (isset($data['client_email'])) {
+            $data['client_email'] = strtolower(trim((string) $data['client_email'])) ?: null;
         }
 
         if (isset($data['client_contact_number'])) {
@@ -863,7 +860,7 @@ class BookingService implements BookingServiceInterface
                     (int) $minGuests,
                     (int) $minGuests === 1 ? '' : 's',
                     $guestCount,
-                    $capacityNote !== '' ? ' ' . $capacityNote : ''
+                    $capacityNote !== '' ? ' '.$capacityNote : ''
                 );
             }
 
@@ -874,7 +871,7 @@ class BookingService implements BookingServiceInterface
                     (int) $maxGuests,
                     (int) $maxGuests === 1 ? '' : 's',
                     $guestCount,
-                    $capacityNote !== '' ? ' ' . $capacityNote : ''
+                    $capacityNote !== '' ? ' '.$capacityNote : ''
                 );
             }
         }
@@ -1620,7 +1617,6 @@ class BookingService implements BookingServiceInterface
         }
     }
 
-
     protected function scheduleSegmentService(): BookingScheduleSegmentService
     {
         return app(BookingScheduleSegmentService::class);
@@ -1994,7 +1990,6 @@ class BookingService implements BookingServiceInterface
         return $this->defaultAvailabilityBlocksForDay(now())[$key];
     }
 
-
     private function buildAvailabilityBlocks(Carbon $day, array $sourceIntervals): array
     {
         $blocks = [
@@ -2051,7 +2046,7 @@ class BookingService implements BookingServiceInterface
 
             if (BookingScheduleCatalog::isWithinLeadTime($block['start'])) {
                 $blocked = true;
-                $reasons[] = 'This time block is no longer bookable because reservations need at least ' . BookingScheduleCatalog::MINIMUM_LEAD_HOURS . ' hours lead time.';
+                $reasons[] = 'This time block is no longer bookable because reservations need at least '.BookingScheduleCatalog::MINIMUM_LEAD_HOURS.' hours lead time.';
             }
 
             unset($blocks[$key]['start'], $blocks[$key]['end']);
@@ -2350,6 +2345,7 @@ class BookingService implements BookingServiceInterface
         foreach ($intervals as $interval) {
             if (empty($merged)) {
                 $merged[] = $interval;
+
                 continue;
             }
 
@@ -2677,7 +2673,7 @@ class BookingService implements BookingServiceInterface
         }
 
         if ($capacitySummary['message']) {
-            $note .= ' ' . $capacitySummary['message'];
+            $note .= ' '.$capacitySummary['message'];
         }
 
         $canProceed = $availableBlockCount > 0 && ! in_array($status, ['blocked', 'private_booked'], true);
@@ -2762,8 +2758,7 @@ class BookingService implements BookingServiceInterface
             ->with('serviceType')
             ->orderBy('name')
             ->get()
-            ->filter(fn (Service $service) =>
-                $this->areasOverlap((string) ($service->name ?? ''), $area)
+            ->filter(fn (Service $service) => $this->areasOverlap((string) ($service->name ?? ''), $area)
                 || $this->areasOverlap((string) ($service->serviceType?->name ?? ''), $area)
             )
             ->values();
@@ -2791,6 +2786,7 @@ class BookingService implements BookingServiceInterface
 
             if ($fitsMin && $fitsMax) {
                 $matching[] = $serviceName;
+
                 continue;
             }
 
@@ -2801,7 +2797,7 @@ class BookingService implements BookingServiceInterface
                     (int) $minGuests,
                     (int) $minGuests === 1 ? '' : 's',
                     $guestCount,
-                    $capacityNote !== '' ? ' ' . $capacityNote : ''
+                    $capacityNote !== '' ? ' '.$capacityNote : ''
                 );
             }
 
@@ -2812,7 +2808,7 @@ class BookingService implements BookingServiceInterface
                     (int) $maxGuests,
                     (int) $maxGuests === 1 ? '' : 's',
                     $guestCount,
-                    $capacityNote !== '' ? ' ' . $capacityNote : ''
+                    $capacityNote !== '' ? ' '.$capacityNote : ''
                 );
             }
         }
@@ -2822,7 +2818,7 @@ class BookingService implements BookingServiceInterface
 
             return [
                 'ok' => true,
-                'message' => 'Guest count fits the selected area based on the current venue rule' . ($preview !== '' ? ' (' . $preview . ').' : '.'),
+                'message' => 'Guest count fits the selected area based on the current venue rule'.($preview !== '' ? ' ('.$preview.').' : '.'),
                 'matching_services' => array_values(array_unique($matching)),
                 'reasons' => [],
             ];

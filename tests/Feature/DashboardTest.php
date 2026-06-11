@@ -1,15 +1,16 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 test('guests are redirected to the login page', function () {
     $this->get(route('dashboard'))->assertRedirect(route('login'));
 });
 
-test('authenticated users can visit the dashboard', function () {
+test('authenticated users are routed to their dashboard', function () {
     $this->actingAs($user = User::factory()->create());
 
-    $this->get(route('dashboard'))->assertOk();
+    $this->get(route('dashboard'))->assertRedirect(route('user.dashboard'));
 });

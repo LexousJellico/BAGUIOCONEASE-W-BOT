@@ -18,6 +18,7 @@ export default [
             'resources/js/actions/**',
             'resources/js/routes/**',
             'resources/js/wayfinder/**',
+            'resources/js/wayfinder-route-stubs.d.ts',
             'resources/js/components/admin-resource/_archive_old/**',
             'tailwind.config.js',
         ],

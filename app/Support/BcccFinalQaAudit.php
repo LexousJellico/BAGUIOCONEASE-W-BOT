@@ -98,7 +98,7 @@ final class BcccFinalQaAudit
         $missing = [];
 
         foreach (self::REQUIRED_FILES as $relativePath) {
-            if (! is_file($basePath . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativePath))) {
+            if (! is_file($basePath.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relativePath))) {
                 $missing[] = $relativePath;
             }
         }
@@ -122,8 +122,8 @@ final class BcccFinalQaAudit
 
             if ($keys !== $expected) {
                 return self::fail('Active venue catalog is not limited to the five approved choices.', [
-                    'Expected: ' . implode(', ', $expected),
-                    'Actual: ' . implode(', ', $keys),
+                    'Expected: '.implode(', ', $expected),
+                    'Actual: '.implode(', ', $keys),
                 ]);
             }
 
@@ -152,7 +152,7 @@ final class BcccFinalQaAudit
             foreach (VenuePackageCatalog::defaults() as $package) {
                 foreach ((array) ($package['area_keys'] ?? []) as $key) {
                     if (! in_array($key, $active, true)) {
-                        $invalid[] = ($package['code'] ?? 'UNKNOWN') . ': ' . $key;
+                        $invalid[] = ($package['code'] ?? 'UNKNOWN').': '.$key;
                     }
                 }
             }
@@ -206,7 +206,7 @@ final class BcccFinalQaAudit
 
     private static function routeFileLooksClean(string $basePath): array
     {
-        $path = $basePath . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'web.php';
+        $path = $basePath.DIRECTORY_SEPARATOR.'routes'.DIRECTORY_SEPARATOR.'web.php';
 
         if (! is_file($path)) {
             return self::fail('routes/web.php is missing.');
@@ -214,13 +214,13 @@ final class BcccFinalQaAudit
 
         $contents = (string) file_get_contents($path);
         $required = [
-            "BookingApprovalController",
-            "BookingBillingController",
-            "BookingPrintableController",
-            "bookings.approval.for-review",
-            "bookings.billing.update",
-            "bookings.print.reservation",
-            "user.bookings.print.reservation",
+            'BookingApprovalController',
+            'BookingBillingController',
+            'BookingPrintableController',
+            'bookings.approval.for-review',
+            'bookings.billing.update',
+            'bookings.print.reservation',
+            'user.bookings.print.reservation',
         ];
 
         $missing = array_values(array_filter($required, fn (string $needle): bool => ! str_contains($contents, $needle)));
@@ -231,13 +231,13 @@ final class BcccFinalQaAudit
 
         $duplicates = [];
         foreach (['admin.bookings.print.reservation', 'manager.bookings.print.reservation', 'staff.bookings.print.reservation', 'user.bookings.print.reservation'] as $name) {
-            $count = substr_count($contents, "->name('" . str_replace(['admin.', 'manager.', 'staff.'], '', $name) . "')");
+            $count = substr_count($contents, "->name('".str_replace(['admin.', 'manager.', 'staff.'], '', $name)."')");
             if ($name === 'user.bookings.print.reservation') {
                 $count = substr_count($contents, "->name('user.bookings.print.reservation')");
             }
 
             if ($count > 6) {
-                $duplicates[] = $name . ' appears unusually often; run php artisan route:list to confirm no duplicate routes.';
+                $duplicates[] = $name.' appears unusually often; run php artisan route:list to confirm no duplicate routes.';
             }
         }
 
@@ -259,7 +259,7 @@ final class BcccFinalQaAudit
     private static function frontendDoesNotExposeExcludedCharges(string $basePath): array
     {
         $hits = [];
-        $frontendPath = $basePath . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'bookings';
+        $frontendPath = $basePath.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'bookings';
 
         if (! is_dir($frontendPath)) {
             return self::warning('Booking frontend components folder is missing.', ['resources/js/components/bookings']);
@@ -267,10 +267,27 @@ final class BcccFinalQaAudit
 
         foreach (self::files($frontendPath, ['tsx', 'ts', 'jsx', 'js']) as $file) {
             $contents = (string) file_get_contents($file);
+
             foreach (self::USER_EXCLUDED_LABELS as $label) {
-                if (stripos($contents, $label) !== false) {
-                    $relative = str_replace($basePath . DIRECTORY_SEPARATOR, '', $file);
-                    $hits[] = $relative . ': ' . $label;
+                $offset = 0;
+
+                while (($position = stripos($contents, $label, $offset)) !== false) {
+                    $context = substr($contents, max(0, $position - 220), strlen($label) + 440);
+                    $isExplicitExclusion = preg_match(
+                        '/excluded_user_charges|excluded from user charges|not user-selectable|not charged as a standalone|not shown as booking charges/i',
+                        $context,
+                    ) === 1;
+
+                    if ($isExplicitExclusion) {
+                        $offset = $position + strlen($label);
+
+                        continue;
+                    }
+
+                    $relative = str_replace($basePath.DIRECTORY_SEPARATOR, '', $file);
+                    $hits[] = $relative.': '.$label;
+
+                    break;
                 }
             }
         }
@@ -282,16 +299,18 @@ final class BcccFinalQaAudit
 
     private static function modelCasingIsSafe(string $basePath): array
     {
-        $correct = $basePath . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'BookingLifecycleEvent.php';
-        $legacy = $basePath . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'BookingLifeCycleEvent.php';
+        $modelsPath = $basePath.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Models';
+        $modelFiles = array_map('basename', glob($modelsPath.DIRECTORY_SEPARATOR.'*.php') ?: []);
+        $hasCorrect = in_array('BookingLifecycleEvent.php', $modelFiles, true);
+        $hasLegacy = in_array('BookingLifeCycleEvent.php', $modelFiles, true);
 
-        if (is_file($correct) && is_file($legacy)) {
+        if ($hasCorrect && $hasLegacy) {
             return self::warning('Both lifecycle model casing variants exist.', [
                 'Keep BookingLifecycleEvent.php and remove/stop using BookingLifeCycleEvent.php on Linux/Hostinger after confirming imports.',
             ]);
         }
 
-        if (! is_file($correct)) {
+        if (! $hasCorrect) {
             return self::warning('BookingLifecycleEvent.php is missing.', ['Batch 5 should add this correctly cased model.']);
         }
 
@@ -300,8 +319,8 @@ final class BcccFinalQaAudit
 
     private static function wayfinderHasBeenGenerated(string $basePath): array
     {
-        $routesPath = $basePath . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'routes';
-        $actionsPath = $basePath . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'actions';
+        $routesPath = $basePath.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'routes';
+        $actionsPath = $basePath.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'js'.DIRECTORY_SEPARATOR.'actions';
 
         if (is_dir($routesPath) && is_dir($actionsPath)) {
             return self::pass('Wayfinder generated routes/actions folders are present.');
@@ -315,8 +334,8 @@ final class BcccFinalQaAudit
 
     private static function buildManifestOrDevModeReady(string $basePath): array
     {
-        $manifest = $basePath . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'build' . DIRECTORY_SEPARATOR . 'manifest.json';
-        $viteConfig = $basePath . DIRECTORY_SEPARATOR . 'vite.config.ts';
+        $manifest = $basePath.DIRECTORY_SEPARATOR.'public'.DIRECTORY_SEPARATOR.'build'.DIRECTORY_SEPARATOR.'manifest.json';
+        $viteConfig = $basePath.DIRECTORY_SEPARATOR.'vite.config.ts';
 
         if (is_file($manifest)) {
             return self::pass('Production Vite manifest exists.');
@@ -335,7 +354,7 @@ final class BcccFinalQaAudit
         $hits = [];
 
         foreach ($folders as $folder) {
-            $root = $basePath . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $folder);
+            $root = $basePath.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $folder);
             if (! is_dir($root)) {
                 continue;
             }
@@ -344,7 +363,7 @@ final class BcccFinalQaAudit
                 $contents = (string) file_get_contents($file);
                 foreach ($needles as $needle) {
                     if (stripos($contents, $needle) !== false) {
-                        $hits[] = str_replace($basePath . DIRECTORY_SEPARATOR, '', $file) . ': ' . $needle;
+                        $hits[] = str_replace($basePath.DIRECTORY_SEPARATOR, '', $file).': '.$needle;
                     }
                 }
             }

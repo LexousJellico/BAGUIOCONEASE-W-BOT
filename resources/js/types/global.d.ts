@@ -7,6 +7,7 @@ declare global {
             appUrl: string;
             csrfToken: string;
         };
+        __bcccLiveRefreshInProgress?: boolean;
         Ziggy?: {
             location?: string;
             url?: string;

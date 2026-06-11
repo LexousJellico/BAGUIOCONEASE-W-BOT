@@ -122,7 +122,6 @@ class StoreBookingRequest extends FormRequest
             'booking_date_to' => ['required', 'date', 'after:booking_date_from'],
             'number_of_guests' => ['required', 'integer', 'min:1'],
 
-            'survey_email' => ['nullable', 'email', 'max:255'],
             'survey_proof_image' => ['nullable', 'image', 'max:5120'],
 
             'booking_status' => ['nullable', 'string', 'max:100'],
@@ -141,7 +140,6 @@ class StoreBookingRequest extends FormRequest
             'accuracy_acknowledged' => ['nullable', 'boolean'],
         ];
     }
-
 
     public function withValidator($validator): void
     {
@@ -236,5 +234,4 @@ class StoreBookingRequest extends FormRequest
                 });
         });
     }
-
 }

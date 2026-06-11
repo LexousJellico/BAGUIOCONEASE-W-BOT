@@ -22,7 +22,10 @@ export function notifyApp(payload: NoticePayload) {
     );
 }
 
-export function notifySuccess(message = 'Saved successfully.', title = 'Success') {
+export function notifySuccess(
+    message = 'Saved successfully.',
+    title = 'Success',
+) {
     notifyApp({
         type: 'success',
         title,
@@ -31,7 +34,10 @@ export function notifySuccess(message = 'Saved successfully.', title = 'Success'
     });
 }
 
-export function notifyError(message = 'Something went wrong.', title = 'Action failed') {
+export function notifyError(
+    message = 'Something went wrong.',
+    title = 'Action failed',
+) {
     notifyApp({
         type: 'error',
         title,
@@ -49,7 +55,10 @@ export function notifyInfo(message = 'Please wait.', title = 'Notice') {
     });
 }
 
-export function notifyLoading(message = 'Please wait while the system prepares the next view.', title = 'Loading') {
+export function notifyLoading(
+    message = 'Please wait while the system prepares the next view.',
+    title = 'Loading',
+) {
     notifyApp({
         type: 'loading',
         title,
@@ -93,7 +102,6 @@ function styleFor(type: NoticeType) {
 export default function AppNoticeCenter() {
     const [notice, setNotice] = useState<Required<NoticePayload> | null>(null);
     const timerRef = useRef<number | null>(null);
-    const loadingRef = useRef(false);
 
     const clearTimer = useCallback(() => {
         if (timerRef.current) {
@@ -107,67 +115,38 @@ export default function AppNoticeCenter() {
         setNotice(null);
     }
 
-    const show = useCallback((payload: NoticePayload) => {
-        clearTimer();
+    const show = useCallback(
+        (payload: NoticePayload) => {
+            clearTimer();
 
-        const type = payload.type ?? 'info';
+            const type = payload.type ?? 'info';
 
-        const nextNotice: Required<NoticePayload> = {
-            type,
-            title: payload.title || defaultTitle(type),
-            message: payload.message || '',
-            duration: payload.duration ?? (type === 'loading' ? 0 : 1600),
-        };
+            const nextNotice: Required<NoticePayload> = {
+                type,
+                title: payload.title || defaultTitle(type),
+                message: payload.message || '',
+                duration: payload.duration ?? (type === 'loading' ? 0 : 1600),
+            };
 
-        setNotice(nextNotice);
+            setNotice(nextNotice);
 
-        if (nextNotice.duration > 0) {
-            timerRef.current = window.setTimeout(() => {
-                setNotice(null);
-            }, nextNotice.duration);
-        }
-    }, [clearTimer]);
+            if (nextNotice.duration > 0) {
+                timerRef.current = window.setTimeout(() => {
+                    setNotice(null);
+                }, nextNotice.duration);
+            }
+        },
+        [clearTimer],
+    );
 
     useEffect(() => {
-        const removeStart = router.on('start', () => {
-            loadingRef.current = true;
-
-            window.setTimeout(() => {
-                if (!loadingRef.current) return;
-
-                show({
-                    type: 'loading',
-                    title: 'Preparing page',
-                    message: 'Please wait while the system loads the next view.',
-                    duration: 0,
-                });
-            }, 240);
-        });
-
-        const removeSuccess = router.on('success', () => {
-            loadingRef.current = false;
-
-            show({
-                type: 'success',
-                title: 'Ready',
-                message: 'Page loaded successfully.',
-                duration: 900,
-            });
-        });
-
         const removeError = router.on('error', () => {
-            loadingRef.current = false;
-
             show({
                 type: 'error',
                 title: 'Request failed',
                 message: 'Please check the page fields or try again.',
                 duration: 3800,
             });
-        });
-
-        const removeFinish = router.on('finish', () => {
-            loadingRef.current = false;
         });
 
         function handleCustomNotice(event: Event) {
@@ -179,10 +158,7 @@ export default function AppNoticeCenter() {
 
         return () => {
             clearTimer();
-            removeStart();
-            removeSuccess();
             removeError();
-            removeFinish();
             window.removeEventListener(NOTICE_EVENT, handleCustomNotice);
         };
     }, [clearTimer, show]);
@@ -194,19 +170,44 @@ export default function AppNoticeCenter() {
         <AnimatePresence>
             {notice ? (
                 <motion.div
-                    initial={{ opacity: 0, y: -18, scale: 0.96, filter: 'blur(8px)' }}
-                    animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
-                    exit={{ opacity: 0, y: -12, scale: 0.96, filter: 'blur(8px)' }}
+                    initial={{
+                        opacity: 0,
+                        y: -18,
+                        scale: 0.96,
+                        filter: 'blur(8px)',
+                    }}
+                    animate={{
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        filter: 'blur(0px)',
+                    }}
+                    exit={{
+                        opacity: 0,
+                        y: -12,
+                        scale: 0.96,
+                        filter: 'blur(8px)',
+                    }}
                     transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                    className="fixed right-4 top-4 z-[100000] w-[min(92vw,25rem)] overflow-hidden rounded-[1.2rem] border border-[#d9c7a6]/70 bg-white/94 p-4 text-[#21180d] shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#101419]/94 dark:text-white"
+                    className="fixed top-4 right-4 z-[100000] w-[min(92vw,25rem)] overflow-hidden rounded-[1.2rem] border border-[#d9c7a6]/70 bg-white/94 p-4 text-[#21180d] shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#101419]/94 dark:text-white"
                 >
                     <div className="flex gap-3">
-                        <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${styleFor(type)}`}>
-                            <Icon className={type === 'loading' ? 'h-5 w-5 animate-spin' : 'h-5 w-5'} />
+                        <span
+                            className={`grid h-10 w-10 shrink-0 place-items-center rounded-full ${styleFor(type)}`}
+                        >
+                            <Icon
+                                className={
+                                    type === 'loading'
+                                        ? 'h-5 w-5 animate-spin'
+                                        : 'h-5 w-5'
+                                }
+                            />
                         </span>
 
                         <div className="min-w-0 flex-1">
-                            <p className="text-sm font-bold tracking-[-0.02em]">{notice.title}</p>
+                            <p className="text-sm font-bold tracking-[-0.02em]">
+                                {notice.title}
+                            </p>
 
                             {notice.message ? (
                                 <p className="mt-1 text-sm leading-6 text-[#6e604c] dark:text-white/62">

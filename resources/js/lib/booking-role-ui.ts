@@ -87,7 +87,6 @@ export type BookingLike = {
     client_contact_number?: string | null;
     client_address?: string | null;
 
-    survey_email?: string | null;
     survey_proof_image_url?: string | null;
     survey_proof_image?: string | null;
     surveyProofImageUrl?: string | null;

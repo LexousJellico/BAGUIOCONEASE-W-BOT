@@ -123,7 +123,7 @@ function moreItems(settings?: PublicSiteSettings): MoreItem[] {
             icon: Sparkles,
         },
         {
-            label: '3D Tour Visit',
+            label: 'Virtual Tour Visit',
             href: '/virtual-tour',
             description:
                 'Coming soon: one guided 360-degree visit for all BCCC public areas.',
@@ -133,7 +133,7 @@ function moreItems(settings?: PublicSiteSettings): MoreItem[] {
             label: '3D Convention Layout',
             href: '/convention-layout',
             description:
-                'Coming soon: architectural 3D layout of BCCC areas and circulation.',
+                'Coming soon: architectural 3D layout of BCCC areas.',
             icon: LayoutDashboard,
         },
         {

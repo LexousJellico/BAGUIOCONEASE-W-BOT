@@ -1,8 +1,11 @@
+import HeroAvailabilityBar from '@/components/public/hero-availability-bar';
 import PublicMotionEffects from '@/components/public/public-motion-effects';
 import PublicScrollProgress from '@/components/public/public-scroll-progress';
 import FloatingQuickLinks from '@/components/public/floating-quick-links';
 import PublicFooter from '@/components/public/public-footer';
 import PublicHeader from '@/components/public/public-header';
+import { fallbackVenues } from '@/lib/public-availability';
+import type { VenueOption } from '@/types/public-content';
 import { usePage } from '@inertiajs/react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
@@ -95,8 +98,15 @@ function FloatingQuickLinksPortal({ siteSettings }: { siteSettings?: SiteSetting
 }
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
-    const page = usePage<{ siteSettings?: SiteSettings }>();
+    const page = usePage<{
+        siteSettings?: SiteSettings;
+        venueOptions?: VenueOption[];
+    }>();
     const siteSettings = page.props.siteSettings;
+    const venueOptions =
+        page.props.venueOptions && page.props.venueOptions.length > 0
+            ? page.props.venueOptions
+            : fallbackVenues;
 
     return (
         <div className="bccc-public-shell min-h-screen bg-[#f8f5ef] text-[#201a12] antialiased dark:bg-[#0d0f12] dark:text-white">
@@ -110,6 +120,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
             </main>
 
             <PublicFooter />
+            <HeroAvailabilityBar venueOptions={venueOptions} />
             <FloatingQuickLinksPortal siteSettings={siteSettings} />
         </div>
     );

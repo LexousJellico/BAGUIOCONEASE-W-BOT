@@ -100,7 +100,6 @@ export interface Booking {
     client_name: string;
     client_contact_number: string;
     client_email: string;
-    survey_email?: string | null;
     survey_proof_image_url?: string | null;
     client_address: string;
     type_of_event: string;

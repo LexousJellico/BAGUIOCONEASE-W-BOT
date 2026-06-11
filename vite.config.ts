@@ -37,7 +37,10 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks(id) {
-                    if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+                    if (
+                        id.includes('node_modules/react') ||
+                        id.includes('node_modules/react-dom')
+                    ) {
                         return 'vendor-react';
                     }
 
@@ -61,22 +64,6 @@ export default defineConfig({
                         return 'vendor-charts';
                     }
 
-                    if (id.includes('/resources/js/components/public/')) {
-                        return 'public-components';
-                    }
-
-                    if (id.includes('/resources/js/components/bookings/')) {
-                        return 'booking-components';
-                    }
-
-                    if (id.includes('/resources/js/components/admin-resource/')) {
-                        return 'admin-resource-components';
-                    }
-
-                    if (id.includes('/resources/js/components/ui/')) {
-                        return 'ui-components';
-                    }
-                    
                     return undefined;
                 },
             },

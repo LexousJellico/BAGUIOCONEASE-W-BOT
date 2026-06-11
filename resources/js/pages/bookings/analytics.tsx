@@ -274,9 +274,7 @@ function AnalyticsLinePanel({
             : paddingX +
               (index * (width - paddingX * 2)) / Math.max(count - 1, 1);
     const yFor = (value: number) =>
-        height -
-        paddingY -
-        (value / max) * Math.max(height - paddingY * 2, 1);
+        height - paddingY - (value / max) * Math.max(height - paddingY * 2, 1);
 
     function toggleSeries(key: string) {
         if (!onActiveChange || !active) return;
@@ -316,7 +314,9 @@ function AnalyticsLinePanel({
                             type="button"
                             onClick={() => toggleSeries(item.key)}
                             className={selected ? 'is-active' : ''}
-                            style={{ '--line-color': item.color } as CSSProperties}
+                            style={
+                                { '--line-color': item.color } as CSSProperties
+                            }
                         >
                             <span />
                             {item.label}
@@ -325,11 +325,17 @@ function AnalyticsLinePanel({
                 })}
             </div>
 
-            {visibleSeries.length > 0 && visibleSeries.some((item) => item.points.length > 0) ? (
+            {visibleSeries.length > 0 &&
+            visibleSeries.some((item) => item.points.length > 0) ? (
                 <div className="analytics-line-chart-wrap">
-                    <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={title}>
+                    <svg
+                        viewBox={`0 0 ${width} ${height}`}
+                        role="img"
+                        aria-label={title}
+                    >
                         {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
-                            const y = paddingY + ratio * (height - paddingY * 2);
+                            const y =
+                                paddingY + ratio * (height - paddingY * 2);
                             return (
                                 <line
                                     key={ratio}
@@ -343,26 +349,58 @@ function AnalyticsLinePanel({
                         })}
 
                         {visibleSeries.map((item) => {
-                            const count = Math.max(item.points.length, pointCount);
+                            const count = Math.max(
+                                item.points.length,
+                                pointCount,
+                            );
                             const points = item.points.map((point, index) => ({
                                 ...point,
                                 x: xFor(index, count),
                                 y: yFor(point.value),
                             }));
-                            const path = points.map((point) => `${point.x},${point.y}`).join(' ');
+                            const path = points
+                                .map((point) => `${point.x},${point.y}`)
+                                .join(' ');
 
                             return (
-                                <g key={item.key} className="analytics-line-series">
-                                    <polyline points={path} fill="none" stroke={item.color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                                <g
+                                    key={item.key}
+                                    className="analytics-line-series"
+                                >
+                                    <polyline
+                                        points={path}
+                                        fill="none"
+                                        stroke={item.color}
+                                        strokeWidth="4"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
                                     {points.map((point, index) => (
-                                        <g key={`${item.key}-${point.label}-${index}`} className="analytics-line-point">
-                                            <circle cx={point.x} cy={point.y} r="5.5" fill={item.color}>
+                                        <g
+                                            key={`${item.key}-${point.label}-${index}`}
+                                            className="analytics-line-point"
+                                        >
+                                            <circle
+                                                cx={point.x}
+                                                cy={point.y}
+                                                r="5.5"
+                                                fill={item.color}
+                                            >
                                                 <title>
-                                                    {item.label}: {point.detail ?? compactNumber(point.value)}
+                                                    {item.label}:{' '}
+                                                    {point.detail ??
+                                                        compactNumber(
+                                                            point.value,
+                                                        )}
                                                 </title>
                                             </circle>
-                                            <text x={point.x} y={Math.max(16, point.y - 12)} textAnchor="middle">
-                                                {point.detail ?? compactNumber(point.value)}
+                                            <text
+                                                x={point.x}
+                                                y={Math.max(16, point.y - 12)}
+                                                textAnchor="middle"
+                                            >
+                                                {point.detail ??
+                                                    compactNumber(point.value)}
                                             </text>
                                         </g>
                                     ))}
@@ -371,9 +409,18 @@ function AnalyticsLinePanel({
                         })}
 
                         {visibleSeries[0]?.points.map((point, index) => {
-                            const count = Math.max(visibleSeries[0].points.length, pointCount);
+                            const count = Math.max(
+                                visibleSeries[0].points.length,
+                                pointCount,
+                            );
                             return (
-                                <text key={`${point.label}-${index}`} x={xFor(index, count)} y={height - 8} textAnchor="middle" className="analytics-line-axis-label">
+                                <text
+                                    key={`${point.label}-${index}`}
+                                    x={xFor(index, count)}
+                                    y={height - 8}
+                                    textAnchor="middle"
+                                    className="analytics-line-axis-label"
+                                >
                                     {point.label.replace(/\s+\d{4}$/u, '')}
                                 </text>
                             );
@@ -427,7 +474,9 @@ function MovementMetricCard({
     const Icon = improved ? ArrowUpRight : ArrowDownRight;
 
     return (
-        <article className={`analytics-monthly-card analytics-movement-card ${improved ? 'is-up' : 'is-down'}`}>
+        <article
+            className={`analytics-monthly-card analytics-movement-card ${improved ? 'is-up' : 'is-down'}`}
+        >
             <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <p className="backend-booking-label">Monthly Rate</p>
@@ -437,7 +486,10 @@ function MovementMetricCard({
             </div>
             <div className="analytics-movement-split">
                 <span>{improved ? 'Increase' : 'Decrease'}</span>
-                <strong>{deltaRevenue >= 0 ? '+' : '-'}{money(Math.abs(deltaRevenue))}</strong>
+                <strong>
+                    {deltaRevenue >= 0 ? '+' : '-'}
+                    {money(Math.abs(deltaRevenue))}
+                </strong>
             </div>
         </article>
     );
@@ -516,55 +568,6 @@ function MiniBar({
     );
 }
 
-function RevenueBar({
-    label,
-    bookings,
-    guests,
-    revenue,
-    maxBookings,
-    maxRevenue,
-}: {
-    label: string;
-    bookings: number;
-    guests: number;
-    revenue: number;
-    maxBookings: number;
-    maxRevenue: number;
-}) {
-    const bookingWidth = Math.max(
-        4,
-        Math.min(100, (bookings / Math.max(maxBookings, 1)) * 100),
-    );
-    const revenueWidth = Math.max(
-        4,
-        Math.min(100, (revenue / Math.max(maxRevenue, 1)) * 100),
-    );
-
-    return (
-        <article className="analytics-trend-row">
-            <div>
-                <p>{label}</p>
-                <span>
-                    {bookings} booking{bookings === 1 ? '' : 's'} · {guests}{' '}
-                    guest
-                    {guests === 1 ? '' : 's'}
-                </span>
-            </div>
-
-            <div className="analytics-trend-bars">
-                <div>
-                    <span style={{ width: `${bookingWidth}%` }} />
-                </div>
-                <div>
-                    <span style={{ width: `${revenueWidth}%` }} />
-                </div>
-            </div>
-
-            <strong>{money(revenue)}</strong>
-        </article>
-    );
-}
-
 function EmptyState({
     icon: Icon,
     title,
@@ -604,10 +607,12 @@ export default function BookingAnalytics({
         ? `${analyticsPath}/print?${query}`
         : `${analyticsPath}/print`;
 
-    const [movementLines, setMovementLines] = useState<Record<string, boolean>>({
-        bookings: true,
-        guests: true,
-    });
+    const [movementLines, setMovementLines] = useState<Record<string, boolean>>(
+        {
+            bookings: true,
+            guests: true,
+        },
+    );
     const [financeLines, setFinanceLines] = useState<Record<string, boolean>>({
         revenue: true,
         unpaid: true,
@@ -737,8 +742,10 @@ export default function BookingAnalytics({
         numberValue(summary.automation_events_7d),
         numberValue(summary.auto_declined_7d),
         numberValue(summary.auto_deleted_7d),
-        numberValue(summary.due_24h_soon) + numberValue(summary.due_24h_overdue),
-        numberValue(summary.due_48h_soon) + numberValue(summary.due_48h_overdue),
+        numberValue(summary.due_24h_soon) +
+            numberValue(summary.due_24h_overdue),
+        numberValue(summary.due_48h_soon) +
+            numberValue(summary.due_48h_overdue),
     );
 
     function applyFilters(formData: FormData) {
@@ -1074,7 +1081,9 @@ export default function BookingAnalytics({
                         <div className="grid gap-3 p-5">
                             <MiniBar
                                 label="Automation events"
-                                value={numberValue(summary.automation_events_7d)}
+                                value={numberValue(
+                                    summary.automation_events_7d,
+                                )}
                                 max={maxAutomation}
                             />
                             <MiniBar

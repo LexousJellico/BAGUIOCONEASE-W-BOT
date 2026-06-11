@@ -1,6 +1,6 @@
 import { BcccFullScreenLoader } from '@/components/shared/bccc-logo-loader';
 import { AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type StartupLoadingOverlayProps = {
     minimumMs?: number;
@@ -12,6 +12,7 @@ export default function StartupLoadingOverlay({
     logoSrc = '/marketing/images/logo/bccc-seal.png',
 }: StartupLoadingOverlayProps) {
     const [open, setOpen] = useState(true);
+    const hideTimerRef = useRef<number | null>(null);
 
     useEffect(() => {
         const startedAt = performance.now();
@@ -20,7 +21,7 @@ export default function StartupLoadingOverlay({
             const elapsed = performance.now() - startedAt;
             const remaining = Math.max(minimumMs - elapsed, 0);
 
-            window.setTimeout(() => {
+            hideTimerRef.current = window.setTimeout(() => {
                 setOpen(false);
                 document.documentElement.dataset.bcccReady = 'true';
             }, remaining);
@@ -30,13 +31,22 @@ export default function StartupLoadingOverlay({
          * This waits until the browser has painted the Inertia page behind the overlay.
          * That is why you will see a blurred version of the actual layout behind the loader.
          */
+        let frameTwo: number | null = null;
         const frameOne = window.requestAnimationFrame(() => {
-            const frameTwo = window.requestAnimationFrame(finish);
-
-            return () => window.cancelAnimationFrame(frameTwo);
+            frameTwo = window.requestAnimationFrame(finish);
         });
 
-        return () => window.cancelAnimationFrame(frameOne);
+        return () => {
+            window.cancelAnimationFrame(frameOne);
+
+            if (frameTwo !== null) {
+                window.cancelAnimationFrame(frameTwo);
+            }
+
+            if (hideTimerRef.current !== null) {
+                window.clearTimeout(hideTimerRef.current);
+            }
+        };
     }, [minimumMs]);
 
     return (

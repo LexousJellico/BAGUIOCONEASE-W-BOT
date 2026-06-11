@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Booking;
+use App\Models\MiceRecord;
 use App\Support\WorkspaceAccess;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Models\Booking;
-use App\Models\MiceRecord;
 
 class StoreBookingPaymentRequest extends FormRequest
 {
@@ -141,7 +141,11 @@ class StoreBookingPaymentRequest extends FormRequest
             $referenceGateways = ['paypal', 'gcash', 'bank', 'card'];
             $proofGateways = ['paypal', 'gcash', 'bank'];
 
-            if (! $this->filled('payer_name') && ! in_array($gateway, ['manual', 'cash'], true)) {
+            if (
+                ! $this->filled('payer_name')
+                && ! in_array($gateway, ['manual', 'cash'], true)
+                && ! in_array($method, ['manual', 'cash'], true)
+            ) {
                 $validator->errors()->add('payer_name', 'Payer name is required for online payment proof.');
             }
 
@@ -160,19 +164,19 @@ class StoreBookingPaymentRequest extends FormRequest
                 $booking = $this->route('booking');
 
                 if (! $canManage && $booking instanceof Booking) {
-    $hasMiceReport = MiceRecord::query()
-        ->where('booking_id', $booking->id)
-        ->where('status', 'submitted')
-        ->whereNotNull('submitted_at')
-        ->exists();
+                    $hasMiceReport = MiceRecord::query()
+                        ->where('booking_id', $booking->id)
+                        ->where('status', 'submitted')
+                        ->whereNotNull('submitted_at')
+                        ->exists();
 
-    if (! $hasMiceReport) {
-        $validator->errors()->add(
-            'payment_gateway',
-            'Please complete the required MICE report before submitting payment proof.',
-        );
-    }
-}
+                    if (! $hasMiceReport) {
+                        $validator->errors()->add(
+                            'payment_gateway',
+                            'Please complete the required MICE report before submitting payment proof.',
+                        );
+                    }
+                }
 
                 return;
             }

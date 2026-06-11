@@ -1,8 +1,29 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(RefreshDatabase::class);
+
+function validProfileUpdatePayload(User $user, array $overrides = []): array
+{
+    return array_merge([
+        'first_name' => 'Test',
+        'middle_name' => null,
+        'last_name' => 'User',
+        'email' => $user->email,
+        'phone_number' => '09171234567',
+        'organization_name' => null,
+        'organization_type' => null,
+        'position_title' => null,
+        'address_line1' => null,
+        'barangay' => null,
+        'city_municipality' => 'Baguio City',
+        'province' => 'Benguet',
+        'postal_code' => '2600',
+        'country' => 'Philippines',
+    ], $overrides);
+}
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
@@ -19,10 +40,9 @@ test('profile information can be updated', function () {
 
     $response = $this
         ->actingAs($user)
-        ->patch(route('profile.update'), [
-            'name' => 'Test User',
+        ->patch(route('profile.update'), validProfileUpdatePayload($user, [
             'email' => 'test@example.com',
-        ]);
+        ]));
 
     $response
         ->assertSessionHasNoErrors()
@@ -30,7 +50,8 @@ test('profile information can be updated', function () {
 
     $user->refresh();
 
-    expect($user->name)->toBe('Test User');
+    expect($user->first_name)->toBe('Test');
+    expect($user->last_name)->toBe('User');
     expect($user->email)->toBe('test@example.com');
     expect($user->email_verified_at)->toBeNull();
 });
@@ -40,10 +61,7 @@ test('email verification status is unchanged when the email address is unchanged
 
     $response = $this
         ->actingAs($user)
-        ->patch(route('profile.update'), [
-            'name' => 'Test User',
-            'email' => $user->email,
-        ]);
+        ->patch(route('profile.update'), validProfileUpdatePayload($user));
 
     $response
         ->assertSessionHasNoErrors()

@@ -40,7 +40,6 @@ trait NormalizesAndValidatesBookingRequest
             $payload['client_contact_number'] = preg_replace('/\D+/', '', $payload['client_contact_number']);
         }
 
-
         if (array_key_exists('organization_type', $payload)) {
             $organizationType = strtolower(trim((string) ($payload['organization_type'] ?? '')));
             $payload['organization_type'] = in_array($organizationType, ['government', 'govt', 'government agency', 'government office', 'public'], true)
@@ -48,11 +47,9 @@ trait NormalizesAndValidatesBookingRequest
                 : 'Private';
         }
 
-        foreach (['client_email', 'survey_email'] as $field) {
-            if (array_key_exists($field, $payload) && is_string($payload[$field])) {
-                $value = strtolower(trim($payload[$field]));
-                $payload[$field] = $value !== '' ? $value : null;
-            }
+        if (array_key_exists('client_email', $payload) && is_string($payload['client_email'])) {
+            $value = strtolower(trim($payload['client_email']));
+            $payload['client_email'] = $value !== '' ? $value : null;
         }
 
         foreach (['number_of_guests', 'service_id', 'service_type_id'] as $field) {
@@ -83,7 +80,7 @@ trait NormalizesAndValidatesBookingRequest
 
         if (isset($payload['extra_schedules']) && is_array($payload['extra_schedules'])) {
             foreach ($payload['extra_schedules'] as $index => $row) {
-                if (!is_array($row)) {
+                if (! is_array($row)) {
                     continue;
                 }
 
@@ -107,12 +104,12 @@ trait NormalizesAndValidatesBookingRequest
             $payload['public_calendar_title'] = $payload['type_of_event'] ?? null;
         }
 
-        if (!$forUpdate && $this->isClientUser() && !$this->isStaffUser()) {
+        if (! $forUpdate && $this->isClientUser() && ! $this->isStaffUser()) {
             $payload['booking_status'] = 'pending';
             $payload['payment_status'] = 'unpaid';
         }
 
-        if ($forUpdate && $booking && $this->isClientUser() && !$this->isStaffUser()) {
+        if ($forUpdate && $booking && $this->isClientUser() && ! $this->isStaffUser()) {
             $payload['booking_status'] = $booking->booking_status;
             $payload['payment_status'] = $booking->payment_status;
         }
@@ -136,7 +133,6 @@ trait NormalizesAndValidatesBookingRequest
             'client_contact_number' => ['required', 'regex:/^\d{11}$/'],
             'client_email' => ['required', 'string', 'email', 'max:255'],
 
-            'survey_email' => ['nullable', 'string', 'email', 'max:255'],
             'survey_proof_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
 
             'client_address' => ['required', 'string', 'max:500'],
@@ -179,12 +175,13 @@ trait NormalizesAndValidatesBookingRequest
         $validator->after(function ($validator) use ($booking, $forUpdate) {
             $isAdmin = $this->isAdminUser();
             $isStaff = $this->isStaffUser();
-            $isClientOnly = $this->isClientUser() && !$isStaff;
+            $isClientOnly = $this->isClientUser() && ! $isStaff;
 
             $service = $this->selectedService();
 
-            if (!$service) {
+            if (! $service) {
                 $validator->errors()->add('service_id', 'Please select a valid Service / rental option.');
+
                 return;
             }
 
@@ -202,20 +199,21 @@ trait NormalizesAndValidatesBookingRequest
 
             if ($isClientOnly && $forUpdate && $booking) {
                 $this->validateClientUpdateRestrictions($validator, $booking);
+
                 return;
             }
 
-            if ($isClientOnly && !$forUpdate) {
+            if ($isClientOnly && ! $forUpdate) {
                 if ($this->input('booking_status') !== 'pending') {
                     $validator->errors()->add('booking_status', 'Client-created bookings must start as Pending.');
                 }
 
-                if (!in_array((string) $this->input('payment_status'), ['', 'unpaid'], true)) {
+                if (! in_array((string) $this->input('payment_status'), ['', 'unpaid'], true)) {
                     $validator->errors()->add('payment_status', 'Payment status is managed by the system.');
                 }
             }
 
-            if ($this->boolean('is_public_calendar_visible') && !$this->filled('public_calendar_title')) {
+            if ($this->boolean('is_public_calendar_visible') && ! $this->filled('public_calendar_title')) {
                 $validator->errors()->add(
                     'public_calendar_title',
                     'Please enter the public title that should appear on the calendar.',
@@ -253,27 +251,29 @@ trait NormalizesAndValidatesBookingRequest
 
             if (is_array($extras)) {
                 foreach ($extras as $index => $row) {
-                    if (!is_array($row)) {
+                    if (! is_array($row)) {
                         continue;
                     }
 
                     $fromRaw = $row['from'] ?? null;
                     $toRaw = $row['to'] ?? null;
 
-                    if (!$fromRaw && !$toRaw) {
+                    if (! $fromRaw && ! $toRaw) {
                         continue;
                     }
 
                     $from = $this->parseDateTime($fromRaw);
                     $to = $this->parseDateTime($toRaw);
 
-                    if (!$from || !$to) {
+                    if (! $from || ! $to) {
                         $validator->errors()->add("extra_schedules.$index.from", 'Invalid date/time for this schedule row.');
+
                         continue;
                     }
 
                     if ($to->lessThanOrEqualTo($from)) {
                         $validator->errors()->add("extra_schedules.$index.to", 'End must be after start.');
+
                         continue;
                     }
 
@@ -324,7 +324,7 @@ trait NormalizesAndValidatesBookingRequest
             if (in_array($status, ['active', 'confirmed', 'approved', 'completed'], true)) {
                 $items = $this->input('items', []);
 
-                if (!is_array($items) || count($items) < 1) {
+                if (! is_array($items) || count($items) < 1) {
                     $validator->errors()->add(
                         'items',
                         'A booking cannot be confirmed, activated, approved, or completed without at least one selected service.',
@@ -340,7 +340,7 @@ trait NormalizesAndValidatesBookingRequest
 
         if ($serviceId < 1 && isset($payload['items']) && is_array($payload['items'])) {
             foreach ($payload['items'] as $row) {
-                if (is_array($row) && !empty($row['service_id'])) {
+                if (is_array($row) && ! empty($row['service_id'])) {
                     $serviceId = (int) $row['service_id'];
                     break;
                 }
@@ -361,7 +361,7 @@ trait NormalizesAndValidatesBookingRequest
             $seen = [];
 
             foreach ($payload['items'] as $row) {
-                if (!is_array($row)) {
+                if (! is_array($row)) {
                     continue;
                 }
 
@@ -404,20 +404,22 @@ trait NormalizesAndValidatesBookingRequest
     {
         $items = $this->input('items', []);
 
-        if (!is_array($items) || count($items) < 1) {
+        if (! is_array($items) || count($items) < 1) {
             $validator->errors()->add('items', 'Please select at least one booking service.');
+
             return;
         }
 
         foreach ($items as $index => $row) {
-            if (!is_array($row)) {
+            if (! is_array($row)) {
                 $validator->errors()->add("items.$index", 'Invalid service item.');
+
                 continue;
             }
 
             $serviceId = (int) ($row['service_id'] ?? 0);
 
-            if ($serviceId < 1 || !Service::query()->whereKey($serviceId)->exists()) {
+            if ($serviceId < 1 || ! Service::query()->whereKey($serviceId)->exists()) {
                 $validator->errors()->add("items.$index.service_id", 'Selected service item does not exist.');
             }
         }
@@ -505,7 +507,7 @@ trait NormalizesAndValidatesBookingRequest
 
         $endOk = ($to->minute === 0) || ($to->hour === 23 && $to->minute === 59);
 
-        if (!$endOk) {
+        if (! $endOk) {
             return 'End time must be aligned to block hours or exactly 11:59 PM for EVE.';
         }
 
@@ -519,13 +521,25 @@ trait NormalizesAndValidatesBookingRequest
             return $isAdmin ? null : '11:59 PM to 6:00 AM is admin-only. Please contact admin for this booking.';
         }
 
-        if ($sameDay && $fromTime === '06:00' && $toTime === '12:00') return null;
-        if ($sameDay && $fromTime === '12:00' && $toTime === '18:00') return null;
-        if ($sameDay && $fromTime === '06:00' && $toTime === '18:00') return null;
+        if ($sameDay && $fromTime === '06:00' && $toTime === '12:00') {
+            return null;
+        }
+        if ($sameDay && $fromTime === '12:00' && $toTime === '18:00') {
+            return null;
+        }
+        if ($sameDay && $fromTime === '06:00' && $toTime === '18:00') {
+            return null;
+        }
 
-        if ($sameDay && $fromTime === '18:00' && $toTime === '23:59') return null;
-        if ($sameDay && $fromTime === '12:00' && $toTime === '23:59') return null;
-        if ($sameDay && $fromTime === '06:00' && $toTime === '23:59') return null;
+        if ($sameDay && $fromTime === '18:00' && $toTime === '23:59') {
+            return null;
+        }
+        if ($sameDay && $fromTime === '12:00' && $toTime === '23:59') {
+            return null;
+        }
+        if ($sameDay && $fromTime === '06:00' && $toTime === '23:59') {
+            return null;
+        }
 
         if ($nextDay && in_array($fromTime, ['06:00', '12:00', '18:00'], true) && $toTime === '00:00') {
             return null;
@@ -567,14 +581,14 @@ trait NormalizesAndValidatesBookingRequest
 
     protected function normalizeSchedulePair(?string $fromRaw, ?string $toRaw): array
     {
-        if (!$fromRaw || !$toRaw) {
+        if (! $fromRaw || ! $toRaw) {
             return [$fromRaw, $toRaw];
         }
 
         $from = $this->parseDateTime($fromRaw);
         $to = $this->parseDateTime($toRaw);
 
-        if (!$from || !$to) {
+        if (! $from || ! $to) {
             return [$fromRaw, $toRaw];
         }
 
@@ -605,7 +619,7 @@ trait NormalizesAndValidatesBookingRequest
             return Carbon::instance($value);
         }
 
-        if (!$value) {
+        if (! $value) {
             return null;
         }
 
@@ -677,7 +691,7 @@ trait NormalizesAndValidatesBookingRequest
     {
         $user = $this->user();
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 

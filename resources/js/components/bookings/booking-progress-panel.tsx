@@ -1,4 +1,5 @@
 import BookingStatusBadge from '@/components/bookings/booking-status-badge';
+import type { LucideIcon } from 'lucide-react';
 import {
     CalendarDays,
     CheckCircle2,
@@ -11,7 +12,6 @@ import {
     ShieldAlert,
     UserCircle2,
 } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 
 type BookingItem = {
     service_id?: number | null;
@@ -62,7 +62,6 @@ type BookingPayload = {
     client_name?: string | null;
     client_contact_number?: string | null;
     client_email?: string | null;
-    survey_email?: string | null;
     survey_proof_image_url?: string | null;
     client_address?: string | null;
     head_of_organization?: string | null;
@@ -139,11 +138,15 @@ function formatDateTime(value?: string | null): string {
 }
 
 function paymentIsConfirmed(payment: BookingPayment): boolean {
-    return ['confirmed', 'paid', 'approved'].includes(String(payment.status ?? '').toLowerCase());
+    return ['confirmed', 'paid', 'approved'].includes(
+        String(payment.status ?? '').toLowerCase(),
+    );
 }
 
 function latestPayment(payments?: BookingPayment[]): BookingPayment | null {
-    const list = [...(payments ?? [])].filter((payment) => payment.created_at || payment.paid_at);
+    const list = [...(payments ?? [])].filter(
+        (payment) => payment.created_at || payment.paid_at,
+    );
 
     list.sort((a, b) => {
         const aTime = new Date(a.paid_at ?? a.created_at ?? '').getTime();
@@ -156,14 +159,25 @@ function latestPayment(payments?: BookingPayment[]): BookingPayment | null {
 }
 
 function stepsForBooking(booking: BookingPayload): ProgressStep[] {
-    const bookingStatus = String(booking.booking_status ?? 'pending').toLowerCase();
-    const paymentStatus = String(booking.payment_status ?? 'unpaid').toLowerCase();
-    const hasSchedule = Boolean(booking.booking_date_from && booking.booking_date_to);
+    const bookingStatus = String(
+        booking.booking_status ?? 'pending',
+    ).toLowerCase();
+    const paymentStatus = String(
+        booking.payment_status ?? 'unpaid',
+    ).toLowerCase();
+    const hasSchedule = Boolean(
+        booking.booking_date_from && booking.booking_date_to,
+    );
     const hasProof = Boolean(booking.survey_proof_image_url);
     const payments = booking.payments ?? [];
     const hasPaymentSubmission = payments.length > 0;
     const hasConfirmedPayment = payments.some(paymentIsConfirmed);
-    const approvedStatuses = new Set(['active', 'approved', 'confirmed', 'completed']);
+    const approvedStatuses = new Set([
+        'active',
+        'approved',
+        'confirmed',
+        'completed',
+    ]);
     const completeStatuses = new Set(['completed', 'closed', 'done']);
 
     return [
@@ -210,7 +224,10 @@ function stepsForBooking(booking: BookingPayload): ProgressStep[] {
                 hasConfirmedPayment || paymentStatus === 'paid'
                     ? 'At least one payment is already confirmed.'
                     : 'Payment confirmation is still pending.',
-            complete: hasConfirmedPayment || paymentStatus === 'paid' || paymentStatus === 'partial',
+            complete:
+                hasConfirmedPayment ||
+                paymentStatus === 'paid' ||
+                paymentStatus === 'partial',
             icon: CreditCard,
         },
         {
@@ -246,11 +263,20 @@ function lifecycleTone(event: BookingLifecycleEvent): string {
         return 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-100';
     }
 
-    if (toStatus === 'confirmed' || toStatus === 'active' || toStatus === 'completed' || toStatus === 'approved') {
+    if (
+        toStatus === 'confirmed' ||
+        toStatus === 'active' ||
+        toStatus === 'completed' ||
+        toStatus === 'approved'
+    ) {
         return 'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-100';
     }
 
-    if (toStatus === 'declined' || toStatus === 'cancelled' || toStatus === 'canceled') {
+    if (
+        toStatus === 'declined' ||
+        toStatus === 'cancelled' ||
+        toStatus === 'canceled'
+    ) {
         return 'border-rose-200 bg-rose-50 text-rose-900 dark:border-rose-400/20 dark:bg-rose-400/10 dark:text-rose-100';
     }
 
@@ -277,11 +303,19 @@ function lifecycleIcon(event: BookingLifecycleEvent): LucideIcon {
         return CheckCircle2;
     }
 
-    if (toStatus === 'active' || toStatus === 'approved' || toStatus === 'confirmed') {
+    if (
+        toStatus === 'active' ||
+        toStatus === 'approved' ||
+        toStatus === 'confirmed'
+    ) {
         return Clock3;
     }
 
-    if (toStatus === 'declined' || toStatus === 'cancelled' || toStatus === 'deleted') {
+    if (
+        toStatus === 'declined' ||
+        toStatus === 'cancelled' ||
+        toStatus === 'deleted'
+    ) {
         return Flag;
     }
 
@@ -306,8 +340,10 @@ function fallbackTimelineEntries(booking: BookingPayload): TimelineEntry[] {
         entries.push({
             key: 'proof',
             title: 'MICE/report proof available',
-            when: booking.updated_at ? formatDateTime(booking.updated_at) : 'Attached',
-            note: booking.survey_email ? `Report email: ${booking.survey_email}` : 'MICE/report proof image is attached.',
+            when: booking.updated_at
+                ? formatDateTime(booking.updated_at)
+                : 'Attached',
+            note: 'MICE/report proof image is attached.',
             tone: 'border-sky-200 bg-sky-50 text-sky-900 dark:border-sky-400/20 dark:bg-sky-400/10 dark:text-sky-100',
             icon: FileImage,
         });
@@ -361,16 +397,23 @@ function buildAuditEntries(booking: BookingPayload): TimelineEntry[] {
         const changes: string[] = [];
 
         if (event.from_status || event.to_status) {
-            changes.push(`Status: ${event.from_status ?? '—'} → ${event.to_status ?? '—'}`);
+            changes.push(
+                `Status: ${event.from_status ?? '—'} → ${event.to_status ?? '—'}`,
+            );
         }
 
         if (event.from_payment_status || event.to_payment_status) {
-            changes.push(`Payment: ${event.from_payment_status ?? '—'} → ${event.to_payment_status ?? '—'}`);
+            changes.push(
+                `Payment: ${event.from_payment_status ?? '—'} → ${event.to_payment_status ?? '—'}`,
+            );
         }
 
-        const actorName = event.actor?.name || event.actor?.email || 'System automation';
+        const actorName =
+            event.actor?.name || event.actor?.email || 'System automation';
         const reason = event.reason ? `${event.reason}` : '';
-        const note = [reason, changes.join(' • '), `Actor: ${actorName}`].filter(Boolean).join(' • ');
+        const note = [reason, changes.join(' • '), `Actor: ${actorName}`]
+            .filter(Boolean)
+            .join(' • ');
 
         return {
             key: `lifecycle-${event.id}`,
@@ -401,19 +444,40 @@ function FinancialCard({
                     : 'border-[#d9c7a6]/70 bg-[#f7f0e3]/78 text-[#21180d] dark:border-white/10 dark:bg-white/7 dark:text-white',
             )}
         >
-            <p className={cx('text-[10px] font-bold uppercase tracking-[0.2em]', emphasis ? 'opacity-70' : 'text-[#9d7b3d] dark:text-[#f1d89b]')}>
+            <p
+                className={cx(
+                    'text-[10px] font-bold tracking-[0.2em] uppercase',
+                    emphasis
+                        ? 'opacity-70'
+                        : 'text-[#9d7b3d] dark:text-[#f1d89b]',
+                )}
+            >
                 {label}
             </p>
-            <p className="mt-2 text-xl font-semibold tracking-[-0.04em]">₱ {value}</p>
+            <p className="mt-2 text-xl font-semibold tracking-[-0.04em]">
+                ₱ {value}
+            </p>
         </div>
     );
 }
 
-export default function BookingProgressPanel({ booking, compact = false }: Props) {
+export default function BookingProgressPanel({
+    booking,
+    compact = false,
+}: Props) {
     const itemsTotal = Number(booking.totals?.items_total ?? 0);
-    const submittedTotal = Number(booking.totals?.submitted_payments_total ?? 0);
-    const confirmedTotal = Number(booking.totals?.confirmed_payments_total ?? 0);
-    const outstanding = Math.max(Number(booking.totals?.remaining_balance ?? itemsTotal - confirmedTotal), 0);
+    const submittedTotal = Number(
+        booking.totals?.submitted_payments_total ?? 0,
+    );
+    const confirmedTotal = Number(
+        booking.totals?.confirmed_payments_total ?? 0,
+    );
+    const outstanding = Math.max(
+        Number(
+            booking.totals?.remaining_balance ?? itemsTotal - confirmedTotal,
+        ),
+        0,
+    );
 
     const steps = stepsForBooking(booking);
     const completedSteps = steps.filter((step) => step.complete).length;
@@ -422,18 +486,25 @@ export default function BookingProgressPanel({ booking, compact = false }: Props
     const latest = latestPayment(booking.payments);
 
     return (
-        <section className={cx('grid gap-4', compact ? 'lg:grid-cols-1' : 'xl:grid-cols-[1fr_0.82fr]')}>
+        <section
+            className={cx(
+                'grid gap-4',
+                compact ? 'lg:grid-cols-1' : 'xl:grid-cols-[1fr_0.82fr]',
+            )}
+        >
             <div className="overflow-hidden rounded-[1.65rem] border border-[#d9c7a6]/70 bg-white/86 p-4 shadow-[0_18px_54px_rgba(47,37,23,0.09)] backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.055]">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#9d7b3d] dark:text-[#f1d89b]">
+                        <p className="text-[10px] font-bold tracking-[0.24em] text-[#9d7b3d] uppercase dark:text-[#f1d89b]">
                             Booking Progress
                         </p>
                         <h3 className="mt-2 text-2xl font-semibold tracking-[-0.045em] text-[#21180d] dark:text-white">
                             Operational completion status
                         </h3>
                         <p className="mt-2 text-sm leading-7 text-[#6e604c] dark:text-white/58">
-                            This panel summarizes booking readiness, schedule state, proof state, payment progress, and approval movement.
+                            This panel summarizes booking readiness, schedule
+                            state, proof state, payment progress, and approval
+                            movement.
                         </p>
                     </div>
 
@@ -441,7 +512,7 @@ export default function BookingProgressPanel({ booking, compact = false }: Props
                         <p className="text-3xl font-semibold tracking-[-0.06em] text-[#21180d] dark:text-white">
                             {percent}%
                         </p>
-                        <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#9d7b3d] dark:text-[#f1d89b]">
+                        <p className="mt-1 text-[10px] font-bold tracking-[0.18em] text-[#9d7b3d] uppercase dark:text-[#f1d89b]">
                             Complete
                         </p>
                     </div>
@@ -482,9 +553,13 @@ export default function BookingProgressPanel({ booking, compact = false }: Props
 
                                     <div className="min-w-0 flex-1">
                                         <div className="flex items-center justify-between gap-2">
-                                            <h4 className="text-sm font-semibold">{step.title}</h4>
-                                            <span className="text-[10px] font-bold uppercase tracking-[0.16em] opacity-65">
-                                                {step.complete ? 'Done' : 'Waiting'}
+                                            <h4 className="text-sm font-semibold">
+                                                {step.title}
+                                            </h4>
+                                            <span className="text-[10px] font-bold tracking-[0.16em] uppercase opacity-65">
+                                                {step.complete
+                                                    ? 'Done'
+                                                    : 'Waiting'}
                                             </span>
                                         </div>
 
@@ -501,19 +576,32 @@ export default function BookingProgressPanel({ booking, compact = false }: Props
 
             <div className="grid gap-4">
                 <div className="overflow-hidden rounded-[1.65rem] border border-[#d9c7a6]/70 bg-white/86 p-4 shadow-[0_18px_54px_rgba(47,37,23,0.09)] backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.055]">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#9d7b3d] dark:text-[#f1d89b]">
+                    <p className="text-[10px] font-bold tracking-[0.24em] text-[#9d7b3d] uppercase dark:text-[#f1d89b]">
                         Financial Snapshot
                     </p>
 
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                        <FinancialCard label="Items Total" value={formatMoney(itemsTotal)} />
-                        <FinancialCard label="Submitted" value={formatMoney(submittedTotal)} />
-                        <FinancialCard label="Confirmed" value={formatMoney(confirmedTotal)} />
-                        <FinancialCard label="Outstanding" value={formatMoney(outstanding)} emphasis />
+                        <FinancialCard
+                            label="Items Total"
+                            value={formatMoney(itemsTotal)}
+                        />
+                        <FinancialCard
+                            label="Submitted"
+                            value={formatMoney(submittedTotal)}
+                        />
+                        <FinancialCard
+                            label="Confirmed"
+                            value={formatMoney(confirmedTotal)}
+                        />
+                        <FinancialCard
+                            label="Outstanding"
+                            value={formatMoney(outstanding)}
+                            emphasis
+                        />
                     </div>
 
                     <div className="mt-4 rounded-[1.25rem] border border-[#d9c7a6]/70 bg-[#f7f0e3]/72 p-4 dark:border-white/10 dark:bg-white/7">
-                        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#9d7b3d] dark:text-[#f1d89b]">
+                        <div className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-[#9d7b3d] uppercase dark:text-[#f1d89b]">
                             <ReceiptText className="h-3.5 w-3.5" />
                             Latest Payment Activity
                         </div>
@@ -521,17 +609,29 @@ export default function BookingProgressPanel({ booking, compact = false }: Props
                         {latest ? (
                             <div className="mt-3">
                                 <p className="text-lg font-semibold tracking-[-0.035em] text-[#21180d] dark:text-white">
-                                    ₱ {formatMoney(latest.amount)} • {latest.payment_gateway ?? latest.payment_method ?? 'Payment'}
+                                    ₱ {formatMoney(latest.amount)} •{' '}
+                                    {latest.payment_gateway ??
+                                        latest.payment_method ??
+                                        'Payment'}
                                 </p>
 
                                 <div className="mt-2">
-                                    <BookingStatusBadge value={latest.status ?? 'submitted'} compact />
+                                    <BookingStatusBadge
+                                        value={latest.status ?? 'submitted'}
+                                        compact
+                                    />
                                 </div>
 
                                 <p className="mt-2 text-sm leading-6 text-[#6e604c] dark:text-white/58">
-                                    {formatDateTime(latest.paid_at ?? latest.created_at)}
-                                    {latest.transaction_reference ? ` • Reference: ${latest.transaction_reference}` : ''}
-                                    {latest.payer_name ? ` • Payer: ${latest.payer_name}` : ''}
+                                    {formatDateTime(
+                                        latest.paid_at ?? latest.created_at,
+                                    )}
+                                    {latest.transaction_reference
+                                        ? ` • Reference: ${latest.transaction_reference}`
+                                        : ''}
+                                    {latest.payer_name
+                                        ? ` • Payer: ${latest.payer_name}`
+                                        : ''}
                                 </p>
                             </div>
                         ) : (
@@ -543,19 +643,29 @@ export default function BookingProgressPanel({ booking, compact = false }: Props
                 </div>
 
                 <div className="overflow-hidden rounded-[1.65rem] border border-[#d9c7a6]/70 bg-white/86 p-4 shadow-[0_18px_54px_rgba(47,37,23,0.09)] backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.055]">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#9d7b3d] dark:text-[#f1d89b]">
+                    <p className="text-[10px] font-bold tracking-[0.24em] text-[#9d7b3d] uppercase dark:text-[#f1d89b]">
                         Quick Status Snapshot
                     </p>
 
                     <div className="mt-4 grid gap-3">
                         <div className="flex items-center justify-between gap-3 rounded-[1.15rem] border border-[#d9c7a6]/70 bg-[#f7f0e3]/72 p-3 dark:border-white/10 dark:bg-white/7">
-                            <span className="text-sm text-[#6e604c] dark:text-white/58">Booking status</span>
-                            <BookingStatusBadge value={booking.booking_status} compact />
+                            <span className="text-sm text-[#6e604c] dark:text-white/58">
+                                Booking status
+                            </span>
+                            <BookingStatusBadge
+                                value={booking.booking_status}
+                                compact
+                            />
                         </div>
 
                         <div className="flex items-center justify-between gap-3 rounded-[1.15rem] border border-[#d9c7a6]/70 bg-[#f7f0e3]/72 p-3 dark:border-white/10 dark:bg-white/7">
-                            <span className="text-sm text-[#6e604c] dark:text-white/58">Payment status</span>
-                            <BookingStatusBadge value={booking.payment_status} compact />
+                            <span className="text-sm text-[#6e604c] dark:text-white/58">
+                                Payment status
+                            </span>
+                            <BookingStatusBadge
+                                value={booking.payment_status}
+                                compact
+                            />
                         </div>
 
                         <div className="rounded-[1.15rem] border border-[#d9c7a6]/70 bg-[#f7f0e3]/72 p-3 dark:border-white/10 dark:bg-white/7">
@@ -564,7 +674,8 @@ export default function BookingProgressPanel({ booking, compact = false }: Props
                                 Event Window
                             </div>
                             <p className="mt-2 text-sm leading-6 text-[#6e604c] dark:text-white/58">
-                                {formatDateTime(booking.booking_date_from)} → {formatDateTime(booking.booking_date_to)}
+                                {formatDateTime(booking.booking_date_from)} →{' '}
+                                {formatDateTime(booking.booking_date_to)}
                             </p>
                         </div>
 
@@ -574,15 +685,22 @@ export default function BookingProgressPanel({ booking, compact = false }: Props
                                 Client
                             </div>
                             <p className="mt-2 text-sm leading-6 text-[#6e604c] dark:text-white/58">
-                                {booking.client_name ?? booking.company_name ?? '—'}
+                                {booking.client_name ??
+                                    booking.company_name ??
+                                    '—'}
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className={cx('overflow-hidden rounded-[1.65rem] border border-[#d9c7a6]/70 bg-white/86 p-4 shadow-[0_18px_54px_rgba(47,37,23,0.09)] backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.055]', compact ? '' : 'xl:col-span-2')}>
-                <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#9d7b3d] dark:text-[#f1d89b]">
+            <div
+                className={cx(
+                    'overflow-hidden rounded-[1.65rem] border border-[#d9c7a6]/70 bg-white/86 p-4 shadow-[0_18px_54px_rgba(47,37,23,0.09)] backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.055]',
+                    compact ? '' : 'xl:col-span-2',
+                )}
+            >
+                <p className="text-[10px] font-bold tracking-[0.24em] text-[#9d7b3d] uppercase dark:text-[#f1d89b]">
                     Lifecycle Audit Trail
                 </p>
 
@@ -592,19 +710,28 @@ export default function BookingProgressPanel({ booking, compact = false }: Props
                             const Icon = entry.icon;
 
                             return (
-                                <article key={entry.key} className={cx('rounded-[1.25rem] border p-4', entry.tone)}>
+                                <article
+                                    key={entry.key}
+                                    className={cx(
+                                        'rounded-[1.25rem] border p-4',
+                                        entry.tone,
+                                    )}
+                                >
                                     <div className="flex items-start gap-3">
                                         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/65 text-current dark:bg-white/10">
                                             <Icon className="h-4.5 w-4.5" />
                                         </span>
 
                                         <div className="min-w-0 flex-1">
-                                            <h4 className="text-sm font-semibold">{entry.title}</h4>
-                                            <p className="mt-1 text-[11px] font-bold uppercase tracking-[0.16em] opacity-60">
+                                            <h4 className="text-sm font-semibold">
+                                                {entry.title}
+                                            </h4>
+                                            <p className="mt-1 text-[11px] font-bold tracking-[0.16em] uppercase opacity-60">
                                                 {entry.when}
                                             </p>
                                             <p className="mt-2 text-xs leading-5 opacity-78">
-                                                {entry.note || 'No additional note.'}
+                                                {entry.note ||
+                                                    'No additional note.'}
                                             </p>
                                         </div>
                                     </div>

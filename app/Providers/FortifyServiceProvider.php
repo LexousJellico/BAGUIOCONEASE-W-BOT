@@ -40,5 +40,33 @@ class FortifyServiceProvider extends ServiceProvider
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(5)->by((string) $request->session()->get('login.id'));
         });
+
+        RateLimiter::for('password-reset', function (Request $request) {
+            $email = mb_strtolower(trim((string) $request->input('email', '')));
+            $rateLimitedResponse = function (Request $request, array $headers) {
+                $retryAfter = max(1, (int) ($headers['Retry-After'] ?? 60));
+                $waitTime = $retryAfter >= 60
+                    ? trans_choice(':count minute|:count minutes', (int) ceil($retryAfter / 60))
+                    : trans_choice(':count second|:count seconds', $retryAfter);
+
+                return back()
+                    ->withInput($request->only('email'))
+                    ->withErrors([
+                        'email' => __('Please wait :time before requesting another password reset link.', [
+                            'time' => $waitTime,
+                        ]),
+                    ])
+                    ->withHeaders($headers);
+            };
+
+            return [
+                Limit::perMinute(10)
+                    ->by('ip:'.$request->ip())
+                    ->response($rateLimitedResponse),
+                Limit::perMinutes(10, 5)
+                    ->by('email-ip:'.hash('sha256', $email.'|'.$request->ip()))
+                    ->response($rateLimitedResponse),
+            ];
+        });
     }
 }

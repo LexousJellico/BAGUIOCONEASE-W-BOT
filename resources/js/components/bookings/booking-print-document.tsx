@@ -5,7 +5,6 @@ import {
     normalizeWorkspaceRole,
 } from '@/lib/booking-role-ui';
 import { Link, usePage } from '@inertiajs/react';
-import { useEffect, useRef } from 'react';
 import {
     ArrowLeft,
     Landmark,
@@ -13,6 +12,7 @@ import {
     ReceiptText,
     ShieldCheck,
 } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 
 type MoneyInput = string | number | null | undefined;
 type Dict = Record<string, unknown>;
@@ -73,7 +73,7 @@ function objectList(value: unknown): Dict[] {
 }
 
 function dateOnly(value?: unknown): string {
-    if (!value) return 'â€”';
+    if (!value) return '-';
     const textValue = String(value);
     const parsed = new Date(textValue);
     if (Number.isNaN(parsed.getTime())) return textValue;
@@ -85,7 +85,7 @@ function dateOnly(value?: unknown): string {
 }
 
 function dateTime(value?: unknown): string {
-    return value ? formatDateTime(String(value)) : 'â€”';
+    return value ? formatDateTime(String(value)) : '-';
 }
 
 function percent(value: unknown): string {
@@ -241,7 +241,8 @@ function SimpleTable({
                                     key={column.key}
                                     className={cx(
                                         'px-3 py-2 align-top text-[#2c2519]',
-                                        column.money && 'text-right whitespace-nowrap tabular-nums',
+                                        column.money &&
+                                            'text-right whitespace-nowrap tabular-nums',
                                         column.className,
                                     )}
                                 >
@@ -249,7 +250,7 @@ function SimpleTable({
                                         formatMoney(moneyInput(row[column.key]))
                                     ) : column.key === 'label' ? (
                                         <div className="min-w-0">
-                                            <p className="font-semibold leading-5">
+                                            <p className="leading-5 font-semibold">
                                                 {text(row[column.key])}
                                             </p>
                                             {row.description ? (
@@ -485,7 +486,7 @@ export function BookingPrintDocument() {
                                 value={
                                     schedule.date_from
                                         ? dateTime(schedule.date_from)
-                                        : 'â€”'
+                                        : '-'
                                 }
                             />
                             <Field
@@ -493,7 +494,7 @@ export function BookingPrintDocument() {
                                 value={
                                     schedule.date_to
                                         ? dateTime(schedule.date_to)
-                                        : 'â€”'
+                                        : '-'
                                 }
                             />
                             <Field
@@ -529,12 +530,12 @@ export function BookingPrintDocument() {
                                     const areaLabel = text(area, 'Venue');
 
                                     return (
-                                    <span
-                                        key={areaLabel}
-                                        className="rounded-full border border-[#cdb98d] bg-[#f7edda] px-3 py-1 text-xs font-bold text-[#382b17]"
-                                    >
-                                        {areaLabel}
-                                    </span>
+                                        <span
+                                            key={areaLabel}
+                                            className="rounded-full border border-[#cdb98d] bg-[#f7edda] px-3 py-1 text-xs font-bold text-[#382b17]"
+                                        >
+                                            {areaLabel}
+                                        </span>
                                     );
                                 })}
                             </div>
@@ -544,7 +545,10 @@ export function BookingPrintDocument() {
                                 <br />
                                 <strong>Dressing Room:</strong>{' '}
                                 {text(venue.dressing_room_label)} (
-                                {formatMoney(moneyInput(venue.dressing_room_charge))})
+                                {formatMoney(
+                                    moneyInput(venue.dressing_room_charge),
+                                )}
+                                )
                             </p>
                             {venue.full_hall_includes_lobby ? (
                                 <p className="mt-3 rounded-xl bg-[#fff8ea] p-3 text-xs leading-6 text-[#6a5a41]">
@@ -570,10 +574,10 @@ export function BookingPrintDocument() {
                                 ...segment,
                                 starts_at: segment.starts_at
                                     ? dateTime(segment.starts_at)
-                                    : 'â€”',
+                                    : '-',
                                 ends_at: segment.ends_at
                                     ? dateTime(segment.ends_at)
-                                    : 'â€”',
+                                    : '-',
                             }))}
                             empty="No detailed schedule segments are attached to this booking."
                         />

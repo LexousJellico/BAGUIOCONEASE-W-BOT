@@ -32,6 +32,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\WorkspaceCalendarController;
 use App\Http\Controllers\WorkspaceHomeController;
+use App\Http\Controllers\WorkspaceLiveStateController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -164,6 +165,10 @@ Route::get('/staff', function (Request $request) {
 */
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/workspace/live-state', WorkspaceLiveStateController::class)
+        ->middleware('throttle:120,1')
+        ->name('workspace.live-state');
+
     Route::get('/home', RoleRedirectController::class)
         ->name('role.home');
 

@@ -258,7 +258,10 @@ export function AppSidebarHeader({
             ),
         [role, permissions],
     );
-    const flatClientItems = useMemo(() => flattenBackendSections(sections), [sections]);
+    const flatClientItems = useMemo(
+        () => flattenBackendSections(sections),
+        [sections],
+    );
     const isClientRole = role === 'user';
     const [mobileOpen, setMobileOpen] = useState(false);
     const [accountOpen, setAccountOpen] = useState(false);
@@ -285,7 +288,8 @@ export function AppSidebarHeader({
     const logout = async () => {
         const confirmed = await confirmBcccAction({
             title: 'Logout confirmation',
-            message: 'Are you sure you want to log out of BCCC EASE? You can stay if you still need to check bookings, notifications, or continue a reservation.',
+            message:
+                'Are you sure you want to log out of BCCC EASE? You can stay if you still need to check bookings, notifications, or continue a reservation.',
             confirmText: 'Yes, logout',
             cancelText: 'Stay logged in',
             tone: 'warning',
@@ -347,7 +351,9 @@ export function AppSidebarHeader({
                             </span>
                             <span className="hidden h-1 w-1 rounded-full bg-slate-300 sm:block dark:bg-white/20" />
                             <span className="hidden truncate text-[11px] font-semibold text-slate-500 sm:block dark:text-white/38">
-                                {isClientRole ? 'Client Booking Workspace' : 'BCCC Operations Console'}
+                                {isClientRole
+                                    ? 'Client Booking Workspace'
+                                    : 'BCCC Operations Console'}
                             </span>
                         </div>
 
@@ -551,7 +557,9 @@ export function AppSidebarHeader({
                                                     key={`mobile-client-${item.href}`}
                                                     item={item}
                                                     currentUrl={page.url}
-                                                    onClick={() => setMobileOpen(false)}
+                                                    onClick={() =>
+                                                        setMobileOpen(false)
+                                                    }
                                                 />
                                             ))}
                                         </div>
@@ -584,7 +592,9 @@ export function AppSidebarHeader({
                                     className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-[#0b0f14]"
                                 >
                                     <BookOpenCheck className="h-4 w-4" />
-                                    {isClientRole ? 'Book Event' : 'New Booking'}
+                                    {isClientRole
+                                        ? 'Book Event'
+                                        : 'New Booking'}
                                 </Link>
                                 <button
                                     type="button"

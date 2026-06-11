@@ -1,7 +1,6 @@
 import AmenitiesRow from '@/components/public/amenities-row';
 import EventsCinemaShowcase from '@/components/public/events-cinema-showcase';
 import FacilitiesLayeredShowcase from '@/components/public/facilities-layered-showcase';
-import HeroAvailabilityBar from '@/components/public/hero-availability-bar';
 import HeroBanner from '@/components/public/hero-banner';
 import LocationAssistance from '@/components/public/location-assistance';
 import VenuePackageShowcase from '@/components/public/venue-package-showcase';
@@ -13,11 +12,9 @@ import type {
     PublicEventItem,
     PublicSpaceItem,
     SiteMetricPayload,
-    VenueOption,
 } from '@/types/public-content';
 
 type Props = {
-    venueOptions?: VenueOption[];
     events?: PublicEventItem[];
     bcccEvents?: PublicEventItem[];
     cityEvents?: PublicEventItem[];
@@ -29,7 +26,6 @@ type Props = {
 };
 
 export default function Home({
-    venueOptions = [],
     events = [],
     bcccEvents = [],
     cityEvents = [],
@@ -47,8 +43,6 @@ export default function Home({
             <Head title="Baguio Convention and Cultural Center" />
 
             <HeroBanner siteMetric={siteMetric} />
-            <HeroAvailabilityBar venueOptions={venueOptions} />
-
             <WelcomeSection />
             <AmenitiesRow siteMetric={siteMetric} />
 

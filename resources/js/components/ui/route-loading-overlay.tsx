@@ -74,7 +74,13 @@ export default function RouteLoadingOverlay({
             }, remaining);
         };
 
-        const offStart = router.on('start', show);
+        const offStart = router.on('start', (event) => {
+            if (event.detail.visit.showProgress === false) {
+                return;
+            }
+
+            show();
+        });
         const offFinish = router.on('finish', hide);
         const offNavigate = router.on('navigate', hide);
         const offError = router.on('error', hide);

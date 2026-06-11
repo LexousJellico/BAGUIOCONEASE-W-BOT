@@ -123,11 +123,6 @@ class BookingResource extends JsonResource
             'client_contact_number' => $this->client_contact_number,
             'client_email' => $this->client_email,
 
-            /*
-             * Legacy fields kept only so older pages do not immediately break.
-             * The active requirement is now the built-in MICE report, not survey proof upload.
-             */
-            'survey_email' => $this->survey_email,
             'survey_proof_image_url' => $this->surveyProofUrl($request),
             'survey_proof_image_name' => $this->survey_proof_image_name,
             'survey_proof_image_mime' => $this->survey_proof_image_mime,
@@ -216,7 +211,6 @@ class BookingResource extends JsonResource
             ],
         ];
     }
-
 
     protected function postEventChargesPayload(): array
     {
@@ -516,7 +510,7 @@ class BookingResource extends JsonResource
             $base = route($routeName, $this->id, false);
             $version = $this->updated_at?->timestamp ?? time();
 
-            return $base . '?v=' . $version;
+            return $base.'?v='.$version;
         } catch (\Throwable) {
             return null;
         }
@@ -538,7 +532,7 @@ class BookingResource extends JsonResource
 
             $version = $payment->updated_at?->timestamp ?? $payment->created_at?->timestamp ?? time();
 
-            return $base . '?v=' . $version;
+            return $base.'?v='.$version;
         } catch (\Throwable) {
             return null;
         }

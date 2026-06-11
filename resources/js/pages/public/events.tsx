@@ -5,7 +5,6 @@ import {
 } from '@/components/public/public-display-system';
 import PublicLayout from '@/layouts/public-layout';
 import { Head, usePage } from '@inertiajs/react';
-import { CalendarDays } from 'lucide-react';
 import { useMemo } from 'react';
 
 type EventsPageProps = {

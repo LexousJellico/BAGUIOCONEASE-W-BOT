@@ -12,7 +12,13 @@ export type Appearance = 'light' | 'dark' | 'system';
 
 export type ThemeMode = Appearance;
 
-export type UserRoleName = 'admin' | 'manager' | 'staff' | 'user' | 'client' | string;
+export type UserRoleName =
+    | 'admin'
+    | 'manager'
+    | 'staff'
+    | 'user'
+    | 'client'
+    | string;
 
 export type PermissionName = string;
 
@@ -157,7 +163,9 @@ export type SharedData = {
     [key: string]: unknown;
 };
 
-export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = SharedData & T;
+export type PageProps<
+    T extends Record<string, unknown> = Record<string, unknown>,
+> = SharedData & T;
 
 export type BookingStatus =
     | 'pending'
@@ -254,16 +262,18 @@ export type BookingServiceItem = {
     updated_at?: string | null;
 };
 
-export type InertiaPage<TProps extends Record<string, unknown> = Record<string, unknown>> = {
+export type InertiaPage<
+    TProps extends Record<string, unknown> = Record<string, unknown>,
+> = {
     component: string;
     props: PageProps<TProps>;
     url: string;
     version: string | null;
 };
 
-export type FormErrors<T extends Record<string, unknown> = Record<string, unknown>> = Partial<
-    Record<keyof T | string, string>
->;
+export type FormErrors<
+    T extends Record<string, unknown> = Record<string, unknown>,
+> = Partial<Record<keyof T | string, string>>;
 
 export type AsyncState<T> = {
     data: T | null;
@@ -280,7 +290,6 @@ export type DateString = string;
 export type MoneyValue = number | string;
 
 export * from './public-content';
-
 
 export type NavGroup = {
     title: string;
@@ -302,7 +311,6 @@ export type Booking = BookingListItem & {
     client_zip_code?: string | null;
     client_street_address?: string | null;
     head_of_organization?: string | null;
-    survey_email?: string | null;
     expired_at?: string | null;
     payment_balance_due_at?: string | null;
     deadline_at?: string | null;

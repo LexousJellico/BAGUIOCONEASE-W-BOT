@@ -1,7 +1,7 @@
 /* Final print layer: keep every print route/document visible after older print rules. */
 @media print {
     @page {
-        size: A4;
+        size: auto;
         margin: 10mm;
     }
 
@@ -202,7 +202,7 @@
 /* Compact official print pass: denser paper forms with styled headers/footers. */
 @media print {
     @page {
-        size: A4;
+        size: auto;
         margin: 7mm;
     }
 
@@ -672,7 +672,7 @@
 /* Baguio paper refinement: tighter rhythm plus pine/mist/gold print furniture. */
 @media print {
     @page {
-        size: A4;
+        size: auto;
         margin: 5mm;
     }
 
@@ -1048,5 +1048,66 @@
 
     .official-mice-print article p:last-child {
         font-size: 9.2pt !important;
+    }
+}
+
+/* Final paper-width guard: keep printable columns inside any selected paper size. */
+@media print {
+    :where(
+        .booking-print-document,
+        .booking-print-shell,
+        .print-report-page,
+        .print-report-paper,
+        .bccc-print-root,
+        .official-mice-print,
+        .official-reservation-preview,
+        .official-form-paper,
+        .mice-print-document
+    ),
+    :where(
+            .booking-print-document,
+            .booking-print-shell,
+            .print-report-page,
+            .print-report-paper,
+            .bccc-print-root,
+            .official-mice-print,
+            .official-reservation-preview,
+            .official-form-paper,
+            .mice-print-document
+        )
+        * {
+        box-sizing: border-box !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    :where(
+        .booking-print-table,
+        .print-report-table,
+        .bccc-form-table,
+        .official-mice-print table,
+        .official-form-paper table,
+        .official-reservation-preview table
+    ) {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+    }
+
+    :where(
+            .booking-print-table,
+            .print-report-table,
+            .bccc-form-table,
+            .official-mice-print table,
+            .official-form-paper table,
+            .official-reservation-preview table
+        )
+        :is(th, td) {
+        min-width: 0 !important;
+        max-width: none !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
     }
 }

@@ -216,7 +216,7 @@ function SimpleTable({
 
     return (
         <div className="booking-print-table-wrap overflow-hidden rounded-xl border border-[#d8c8a8]">
-            <table className="booking-print-table w-full border-collapse text-left text-sm">
+            <table className="booking-print-table w-full table-fixed border-collapse text-left text-sm">
                 <thead className="bg-[#efe3cd] text-[10px] tracking-[0.18em] text-[#806332] uppercase">
                     <tr>
                         {columns.map((column) => (
@@ -315,9 +315,9 @@ export function BookingPrintDocument() {
     return (
         <main className="booking-print-document min-h-screen bg-[#f5efe4] px-4 py-6 text-[#1f1a12] print:bg-white print:px-0 print:py-0">
             <style>{`
-                @page { size: A4 portrait; margin: 5mm; }
+                @page { size: auto; margin: 5mm; }
                 @media print {
-                    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: none !important; text-shadow: none !important; }
+                    * { box-sizing: border-box !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: none !important; text-shadow: none !important; }
                     html, body, #app, [data-page], main { width: 100% !important; min-width: 0 !important; min-height: auto !important; height: auto !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background: #ffffff !important; color: #111111 !important; }
                     body * { visibility: visible !important; }
                     .no-print, .no-print * { display: none !important; visibility: hidden !important; }
@@ -325,16 +325,22 @@ export function BookingPrintDocument() {
                     .booking-print-shell { position: static !important; left: auto !important; top: auto !important; display: block !important; width: 100% !important; max-width: none !important; min-height: auto !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background: #ffffff !important; color: #111111 !important; transform: none !important; filter: none !important; opacity: 1 !important; }
                     .booking-print-shell::before, .booking-print-shell::after { display: none !important; content: none !important; }
                     .booking-print-watermark { display: none !important; }
-                    section, header, footer, .print-card { display: block !important; break-inside: avoid; page-break-inside: avoid; border: 1px solid #999999 !important; background: #ffffff !important; color: #111111 !important; }
-                    table { page-break-inside: auto; width: 100% !important; border-collapse: collapse !important; color: #111111 !important; }
+                    section, header, footer, .print-card { display: block !important; width: 100% !important; min-width: 0 !important; max-width: 100% !important; border: 1px solid #999999 !important; background: #ffffff !important; color: #111111 !important; }
+                    header, footer, .print-card, .booking-print-footer-signatures { break-inside: avoid; page-break-inside: avoid; }
+                    .booking-print-section { break-inside: auto !important; page-break-inside: auto !important; }
+                    .booking-print-section :is(.grid, .flex) { min-width: 0 !important; max-width: 100% !important; }
+                    .booking-print-shell > section.grid { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(min(58mm, 100%), 1fr)) !important; }
+                    .booking-print-section-body > .grid { grid-template-columns: repeat(auto-fit, minmax(min(42mm, 100%), 1fr)) !important; }
+                    .booking-print-header > div, .booking-print-footer-signatures { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(min(48mm, 100%), 1fr)) !important; }
+                    table { page-break-inside: auto; width: 100% !important; min-width: 0 !important; max-width: 100% !important; table-layout: fixed !important; border-collapse: collapse !important; color: #111111 !important; }
                     thead { display: table-header-group; }
                     tfoot { display: table-footer-group; }
                     tr { page-break-inside: avoid; page-break-after: auto; }
-                    th, td { border: 1px solid #bbbbbb !important; color: #111111 !important; background: #ffffff !important; }
-                    .booking-print-qty { width: 2.1rem !important; max-width: 2.1rem !important; text-align: center !important; padding-left: 0.25rem !important; padding-right: 0.25rem !important; }
-                    .booking-print-unit { width: 6.15rem !important; max-width: 6.15rem !important; text-align: right !important; white-space: nowrap !important; padding-left: 0.35rem !important; padding-right: 0.35rem !important; }
-                    .booking-print-amount { width: 6.65rem !important; max-width: 6.65rem !important; text-align: right !important; white-space: nowrap !important; padding-left: 0.35rem !important; padding-right: 0.35rem !important; }
-                    .booking-print-item { width: auto !important; }
+                    th, td { min-width: 0 !important; max-width: none !important; border: 1px solid #bbbbbb !important; padding: 1.5mm 1.25mm !important; color: #111111 !important; background: #ffffff !important; font-size: 6.5pt !important; line-height: 1.15 !important; white-space: normal !important; word-break: normal !important; overflow-wrap: anywhere !important; }
+                    .booking-print-qty { width: 10% !important; text-align: center !important; }
+                    .booking-print-unit { width: 22% !important; text-align: right !important; }
+                    .booking-print-amount { width: 24% !important; text-align: right !important; }
+                    .booking-print-item { width: 44% !important; }
                     p, span, h1, h2, h3, strong, small, div { color: #111111 !important; }
                     a { color: inherit !important; text-decoration: none !important; }
                 }

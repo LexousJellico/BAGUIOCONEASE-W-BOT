@@ -42,7 +42,11 @@ export type RoleTone = {
 };
 
 export function getRoleFromAuth(auth?: Auth | null): RoleKey {
-    return getPrimaryRole((auth?.roles ?? []).map((role) => (typeof role === 'string' ? role : String(role.name ?? ''))));
+    return getPrimaryRole(
+        (auth?.roles ?? []).map((role) =>
+            typeof role === 'string' ? role : String(role.name ?? ''),
+        ),
+    );
 }
 
 export function getRoleTone(role: RoleKey): RoleTone {
@@ -232,7 +236,7 @@ export function getRoleMenuGroups(role: RoleKey): NavGroup[] {
                 title: 'Reports',
                 items: [
                     {
-                        title: 'MICE Registry',
+                        title: 'MICE Report',
                         href: '/admin/reports/mice-registry',
                         icon: FileBarChart,
                         permission: 'bookings.view',
@@ -329,7 +333,7 @@ export function getRoleMenuGroups(role: RoleKey): NavGroup[] {
                 title: 'Reports & Communication',
                 items: [
                     {
-                        title: 'MICE Registry',
+                        title: 'MICE Report',
                         href: '/manager/reports/mice-registry',
                         icon: FileBarChart,
                         permission: 'bookings.view',

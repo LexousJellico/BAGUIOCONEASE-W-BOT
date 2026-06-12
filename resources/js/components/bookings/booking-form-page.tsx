@@ -33,6 +33,7 @@ import {
     useRef,
     useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 
 type ServiceOption = {
     id: number | string;
@@ -355,6 +356,7 @@ type BookingFormData = {
     dressing_room_charge?: string | number;
     reservation_notes: string;
     event_nature: EventScope;
+    event_scope: string;
     event_center_name: string;
     covered_month: string;
     classification_of_event: string;
@@ -372,6 +374,29 @@ type BookingFormData = {
     exhibitors_count: string;
     visitors_count: string;
     comments_feedback: string;
+    enterprise_group: string;
+    btc_group_code: string;
+    event_category: string;
+    local_male_participants: string;
+    local_female_participants: string;
+    domestic_male_participants: string;
+    domestic_female_participants: string;
+    foreign_male_participants: string;
+    foreign_female_participants: string;
+    main_origin_country: string;
+    main_origin_province: string;
+    main_origin_city: string;
+    same_day_visitors: string;
+    overnight_visitors: string;
+    estimated_room_nights: string;
+    estimated_tourism_receipts: string;
+    total_employees: string;
+    female_employees: string;
+    male_employees: string;
+    permit_to_engage: string;
+    dot_accredited: string;
+    active_member: string;
+    remarks: string;
 };
 
 const BOOKING_FORM_STRING_FIELDS = [
@@ -408,6 +433,7 @@ const BOOKING_FORM_STRING_FIELDS = [
     'estimated_other_rentals',
     'estimated_additional_charges',
     'reservation_notes',
+    'event_scope',
     'event_center_name',
     'covered_month',
     'classification_of_event',
@@ -425,6 +451,29 @@ const BOOKING_FORM_STRING_FIELDS = [
     'exhibitors_count',
     'visitors_count',
     'comments_feedback',
+    'enterprise_group',
+    'btc_group_code',
+    'event_category',
+    'local_male_participants',
+    'local_female_participants',
+    'domestic_male_participants',
+    'domestic_female_participants',
+    'foreign_male_participants',
+    'foreign_female_participants',
+    'main_origin_country',
+    'main_origin_province',
+    'main_origin_city',
+    'same_day_visitors',
+    'overnight_visitors',
+    'estimated_room_nights',
+    'estimated_tourism_receipts',
+    'total_employees',
+    'female_employees',
+    'male_employees',
+    'permit_to_engage',
+    'dot_accredited',
+    'active_member',
+    'remarks',
 ] satisfies Array<keyof BookingFormData>;
 
 const BOOKING_FORM_BOOLEAN_FIELDS = [
@@ -1552,7 +1601,7 @@ function draftExitPromptCopy(url: string, method: InertiaVisitMethod) {
         return {
             title: 'Save booking draft before logging out?',
             description:
-                'This booking form has changes that are not saved as a draft yet. Save them now so you can continue later, or log out without keeping these changes.',
+                'This booking is still in progress. Save the latest draft so you can continue later, log out without keeping the draft, or stay on this page.',
             saveLabel: 'Save Draft & Log Out',
             discardLabel: 'Log Out Without Saving',
             stayLabel: 'Keep Editing',
@@ -1563,7 +1612,7 @@ function draftExitPromptCopy(url: string, method: InertiaVisitMethod) {
     return {
         title: 'Save booking draft before leaving?',
         description:
-            'This booking form has changes that are not saved as a draft yet. Save them now so you can continue later, or leave without keeping these changes.',
+            'This booking is still in progress. Save the latest draft so you can continue later, leave without keeping the draft, or stay on this page.',
         saveLabel: 'Save Draft & Leave',
         discardLabel: 'Leave Without Saving',
         stayLabel: 'Keep Editing',
@@ -2554,6 +2603,29 @@ function buildMiceDraft(
             has_exhibitions: '-',
             exhibitors_count: '-',
             visitors_count: '-',
+            enterprise_group: '-',
+            btc_group_code: '-',
+            event_category: '-',
+            local_male_participants: '0',
+            local_female_participants: '0',
+            domestic_male_participants: '0',
+            domestic_female_participants: '0',
+            foreign_male_participants: '0',
+            foreign_female_participants: '0',
+            main_origin_country: '-',
+            main_origin_province: '-',
+            main_origin_city: '-',
+            same_day_visitors: '0',
+            overnight_visitors: '0',
+            estimated_room_nights: '0',
+            estimated_tourism_receipts: '0',
+            total_employees: '0',
+            female_employees: '0',
+            male_employees: '0',
+            permit_to_engage: 'No',
+            dot_accredited: 'No',
+            active_member: 'No',
+            remarks: cleanValue(data.remarks, 'N/A'),
             organization_name: upper(data.company_name || ''),
             organizer_address: upper(data.client_address || ''),
             organizer_contact_person: upper(data.client_name || ''),
@@ -2589,6 +2661,29 @@ function buildMiceDraft(
         has_exhibitions: data.has_exhibitions,
         exhibitors_count: hasExhibitions ? data.exhibitors_count : '0',
         visitors_count: hasExhibitions ? data.visitors_count : '0',
+        enterprise_group: upper(data.enterprise_group),
+        btc_group_code: upper(data.btc_group_code),
+        event_category: upper(data.event_category),
+        local_male_participants: data.local_male_participants,
+        local_female_participants: data.local_female_participants,
+        domestic_male_participants: data.domestic_male_participants,
+        domestic_female_participants: data.domestic_female_participants,
+        foreign_male_participants: data.foreign_male_participants,
+        foreign_female_participants: data.foreign_female_participants,
+        main_origin_country: upper(data.main_origin_country),
+        main_origin_province: upper(data.main_origin_province),
+        main_origin_city: upper(data.main_origin_city),
+        same_day_visitors: data.same_day_visitors,
+        overnight_visitors: data.overnight_visitors,
+        estimated_room_nights: data.estimated_room_nights,
+        estimated_tourism_receipts: data.estimated_tourism_receipts,
+        total_employees: data.total_employees,
+        female_employees: data.female_employees,
+        male_employees: data.male_employees,
+        permit_to_engage: data.permit_to_engage,
+        dot_accredited: data.dot_accredited,
+        active_member: data.active_member,
+        remarks: cleanValue(data.remarks, 'N/A'),
         organization_name: upper(data.company_name || ''),
         organizer_address: upper(data.client_address || ''),
         organizer_contact_person: upper(data.client_name || ''),
@@ -2876,6 +2971,13 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
             ? booking.payment_meta
             : draftMeta
     ) as BookingPaymentMeta;
+    const initialMice = (
+        booking?.mice_report &&
+        typeof booking.mice_report === 'object' &&
+        !Array.isArray(booking.mice_report)
+            ? booking.mice_report
+            : {}
+    ) as BookingPaymentMeta;
     const initialAreaKeys = Array.isArray(booking?.selected_area_keys)
         ? booking.selected_area_keys
               .map((key) => activeKeyFromString(key))
@@ -2890,7 +2992,9 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
     )
         .map((key) => activeKeyFromString(String(key)))
         .filter((key): key is ActiveVenueKey => Boolean(key));
-    const queryAreaKeys = (Array.isArray(props.initialAreaKeys) ? props.initialAreaKeys : [])
+    const queryAreaKeys = (
+        Array.isArray(props.initialAreaKeys) ? props.initialAreaKeys : []
+    )
         .map((key) => activeKeyFromString(String(key)))
         .filter((key): key is ActiveVenueKey => Boolean(key));
     const initialPackageCode = firstValue(
@@ -3095,17 +3199,24 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
             booking?.mice_required === false || booking?.mice_required === 0
                 ? 'private'
                 : 'public',
+        event_scope:
+            booking?.mice_required === false || booking?.mice_required === 0
+                ? 'PRIVATE/PERSONAL EVENT'
+                : 'GOVERNMENT EVENT',
         event_center_name: PUBLIC_EVENT_CENTER,
         covered_month: firstValue(
+            initialMice.covered_month,
             initialMeta.covered_month,
             coveredMonthFromDate(initialFrom),
         ),
         classification_of_event: firstValue(
+            initialMice.classification_of_event,
             initialMeta.classification_of_event,
             'REGIONAL PHILIPPINES',
         ),
         classification_other: firstValue(initialMeta.classification_other),
         mice_type_of_event: firstValue(
+            initialMice.mice_type_of_event,
             initialMeta.mice_type_of_event,
             'MEETINGS',
         ),
@@ -3113,23 +3224,175 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
         function_halls_count: '1',
         function_hall_capacity: '2000',
         number_of_hours: String(totalHours(initialSelections)),
-        foreign_attendees: firstValue(initialMeta.foreign_attendees, '0'),
+        foreign_attendees: firstValue(
+            initialMice.foreign_attendees,
+            initialMeta.foreign_attendees,
+            '0',
+        ),
         domestic_attendees: firstValue(
+            initialMice.domestic_attendees,
             initialMeta.domestic_attendees,
             props.initialGuests,
             '0',
         ),
         total_number_of_countries: firstValue(
+            initialMice.total_number_of_countries,
             initialMeta.total_number_of_countries,
             '1',
         ),
         countries_breakdown_text: upper(
-            firstValue(initialMeta.countries_breakdown_text, 'PHILIPPINES'),
+            firstValue(
+                initialMice.countries_breakdown_text,
+                initialMeta.countries_breakdown_text,
+                'PHILIPPINES',
+            ),
         ),
-        has_exhibitions: firstValue(initialMeta.has_exhibitions, 'No'),
-        exhibitors_count: firstValue(initialMeta.exhibitors_count, '0'),
-        visitors_count: firstValue(initialMeta.visitors_count, '0'),
-        comments_feedback: firstValue(initialMeta.comments_feedback),
+        has_exhibitions: booleanValue(
+            initialMice.has_exhibitions,
+            booleanValue(initialMeta.has_exhibitions),
+        )
+            ? 'Yes'
+            : 'No',
+        exhibitors_count: firstValue(
+            initialMice.exhibitors_count,
+            initialMeta.exhibitors_count,
+            '0',
+        ),
+        visitors_count: firstValue(
+            initialMice.visitors_count,
+            initialMeta.visitors_count,
+            '0',
+        ),
+        comments_feedback: firstValue(
+            initialMice.comments_feedback,
+            initialMeta.comments_feedback,
+        ),
+        enterprise_group: upper(
+            firstValue(
+                initialMice.enterprise_group,
+                initialMeta.enterprise_group,
+                'UNCLASSIFIED',
+            ),
+        ),
+        btc_group_code: upper(
+            firstValue(
+                initialMice.btc_group_code,
+                initialMeta.btc_group_code,
+                'N/A',
+            ),
+        ),
+        event_category: upper(
+            firstValue(
+                initialMice.event_category,
+                initialMeta.event_category,
+                'CONVENTION',
+            ),
+        ),
+        local_male_participants: firstValue(
+            initialMice.local_male_participants,
+            initialMeta.local_male_participants,
+            '0',
+        ),
+        local_female_participants: firstValue(
+            initialMice.local_female_participants,
+            initialMeta.local_female_participants,
+            '0',
+        ),
+        domestic_male_participants: firstValue(
+            initialMice.domestic_male_participants,
+            initialMeta.domestic_male_participants,
+            '0',
+        ),
+        domestic_female_participants: firstValue(
+            initialMice.domestic_female_participants,
+            initialMeta.domestic_female_participants,
+            '0',
+        ),
+        foreign_male_participants: firstValue(
+            initialMice.foreign_male_participants,
+            initialMeta.foreign_male_participants,
+            '0',
+        ),
+        foreign_female_participants: firstValue(
+            initialMice.foreign_female_participants,
+            initialMeta.foreign_female_participants,
+            '0',
+        ),
+        main_origin_country: upper(
+            firstValue(
+                initialMice.main_origin_country,
+                initialMeta.main_origin_country,
+                'PHILIPPINES',
+            ),
+        ),
+        main_origin_province: upper(
+            firstValue(
+                initialMice.main_origin_province,
+                initialMeta.main_origin_province,
+                'BENGUET',
+            ),
+        ),
+        main_origin_city: upper(
+            firstValue(
+                initialMice.main_origin_city,
+                initialMeta.main_origin_city,
+                'BAGUIO CITY',
+            ),
+        ),
+        same_day_visitors: firstValue(
+            initialMice.same_day_visitors,
+            initialMeta.same_day_visitors,
+            '0',
+        ),
+        overnight_visitors: firstValue(
+            initialMice.overnight_visitors,
+            initialMeta.overnight_visitors,
+            '0',
+        ),
+        estimated_room_nights: firstValue(
+            initialMice.estimated_room_nights,
+            initialMeta.estimated_room_nights,
+            '0',
+        ),
+        estimated_tourism_receipts: firstValue(
+            initialMice.estimated_tourism_receipts,
+            initialMeta.estimated_tourism_receipts,
+            '0',
+        ),
+        total_employees: firstValue(
+            initialMice.total_employees,
+            initialMeta.total_employees,
+            '0',
+        ),
+        female_employees: firstValue(
+            initialMice.female_employees,
+            initialMeta.female_employees,
+            '0',
+        ),
+        male_employees: firstValue(
+            initialMice.male_employees,
+            initialMeta.male_employees,
+            '0',
+        ),
+        permit_to_engage: booleanValue(
+            initialMice.permit_to_engage,
+            booleanValue(initialMeta.permit_to_engage),
+        )
+            ? 'Yes'
+            : 'No',
+        dot_accredited: booleanValue(
+            initialMice.dot_accredited,
+            booleanValue(initialMeta.dot_accredited),
+        )
+            ? 'Yes'
+            : 'No',
+        active_member: booleanValue(
+            initialMice.active_member,
+            booleanValue(initialMeta.active_member),
+        )
+            ? 'Yes'
+            : 'No',
+        remarks: firstValue(initialMice.remarks, initialMeta.remarks, 'N/A'),
         ...(!editing ? draftData : {}),
         booking_draft_key: draftKey,
         draft_key: draftKey,
@@ -3146,6 +3409,7 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
         ...(errors as Record<string, string>),
         ...stepErrors,
     };
+    const cityMunicipalityOptions = citiesForProvince(data.client_province);
     const selectedPackage =
         packages.find((item) => item.code === selectedPackageCode) ?? null;
     const selectedCombinationError = fullMainCombinationError(selectedAreaKeys);
@@ -3531,22 +3795,46 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
     }, [draftAutosaveSnapshot, leavePrompt]);
 
     useEffect(() => {
-        const shouldWarn = () =>
+        if (!leavePrompt && !floatingNotice) return;
+
+        const previousHtmlOverflow = document.documentElement.style.overflow;
+        const previousBodyOverflow = document.body.style.overflow;
+        const previousBodyOverscroll = document.body.style.overscrollBehavior;
+
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        document.body.style.overscrollBehavior = 'none';
+
+        return () => {
+            document.documentElement.style.overflow = previousHtmlOverflow;
+            document.body.style.overflow = previousBodyOverflow;
+            document.body.style.overscrollBehavior = previousBodyOverscroll;
+        };
+    }, [floatingNotice, leavePrompt]);
+
+    useEffect(() => {
+        const shouldWarnBeforeUnload = () =>
             !bypassLeavePromptRef.current && hasUnsavedDraftChanges();
+        const shouldPromptInAppExit = () =>
+            !bypassLeavePromptRef.current &&
+            !draftDiscardingRef.current &&
+            !editing &&
+            !submitted &&
+            hasMeaningfulDraftData();
         const message =
             draftSaveState === 'saving'
                 ? 'Your booking draft is still saving. Wait for it to finish before closing this tab.'
-                : 'Your booking form has changes that are not saved as a draft yet.';
+                : 'Your booking is still in progress. Review your draft before closing this tab.';
 
         const beforeUnload = (event: BeforeUnloadEvent) => {
-            if (!shouldWarn()) return;
+            if (!shouldWarnBeforeUnload()) return;
             event.preventDefault();
             event.returnValue = message;
             return message;
         };
 
         const offBefore = router.on('before', (event) => {
-            if (!shouldWarn()) return;
+            if (!shouldPromptInAppExit()) return;
 
             const visit = event.detail.visit as {
                 url: URL | string;
@@ -4050,9 +4338,6 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                 nextErrors.client_address = 'Enter the city or municipality.';
             if (!cleanValue(data.client_barangay))
                 nextErrors.client_address = 'Enter the barangay.';
-            if (!cleanValue(data.client_street_address))
-                nextErrors.client_address =
-                    'Enter the street/building address.';
             if (!cleanValue(data.number_of_guests))
                 nextErrors.number_of_guests =
                     'Expected attendance is required.';
@@ -4063,6 +4348,9 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                 if (!data.mice_type_of_event)
                     nextErrors.mice_type_of_event =
                         'MICE event type is required for Government/MICE events.';
+                if (!cleanValue(data.foreign_attendees))
+                    nextErrors.foreign_attendees =
+                        'Foreign attendee count is required. Enter 0 when there are none.';
                 if (!cleanValue(data.domestic_attendees))
                     nextErrors.domestic_attendees =
                         'Domestic attendee count is required.';
@@ -4080,6 +4368,91 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                     nextErrors.exhibitors_count =
                         'Exhibitor and visitor counts are required when exhibitions is Yes.';
                 }
+
+                const requiredMiceFields: Array<
+                    [keyof BookingFormData, string]
+                > = [
+                    ['enterprise_group', 'Enterprise group'],
+                    ['btc_group_code', 'BTC group code'],
+                    ['event_category', 'Event category'],
+                    ['local_male_participants', 'Local male participants'],
+                    ['local_female_participants', 'Local female participants'],
+                    [
+                        'domestic_male_participants',
+                        'Domestic male participants',
+                    ],
+                    [
+                        'domestic_female_participants',
+                        'Domestic female participants',
+                    ],
+                    ['foreign_male_participants', 'Foreign male participants'],
+                    [
+                        'foreign_female_participants',
+                        'Foreign female participants',
+                    ],
+                    ['main_origin_country', 'Main origin country'],
+                    ['main_origin_province', 'Main origin province'],
+                    ['main_origin_city', 'Main origin city'],
+                    ['same_day_visitors', 'Same-day visitors'],
+                    ['overnight_visitors', 'Overnight visitors'],
+                    ['estimated_room_nights', 'Estimated room nights'],
+                    [
+                        'estimated_tourism_receipts',
+                        'Estimated tourism receipts',
+                    ],
+                    ['total_employees', 'Total employees'],
+                    ['female_employees', 'Female employees'],
+                    ['male_employees', 'Male employees'],
+                    ['permit_to_engage', 'Permit to engage'],
+                    ['dot_accredited', 'DOT accreditation'],
+                    ['active_member', 'Active membership'],
+                    ['remarks', 'Remarks'],
+                ];
+                const missingMiceField = requiredMiceFields.find(
+                    ([field]) => !cleanValue(data[field]),
+                );
+
+                if (missingMiceField)
+                    nextErrors.mice_report = `${missingMiceField[1]} is required for a public MICE report. Enter 0 or N/A when applicable.`;
+
+                const participantBreakdownTotal = [
+                    data.local_male_participants,
+                    data.local_female_participants,
+                    data.domestic_male_participants,
+                    data.domestic_female_participants,
+                    data.foreign_male_participants,
+                    data.foreign_female_participants,
+                ].reduce((total, value) => total + Number(value || 0), 0);
+                const domesticBreakdownTotal = [
+                    data.local_male_participants,
+                    data.local_female_participants,
+                    data.domestic_male_participants,
+                    data.domestic_female_participants,
+                ].reduce((total, value) => total + Number(value || 0), 0);
+                const foreignBreakdownTotal =
+                    Number(data.foreign_male_participants || 0) +
+                    Number(data.foreign_female_participants || 0);
+                const employeeBreakdownTotal =
+                    Number(data.female_employees || 0) +
+                    Number(data.male_employees || 0);
+
+                if (participantBreakdownTotal !== Number(data.number_of_guests))
+                    nextErrors.mice_participants =
+                        'The participant breakdown must equal the expected attendance.';
+                else if (
+                    domesticBreakdownTotal !== Number(data.domestic_attendees)
+                )
+                    nextErrors.mice_participants =
+                        'Local plus domestic participant breakdown must equal domestic attendees.';
+                else if (
+                    foreignBreakdownTotal !== Number(data.foreign_attendees)
+                )
+                    nextErrors.mice_participants =
+                        'Foreign male plus foreign female participants must equal foreign attendees.';
+
+                if (employeeBreakdownTotal !== Number(data.total_employees))
+                    nextErrors.mice_employees =
+                        'Female plus male employees must equal total employees.';
             }
         }
         if (step === 3) {
@@ -4243,6 +4616,10 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
             schedule_meta: scheduleMeta,
             schedule_segments: scheduleSegments,
             event_nature: current.event_nature,
+            event_scope:
+                current.event_nature === 'public'
+                    ? 'GOVERNMENT EVENT'
+                    : 'PRIVATE/PERSONAL EVENT',
             mice_required: current.event_nature === 'public',
             private_event_type:
                 current.event_nature === 'private'
@@ -5907,7 +6284,7 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                                         )
                                     }
                                     className={inputClass()}
-                                    placeholder="Optional display title"
+                                    placeholder="Optional - display title"
                                 />
                             </Field>
                             <label className="flex items-center gap-3 self-end border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
@@ -5964,6 +6341,7 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                                         )
                                     }
                                     className={inputClass()}
+                                    placeholder="Optional"
                                 />
                             </Field>
                             <Field
@@ -6141,41 +6519,87 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                                     label="City / Municipality"
                                     required
                                     help={
-                                        citiesForProvince(data.client_province)
-                                            .length
-                                            ? 'Choose from the list or type if not shown.'
+                                        cityMunicipalityOptions.length
+                                            ? 'Choose the official city or municipality for the selected province.'
                                             : 'Type the official city or municipality.'
                                     }
                                 >
-                                    <input
-                                        value={data.client_city_municipality}
-                                        onChange={(event) => {
-                                            const city = upper(
-                                                event.target.value,
-                                            );
-                                            patchAddress({
-                                                client_city_municipality: city,
-                                                client_zip_code:
-                                                    zipCodeForCityMunicipality(
+                                    {cityMunicipalityOptions.length ? (
+                                        <select
+                                            value={
+                                                data.client_city_municipality
+                                            }
+                                            onChange={(event) => {
+                                                const city = event.target.value;
+                                                patchAddress({
+                                                    client_city_municipality:
                                                         city,
-                                                    ),
-                                            });
-                                        }}
-                                        className={inputClass(
-                                            Boolean(
-                                                mergedErrors.client_address,
-                                            ),
-                                        )}
-                                        list="booking-city-municipality-options"
-                                        placeholder="CITY / MUNICIPALITY"
-                                    />
-                                    <datalist id="booking-city-municipality-options">
-                                        {citiesForProvince(
-                                            data.client_province,
-                                        ).map((city) => (
-                                            <option key={city} value={city} />
-                                        ))}
-                                    </datalist>
+                                                    client_zip_code:
+                                                        zipCodeForCityMunicipality(
+                                                            city,
+                                                        ),
+                                                });
+                                            }}
+                                            className={inputClass(
+                                                Boolean(
+                                                    mergedErrors.client_address,
+                                                ),
+                                            )}
+                                        >
+                                            <option value="">
+                                                Select city or municipality
+                                            </option>
+                                            {data.client_city_municipality &&
+                                            !cityMunicipalityOptions.includes(
+                                                data.client_city_municipality,
+                                            ) ? (
+                                                <option
+                                                    value={
+                                                        data.client_city_municipality
+                                                    }
+                                                >
+                                                    {
+                                                        data.client_city_municipality
+                                                    }
+                                                </option>
+                                            ) : null}
+                                            {cityMunicipalityOptions.map(
+                                                (city) => (
+                                                    <option
+                                                        key={city}
+                                                        value={city}
+                                                    >
+                                                        {city}
+                                                    </option>
+                                                ),
+                                            )}
+                                        </select>
+                                    ) : (
+                                        <input
+                                            value={
+                                                data.client_city_municipality
+                                            }
+                                            onChange={(event) => {
+                                                const city = upper(
+                                                    event.target.value,
+                                                );
+                                                patchAddress({
+                                                    client_city_municipality:
+                                                        city,
+                                                    client_zip_code:
+                                                        zipCodeForCityMunicipality(
+                                                            city,
+                                                        ),
+                                                });
+                                            }}
+                                            className={inputClass(
+                                                Boolean(
+                                                    mergedErrors.client_address,
+                                                ),
+                                            )}
+                                            placeholder="CITY / MUNICIPALITY"
+                                        />
+                                    )}
                                 </Field>
                                 <Field label="Barangay" required>
                                     <input
@@ -6197,7 +6621,7 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                                 </Field>
                                 <Field
                                     label="Street / Building / House No."
-                                    required
+                                    help="Optional. Add this only when a specific street, building, unit, or house number is available."
                                 >
                                     <input
                                         value={data.client_street_address}
@@ -6213,7 +6637,7 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                                                 mergedErrors.client_address,
                                             ),
                                         )}
-                                        placeholder="STREET, BUILDING, UNIT"
+                                        placeholder="Optional - street, building, unit, or house no."
                                     />
                                 </Field>
                                 <Field label="ZIP Code">
@@ -6230,6 +6654,7 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                                         className={inputClass()}
                                         inputMode="numeric"
                                         maxLength={4}
+                                        placeholder="Optional - auto-filled when known"
                                     />
                                     <small className="text-xs leading-5 font-normal text-slate-500">
                                         Auto-filled for known cities and
@@ -6256,7 +6681,7 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                                         )
                                     }
                                     className={cx(inputClass(), 'min-h-24')}
-                                    placeholder="N/A if none"
+                                    placeholder="Optional - add comments or feedback"
                                 />
                             </Field>
                         </div>
@@ -6442,7 +6867,11 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                                             ))}
                                         </select>
                                     </Field>
-                                    <Field label="Foreign Attendees">
+                                    <Field
+                                        label="Foreign Attendees"
+                                        required
+                                        error={mergedErrors.foreign_attendees}
+                                    >
                                         <input
                                             value={data.foreign_attendees}
                                             onChange={(event) =>
@@ -6454,7 +6883,11 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                                                     ),
                                                 )
                                             }
-                                            className={inputClass()}
+                                            className={inputClass(
+                                                Boolean(
+                                                    mergedErrors.foreign_attendees,
+                                                ),
+                                            )}
                                             inputMode="numeric"
                                         />
                                     </Field>
@@ -6596,6 +7029,303 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                                             />
                                         </Field>
                                     ) : null}
+                                    <div className="border-t border-slate-200 pt-4 lg:col-span-2">
+                                        <p className="text-[11px] font-semibold tracking-[0.2em] text-[#a88633] uppercase">
+                                            Registry Classification
+                                        </p>
+                                        <p className="mt-1 text-xs leading-5 text-slate-500">
+                                            These details are saved directly to
+                                            the booking-linked MICE report.
+                                            Enter N/A when a text value does not
+                                            apply.
+                                        </p>
+                                    </div>
+                                    {mergedErrors.mice_report ? (
+                                        <div className="border border-red-200 bg-red-50 p-3 text-xs leading-5 font-semibold text-red-700 lg:col-span-2">
+                                            {mergedErrors.mice_report}
+                                        </div>
+                                    ) : null}
+                                    {(
+                                        [
+                                            [
+                                                'Enterprise Group',
+                                                'enterprise_group',
+                                                'UNCLASSIFIED',
+                                            ],
+                                            [
+                                                'BTC Group Code',
+                                                'btc_group_code',
+                                                'N/A',
+                                            ],
+                                            [
+                                                'Event Category',
+                                                'event_category',
+                                                'CONVENTION',
+                                            ],
+                                        ] as const
+                                    ).map(([label, field, placeholder]) => (
+                                        <Field
+                                            key={field}
+                                            label={label}
+                                            required
+                                        >
+                                            <input
+                                                value={data[field]}
+                                                onChange={(event) =>
+                                                    setData(
+                                                        field,
+                                                        upper(
+                                                            event.target.value,
+                                                        ),
+                                                    )
+                                                }
+                                                className={inputClass()}
+                                                placeholder={placeholder}
+                                            />
+                                        </Field>
+                                    ))}
+                                    <div className="border-t border-slate-200 pt-4 lg:col-span-2">
+                                        <p className="text-[11px] font-semibold tracking-[0.2em] text-[#a88633] uppercase">
+                                            Participant Breakdown
+                                        </p>
+                                        <p className="mt-1 text-xs leading-5 text-slate-500">
+                                            All six counts must add up to the
+                                            expected attendance. Local and
+                                            domestic counts must also match
+                                            domestic attendees.
+                                        </p>
+                                    </div>
+                                    {mergedErrors.mice_participants ? (
+                                        <div className="border border-red-200 bg-red-50 p-3 text-xs leading-5 font-semibold text-red-700 lg:col-span-2">
+                                            {mergedErrors.mice_participants}
+                                        </div>
+                                    ) : null}
+                                    {(
+                                        [
+                                            [
+                                                'Local Male Participants',
+                                                'local_male_participants',
+                                            ],
+                                            [
+                                                'Local Female Participants',
+                                                'local_female_participants',
+                                            ],
+                                            [
+                                                'Domestic Male Participants',
+                                                'domestic_male_participants',
+                                            ],
+                                            [
+                                                'Domestic Female Participants',
+                                                'domestic_female_participants',
+                                            ],
+                                            [
+                                                'Foreign Male Participants',
+                                                'foreign_male_participants',
+                                            ],
+                                            [
+                                                'Foreign Female Participants',
+                                                'foreign_female_participants',
+                                            ],
+                                        ] as const
+                                    ).map(([label, field]) => (
+                                        <Field
+                                            key={field}
+                                            label={label}
+                                            required
+                                        >
+                                            <input
+                                                value={data[field]}
+                                                onChange={(event) =>
+                                                    setData(
+                                                        field,
+                                                        event.target.value.replace(
+                                                            /\D/g,
+                                                            '',
+                                                        ),
+                                                    )
+                                                }
+                                                className={inputClass()}
+                                                inputMode="numeric"
+                                            />
+                                        </Field>
+                                    ))}
+                                    <div className="border-t border-slate-200 pt-4 lg:col-span-2">
+                                        <p className="text-[11px] font-semibold tracking-[0.2em] text-[#a88633] uppercase">
+                                            Visitor Origin and Tourism Impact
+                                        </p>
+                                    </div>
+                                    {(
+                                        [
+                                            [
+                                                'Main Origin Country',
+                                                'main_origin_country',
+                                            ],
+                                            [
+                                                'Main Origin Province',
+                                                'main_origin_province',
+                                            ],
+                                            [
+                                                'Main Origin City',
+                                                'main_origin_city',
+                                            ],
+                                        ] as const
+                                    ).map(([label, field]) => (
+                                        <Field
+                                            key={field}
+                                            label={label}
+                                            required
+                                        >
+                                            <input
+                                                value={data[field]}
+                                                onChange={(event) =>
+                                                    setData(
+                                                        field,
+                                                        upper(
+                                                            event.target.value,
+                                                        ),
+                                                    )
+                                                }
+                                                className={inputClass()}
+                                            />
+                                        </Field>
+                                    ))}
+                                    {(
+                                        [
+                                            [
+                                                'Same-Day Visitors',
+                                                'same_day_visitors',
+                                            ],
+                                            [
+                                                'Overnight Visitors',
+                                                'overnight_visitors',
+                                            ],
+                                            [
+                                                'Estimated Room Nights',
+                                                'estimated_room_nights',
+                                            ],
+                                            [
+                                                'Estimated Tourism Receipts',
+                                                'estimated_tourism_receipts',
+                                            ],
+                                        ] as const
+                                    ).map(([label, field]) => (
+                                        <Field
+                                            key={field}
+                                            label={label}
+                                            required
+                                        >
+                                            <input
+                                                value={data[field]}
+                                                onChange={(event) =>
+                                                    setData(
+                                                        field,
+                                                        event.target.value.replace(
+                                                            /[^\d.]/g,
+                                                            '',
+                                                        ),
+                                                    )
+                                                }
+                                                className={inputClass()}
+                                                inputMode="decimal"
+                                            />
+                                        </Field>
+                                    ))}
+                                    <div className="border-t border-slate-200 pt-4 lg:col-span-2">
+                                        <p className="text-[11px] font-semibold tracking-[0.2em] text-[#a88633] uppercase">
+                                            Employees and Compliance
+                                        </p>
+                                    </div>
+                                    {mergedErrors.mice_employees ? (
+                                        <div className="border border-red-200 bg-red-50 p-3 text-xs leading-5 font-semibold text-red-700 lg:col-span-2">
+                                            {mergedErrors.mice_employees}
+                                        </div>
+                                    ) : null}
+                                    {(
+                                        [
+                                            [
+                                                'Total Employees',
+                                                'total_employees',
+                                            ],
+                                            [
+                                                'Female Employees',
+                                                'female_employees',
+                                            ],
+                                            [
+                                                'Male Employees',
+                                                'male_employees',
+                                            ],
+                                        ] as const
+                                    ).map(([label, field]) => (
+                                        <Field
+                                            key={field}
+                                            label={label}
+                                            required
+                                        >
+                                            <input
+                                                value={data[field]}
+                                                onChange={(event) =>
+                                                    setData(
+                                                        field,
+                                                        event.target.value.replace(
+                                                            /\D/g,
+                                                            '',
+                                                        ),
+                                                    )
+                                                }
+                                                className={inputClass()}
+                                                inputMode="numeric"
+                                            />
+                                        </Field>
+                                    ))}
+                                    {(
+                                        [
+                                            [
+                                                'Permit to Engage',
+                                                'permit_to_engage',
+                                            ],
+                                            [
+                                                'DOT Accredited',
+                                                'dot_accredited',
+                                            ],
+                                            ['Active Member', 'active_member'],
+                                        ] as const
+                                    ).map(([label, field]) => (
+                                        <Field
+                                            key={field}
+                                            label={label}
+                                            required
+                                        >
+                                            <select
+                                                value={data[field]}
+                                                onChange={(event) =>
+                                                    setData(
+                                                        field,
+                                                        event.target.value,
+                                                    )
+                                                }
+                                                className={inputClass()}
+                                            >
+                                                <option value="No">No</option>
+                                                <option value="Yes">Yes</option>
+                                            </select>
+                                        </Field>
+                                    ))}
+                                    <Field label="MICE Report Remarks" required>
+                                        <textarea
+                                            value={data.remarks}
+                                            onChange={(event) =>
+                                                setData(
+                                                    'remarks',
+                                                    event.target.value,
+                                                )
+                                            }
+                                            className={cx(
+                                                inputClass(),
+                                                'min-h-24',
+                                            )}
+                                            placeholder="N/A if none"
+                                        />
+                                    </Field>
                                 </>
                             ) : (
                                 <div className="border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-600 lg:col-span-2">
@@ -6870,6 +7600,48 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                                             : '-',
                                     ],
                                     [
+                                        'Participant Breakdown',
+                                        data.event_nature === 'public'
+                                            ? `Local M/F: ${data.local_male_participants}/${data.local_female_participants}; Domestic M/F: ${data.domestic_male_participants}/${data.domestic_female_participants}; Foreign M/F: ${data.foreign_male_participants}/${data.foreign_female_participants}`
+                                            : '-',
+                                    ],
+                                    [
+                                        'Main Visitor Origin',
+                                        data.event_nature === 'public'
+                                            ? `${data.main_origin_city}, ${data.main_origin_province}, ${data.main_origin_country}`
+                                            : '-',
+                                    ],
+                                    [
+                                        'Same-Day / Overnight Visitors',
+                                        data.event_nature === 'public'
+                                            ? `${data.same_day_visitors} / ${data.overnight_visitors}`
+                                            : '-',
+                                    ],
+                                    [
+                                        'Room Nights / Tourism Receipts',
+                                        data.event_nature === 'public'
+                                            ? `${data.estimated_room_nights} / ${money(data.estimated_tourism_receipts)}`
+                                            : '-',
+                                    ],
+                                    [
+                                        'Employee Breakdown',
+                                        data.event_nature === 'public'
+                                            ? `Total: ${data.total_employees}; Female: ${data.female_employees}; Male: ${data.male_employees}`
+                                            : '-',
+                                    ],
+                                    [
+                                        'Compliance',
+                                        data.event_nature === 'public'
+                                            ? `Permit: ${data.permit_to_engage}; DOT: ${data.dot_accredited}; Active member: ${data.active_member}`
+                                            : '-',
+                                    ],
+                                    [
+                                        'MICE Report Remarks',
+                                        data.event_nature === 'public'
+                                            ? data.remarks || 'N/A'
+                                            : '-',
+                                    ],
+                                    [
                                         'Comment / Feedback',
                                         data.comments_feedback || 'N/A',
                                     ],
@@ -7082,174 +7854,196 @@ export function BookingFormPage(rawProps: BookingFormPageProps = {}) {
                             setActiveStep(index);
                     }}
                 />
-                {floatingNotice ? (
-                    <div
-                        className="bccc-booking-floating-notice fixed inset-0 z-[2147483300] grid place-items-center bg-slate-950/45 p-4 text-sm text-slate-700 backdrop-blur-md"
-                        role="dialog"
-                        aria-modal="true"
-                        onClick={() => setFloatingNotice(null)}
-                    >
-                        <div
-                            className="w-full max-w-lg border border-red-200 bg-white p-5 shadow-2xl dark:border-red-400/30 dark:bg-slate-950 dark:text-slate-200"
-                            onClick={(event) => event.stopPropagation()}
-                        >
-                            <div className="flex gap-3">
-                                <AlertTriangle
-                                    className={cx(
-                                        'mt-0.5 h-5 w-5 shrink-0',
-                                        floatingNotice.tone === 'error'
-                                            ? 'text-red-600'
-                                            : 'text-[#164734]',
-                                    )}
-                                />
-                                <div>
-                                    <strong className="block text-base text-slate-950 dark:text-white">
-                                        {floatingNotice.title}
-                                    </strong>
-                                    <span className="mt-2 block leading-6">
-                                        {floatingNotice.message}
-                                    </span>
-                                    <button
-                                        type="button"
-                                        onClick={() => setFloatingNotice(null)}
-                                        className="mt-4 inline-flex min-h-10 items-center justify-center bg-[#164734] px-5 text-xs font-semibold tracking-[0.16em] text-white uppercase transition hover:bg-[#0f3325]"
-                                    >
-                                        Close
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ) : null}
-                {leavePrompt && currentLeavePromptCopy ? (
-                    <div
-                        className="bccc-booking-floating-notice fixed inset-0 z-[2147483300] grid place-items-center bg-slate-950/45 p-4 text-sm text-slate-700 backdrop-blur-md"
-                        role="dialog"
-                        aria-modal="true"
-                        onClick={() =>
-                            leavePrompt.saving ? null : setLeavePrompt(null)
-                        }
-                    >
-                        <div
-                            className="bccc-booking-draft-exit-modal w-full max-w-xl border border-[#d6b56d]/50 bg-white p-5 shadow-2xl dark:border-[#d6b56d]/30 dark:bg-slate-950 dark:text-slate-200"
-                            onClick={(event) => event.stopPropagation()}
-                        >
-                            <div className="flex gap-3">
-                                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[#a88633]" />
-                                <div className="min-w-0">
-                                    <strong className="block text-base text-slate-950 dark:text-white">
-                                        {currentLeavePromptCopy.title}
-                                    </strong>
-                                    <span className="mt-2 block leading-6">
-                                        {currentLeavePromptCopy.description}
-                                    </span>
-                                    <div className="mt-5 grid gap-2 sm:grid-cols-[1fr_auto_auto]">
-                                        <button
-                                            type="button"
-                                            onClick={async () => {
-                                                draftDiscardingRef.current = false;
-                                                setLeavePrompt((current) =>
-                                                    current
-                                                        ? {
-                                                              ...current,
-                                                              saving: true,
-                                                          }
-                                                        : current,
-                                                );
-                                                const ok =
-                                                    await saveBookingDraft(
-                                                        'manual',
-                                                    );
-                                                if (ok) {
-                                                    continueToUrl(
-                                                        leavePrompt.url,
-                                                        leavePrompt.method,
-                                                    );
-                                                    return;
-                                                }
-                                                setLeavePrompt((current) =>
-                                                    current
-                                                        ? {
-                                                              ...current,
-                                                              saving: false,
-                                                          }
-                                                        : current,
-                                                );
-                                                showFloatingNotice(
-                                                    'Draft was not saved',
-                                                    'Please check your connection and try Save as Draft again before leaving.',
-                                                    'error',
-                                                );
-                                            }}
-                                            disabled={leavePrompt.saving}
-                                            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#164734] px-5 text-xs font-semibold tracking-[0.16em] text-white uppercase transition hover:bg-[#0f3325] disabled:opacity-60"
-                                        >
-                                            {leavePrompt.saving ? (
-                                                <LoaderCircle className="h-4 w-4 animate-spin" />
-                                            ) : (
-                                                <ReceiptText className="h-4 w-4" />
-                                            )}
-                                            {leavePrompt.saving
-                                                ? currentLeavePromptCopy.savingLabel
-                                                : currentLeavePromptCopy.saveLabel}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={async () => {
-                                                setLeavePrompt((current) =>
-                                                    current
-                                                        ? {
-                                                              ...current,
-                                                              saving: true,
-                                                          }
-                                                        : current,
-                                                );
-                                                const ok =
-                                                    await discardBookingDraft();
+                {floatingNotice && typeof document !== 'undefined'
+                    ? createPortal(
+                          <div
+                              className="bccc-booking-floating-notice bccc-booking-viewport-overlay fixed inset-0 z-[2147483600] grid h-[100dvh] w-screen place-items-center overflow-y-auto overscroll-none bg-slate-950/55 p-4 text-sm text-slate-700 backdrop-blur-md"
+                              role="dialog"
+                              aria-modal="true"
+                              onClick={() => setFloatingNotice(null)}
+                          >
+                              <div
+                                  className="w-full max-w-lg border border-red-200 bg-white p-5 shadow-2xl dark:border-red-400/30 dark:bg-slate-950 dark:text-slate-200"
+                                  onClick={(event) => event.stopPropagation()}
+                              >
+                                  <div className="flex gap-3">
+                                      <AlertTriangle
+                                          className={cx(
+                                              'mt-0.5 h-5 w-5 shrink-0',
+                                              floatingNotice.tone === 'error'
+                                                  ? 'text-red-600'
+                                                  : 'text-[#164734]',
+                                          )}
+                                      />
+                                      <div>
+                                          <strong className="block text-base text-slate-950 dark:text-white">
+                                              {floatingNotice.title}
+                                          </strong>
+                                          <span className="mt-2 block leading-6">
+                                              {floatingNotice.message}
+                                          </span>
+                                          <button
+                                              type="button"
+                                              onClick={() =>
+                                                  setFloatingNotice(null)
+                                              }
+                                              className="mt-4 inline-flex min-h-10 items-center justify-center bg-[#164734] px-5 text-xs font-semibold tracking-[0.16em] text-white uppercase transition hover:bg-[#0f3325]"
+                                          >
+                                              Close
+                                          </button>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>,
+                          document.body,
+                      )
+                    : null}
+                {leavePrompt &&
+                currentLeavePromptCopy &&
+                typeof document !== 'undefined'
+                    ? createPortal(
+                          <div
+                              className="bccc-booking-floating-notice bccc-booking-viewport-overlay fixed inset-0 z-[2147483600] grid h-[100dvh] w-screen place-items-center overflow-y-auto overscroll-none bg-slate-950/60 p-4 text-sm text-slate-700 backdrop-blur-md"
+                              role="dialog"
+                              aria-modal="true"
+                              onClick={() =>
+                                  leavePrompt.saving
+                                      ? null
+                                      : setLeavePrompt(null)
+                              }
+                          >
+                              <div
+                                  className="bccc-booking-draft-exit-modal my-auto max-h-[calc(100dvh-2rem)] w-full max-w-xl overflow-y-auto rounded-2xl border border-[#d6b56d]/50 bg-white p-5 shadow-2xl dark:border-[#d6b56d]/30 dark:bg-slate-950 dark:text-slate-200"
+                                  onClick={(event) => event.stopPropagation()}
+                              >
+                                  <div className="flex gap-3">
+                                      <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[#a88633]" />
+                                      <div className="min-w-0">
+                                          <strong className="block text-base text-slate-950 dark:text-white">
+                                              {currentLeavePromptCopy.title}
+                                          </strong>
+                                          <span className="mt-2 block leading-6">
+                                              {
+                                                  currentLeavePromptCopy.description
+                                              }
+                                          </span>
+                                          <div className="mt-5 grid gap-2 sm:grid-cols-3">
+                                              <button
+                                                  type="button"
+                                                  onClick={async () => {
+                                                      draftDiscardingRef.current = false;
+                                                      setLeavePrompt(
+                                                          (current) =>
+                                                              current
+                                                                  ? {
+                                                                        ...current,
+                                                                        saving: true,
+                                                                    }
+                                                                  : current,
+                                                      );
+                                                      const ok =
+                                                          await saveBookingDraft(
+                                                              'manual',
+                                                          );
+                                                      if (ok) {
+                                                          continueToUrl(
+                                                              leavePrompt.url,
+                                                              leavePrompt.method,
+                                                          );
+                                                          return;
+                                                      }
+                                                      setLeavePrompt(
+                                                          (current) =>
+                                                              current
+                                                                  ? {
+                                                                        ...current,
+                                                                        saving: false,
+                                                                    }
+                                                                  : current,
+                                                      );
+                                                      showFloatingNotice(
+                                                          'Draft was not saved',
+                                                          'Please check your connection and try Save as Draft again before leaving.',
+                                                          'error',
+                                                      );
+                                                  }}
+                                                  disabled={leavePrompt.saving}
+                                                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#164734] px-5 text-xs font-semibold tracking-[0.16em] text-white uppercase transition hover:bg-[#0f3325] disabled:opacity-60"
+                                              >
+                                                  {leavePrompt.saving ? (
+                                                      <LoaderCircle className="h-4 w-4 animate-spin" />
+                                                  ) : (
+                                                      <ReceiptText className="h-4 w-4" />
+                                                  )}
+                                                  {leavePrompt.saving
+                                                      ? currentLeavePromptCopy.savingLabel
+                                                      : currentLeavePromptCopy.saveLabel}
+                                              </button>
+                                              <button
+                                                  type="button"
+                                                  onClick={async () => {
+                                                      setLeavePrompt(
+                                                          (current) =>
+                                                              current
+                                                                  ? {
+                                                                        ...current,
+                                                                        saving: true,
+                                                                    }
+                                                                  : current,
+                                                      );
+                                                      const ok =
+                                                          await discardBookingDraft();
 
-                                                if (ok) {
-                                                    continueToUrl(
-                                                        leavePrompt.url,
-                                                        leavePrompt.method,
-                                                    );
-                                                    return;
-                                                }
+                                                      if (ok) {
+                                                          continueToUrl(
+                                                              leavePrompt.url,
+                                                              leavePrompt.method,
+                                                          );
+                                                          return;
+                                                      }
 
-                                                setLeavePrompt((current) =>
-                                                    current
-                                                        ? {
-                                                              ...current,
-                                                              saving: false,
-                                                          }
-                                                        : current,
-                                                );
-                                                showFloatingNotice(
-                                                    'Draft was not discarded',
-                                                    'Please check your connection and try Leave Without Saving again. The form stayed open so your draft state is clear.',
-                                                    'error',
-                                                );
-                                            }}
-                                            disabled={leavePrompt.saving}
-                                            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 px-4 text-xs font-semibold tracking-[0.14em] text-slate-700 uppercase transition hover:border-red-300 hover:text-red-600 disabled:opacity-60 dark:border-white/10 dark:text-slate-200"
-                                        >
-                                            {
-                                                currentLeavePromptCopy.discardLabel
-                                            }
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setLeavePrompt(null)}
-                                            disabled={leavePrompt.saving}
-                                            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 px-4 text-xs font-semibold tracking-[0.14em] text-slate-700 uppercase transition hover:border-[#164734] hover:text-[#164734] disabled:opacity-60 dark:border-white/10 dark:text-slate-200"
-                                        >
-                                            {currentLeavePromptCopy.stayLabel}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ) : null}
+                                                      setLeavePrompt(
+                                                          (current) =>
+                                                              current
+                                                                  ? {
+                                                                        ...current,
+                                                                        saving: false,
+                                                                    }
+                                                                  : current,
+                                                      );
+                                                      showFloatingNotice(
+                                                          'Draft was not discarded',
+                                                          'Please check your connection and try Leave Without Saving again. The form stayed open so your draft state is clear.',
+                                                          'error',
+                                                      );
+                                                  }}
+                                                  disabled={leavePrompt.saving}
+                                                  className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 px-4 text-xs font-semibold tracking-[0.14em] text-slate-700 uppercase transition hover:border-red-300 hover:text-red-600 disabled:opacity-60 dark:border-white/10 dark:text-slate-200"
+                                              >
+                                                  {
+                                                      currentLeavePromptCopy.discardLabel
+                                                  }
+                                              </button>
+                                              <button
+                                                  type="button"
+                                                  onClick={() =>
+                                                      setLeavePrompt(null)
+                                                  }
+                                                  disabled={leavePrompt.saving}
+                                                  className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 px-4 text-xs font-semibold tracking-[0.14em] text-slate-700 uppercase transition hover:border-[#164734] hover:text-[#164734] disabled:opacity-60 dark:border-white/10 dark:text-slate-200"
+                                              >
+                                                  {
+                                                      currentLeavePromptCopy.stayLabel
+                                                  }
+                                              </button>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>,
+                          document.body,
+                      )
+                    : null}
                 <div
                     ref={stepRootRef}
                     className="bccc-booking-step-root mx-auto max-w-[1700px] scroll-mt-28 p-3 sm:p-5"

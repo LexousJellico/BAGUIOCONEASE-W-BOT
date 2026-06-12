@@ -114,10 +114,10 @@ export const adminWorkspaceGroups: WorkspaceGroup[] = [
             'Review analytics, MICE records, audit trails, printable records, and system activity.',
         links: [
             {
-                label: 'MICE Registry',
+                label: 'MICE Report',
                 href: '/admin/reports/mice-registry',
                 description:
-                    'Open the MICE registry and survey-linked reports.',
+                    'Open booking-linked MICE reports and survey details.',
             },
             {
                 label: 'Booking Analytics',
@@ -195,7 +195,7 @@ export const managerWorkspaceGroups: WorkspaceGroup[] = [
                 description: 'Review payment compliance.',
             },
             {
-                label: 'MICE Registry',
+                label: 'MICE Report',
                 href: '/manager/reports/mice-registry',
                 description: 'Open MICE records and reporting outputs.',
             },

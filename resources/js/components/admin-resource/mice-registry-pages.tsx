@@ -11,7 +11,6 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     Building2,
     CalendarDays,
-    Edit3,
     FileSpreadsheet,
     Globe2,
     Mail,
@@ -20,7 +19,6 @@ import {
     ReceiptText,
     Search,
     ShieldCheck,
-    Trash2,
     UsersRound,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -154,12 +152,12 @@ type MicePageProps = {
 
 const adminBreadcrumbs: BreadcrumbItem[] = [
     { title: 'Admin', href: '/admin/dashboard' },
-    { title: 'MICE Registry', href: '/admin/reports/mice-registry' },
+    { title: 'MICE Report', href: '/admin/reports/mice-registry' },
 ];
 
 const managerBreadcrumbs: BreadcrumbItem[] = [
     { title: 'Manager', href: '/manager/dashboard' },
-    { title: 'MICE Registry', href: '/manager/reports/mice-registry' },
+    { title: 'MICE Report', href: '/manager/reports/mice-registry' },
 ];
 
 function collection<T>(value?: T[] | Paginated<T>): T[] {
@@ -193,7 +191,9 @@ function basePath(role?: string) {
 }
 
 function breadcrumbsFor(role?: string): BreadcrumbItem[] {
-    return currentRole(role) === 'manager' ? managerBreadcrumbs : adminBreadcrumbs;
+    return currentRole(role) === 'manager'
+        ? managerBreadcrumbs
+        : adminBreadcrumbs;
 }
 
 function numberValue(value?: number | string | null): number {
@@ -266,17 +266,9 @@ function cleanLabel(value?: string | null): string {
 }
 
 function yesNo(value?: boolean | number | string | null): string {
-    return value === true || value === 1 || value === '1' || value === 'true' ? 'Yes' : 'No';
-}
-
-function recordTitle(record: MiceRecord): string {
-    return (
-        record.event_name ||
-        record.type_of_event ||
-        record.establishment_name ||
-        record.organization_name ||
-        `MICE Record #${record.id}`
-    );
+    return value === true || value === 1 || value === '1' || value === 'true'
+        ? 'Yes'
+        : 'No';
 }
 
 function participantTotal(record: MiceRecord): number {
@@ -302,7 +294,6 @@ function participantTotal(record: MiceRecord): number {
     );
 }
 
-
 function officialDomestic(record: MiceRecord): number {
     const official = numberValue(record.domestic_attendees);
 
@@ -310,10 +301,12 @@ function officialDomestic(record: MiceRecord): number {
         return official;
     }
 
-    return numberValue(record.local_male_participants) +
+    return (
+        numberValue(record.local_male_participants) +
         numberValue(record.local_female_participants) +
         numberValue(record.domestic_male_participants) +
-        numberValue(record.domestic_female_participants);
+        numberValue(record.domestic_female_participants)
+    );
 }
 
 function officialForeign(record: MiceRecord): number {
@@ -323,7 +316,10 @@ function officialForeign(record: MiceRecord): number {
         return official;
     }
 
-    return numberValue(record.foreign_male_participants) + numberValue(record.foreign_female_participants);
+    return (
+        numberValue(record.foreign_male_participants) +
+        numberValue(record.foreign_female_participants)
+    );
 }
 
 function officialVisitors(record: MiceRecord): number {
@@ -333,11 +329,19 @@ function officialVisitors(record: MiceRecord): number {
         return official;
     }
 
-    return numberValue(record.same_day_visitors) + numberValue(record.overnight_visitors);
+    return (
+        numberValue(record.same_day_visitors) +
+        numberValue(record.overnight_visitors)
+    );
 }
 
 function officialEventName(record: MiceRecord): string {
-    return textValue(record.event_name || record.type_of_event || record.booking?.type_of_event, `MICE Record #${record.id}`);
+    return textValue(
+        record.event_name ||
+            record.type_of_event ||
+            record.booking?.type_of_event,
+        `MICE Record #${record.id}`,
+    );
 }
 
 function officialDates(record: MiceRecord): string {
@@ -345,12 +349,22 @@ function officialDates(record: MiceRecord): string {
 }
 
 function officialOrganizer(record: MiceRecord): string {
-    return textValue(record.organizer_organization_name || record.organization_name || record.organizer_name);
+    return textValue(
+        record.organizer_organization_name ||
+            record.organization_name ||
+            record.organizer_name,
+    );
 }
 
 function officialContact(record: MiceRecord): string {
-    const person = textValue(record.organizer_contact_person || record.contact_person, '');
-    const number = textValue(record.organizer_contact_number || record.contact_number, '');
+    const person = textValue(
+        record.organizer_contact_person || record.contact_person,
+        '',
+    );
+    const number = textValue(
+        record.organizer_contact_number || record.contact_number,
+        '',
+    );
 
     if (person && number) {
         return `${person} / ${number}`;
@@ -444,10 +458,15 @@ export function MiceRegistryReportPage() {
     const { props, records, links, role, path } = useMiceRecords();
 
     const [q, setQ] = useState(String(props.filters?.q ?? ''));
-    const [year, setYear] = useState(String(props.filters?.year_recorded ?? props.filters?.year ?? ''));
+    const [year, setYear] = useState(
+        String(props.filters?.year_recorded ?? props.filters?.year ?? ''),
+    );
     const [status, setStatus] = useState(String(props.filters?.status ?? ''));
 
-    const totalRecords = props.summary?.total_records ?? props.summary?.totalRecords ?? records.length;
+    const totalRecords =
+        props.summary?.total_records ??
+        props.summary?.totalRecords ??
+        records.length;
     const totalParticipants =
         props.summary?.total_participants ??
         props.summary?.totalParticipants ??
@@ -455,11 +474,18 @@ export function MiceRegistryReportPage() {
     const totalRoomNights =
         props.summary?.total_room_nights ??
         props.summary?.totalRoomNights ??
-        records.reduce((sum, record) => sum + numberValue(record.estimated_room_nights), 0);
+        records.reduce(
+            (sum, record) => sum + numberValue(record.estimated_room_nights),
+            0,
+        );
     const totalReceipts =
         props.summary?.total_receipts ??
         props.summary?.totalReceipts ??
-        records.reduce((sum, record) => sum + numberValue(record.estimated_tourism_receipts), 0);
+        records.reduce(
+            (sum, record) =>
+                sum + numberValue(record.estimated_tourism_receipts),
+            0,
+        );
 
     function search() {
         router.get(
@@ -477,38 +503,28 @@ export function MiceRegistryReportPage() {
         );
     }
 
-    function destroy(record: MiceRecord) {
-        if (!window.confirm(`Delete MICE record "${recordTitle(record)}"?`)) {
-            return;
-        }
-
-        router.delete(`${path}/${record.id}`, {
-            preserveScroll: true,
-        });
-    }
-
     return (
         <ResourcePageShell
-            title="MICE Registry"
+            title="MICE Report"
             eyebrow="Reports"
             icon={FileSpreadsheet}
             breadcrumbs={breadcrumbsFor(role)}
-            subtitle="Formal registry for Meetings, Incentives, Conferences, and Exhibitions records, participant counts, visitor origin, room nights, and tourism receipt reporting."
+            subtitle="Booking-linked Meetings, Incentives, Conferences, and Exhibitions details for participant, visitor-origin, room-night, and tourism-receipt monitoring."
             actions={
                 <>
-                    <ResourceActionLink href={`${path}/print`} variant="secondary">
+                    <ResourceActionLink
+                        href={`${path}/print`}
+                        variant="secondary"
+                    >
                         Print Report
                     </ResourceActionLink>
 
-                    <ResourceActionLink href={`${path}/export`} variant="secondary">
+                    <ResourceActionLink
+                        href={`${path}/export`}
+                        variant="secondary"
+                    >
                         Export
                     </ResourceActionLink>
-
-                    {role === 'admin' ? (
-                        <ResourceActionLink href={`${path}/create`}>
-                            New MICE Record
-                        </ResourceActionLink>
-                    ) : null}
                 </>
             }
         >
@@ -544,9 +560,9 @@ export function MiceRegistryReportPage() {
 
             <div className="mt-5">
                 <ResourceSection
-                    title="Registry records"
+                    title="Booking-linked reports"
                     eyebrow="MICE Report"
-                    description="Review submitted MICE reports, verify event information, and prepare print/export reports."
+                    description="Review submitted booking MICE details, verify event information, and prepare print/export reports."
                 >
                     <ResourceToolbar
                         searchPlaceholder="Search event, establishment, organizer, venue, origin, or remarks..."
@@ -559,7 +575,9 @@ export function MiceRegistryReportPage() {
                                     <CalendarDays className="h-4 w-4 shrink-0 text-[#9d7b3d] dark:text-[#f1d89b]" />
                                     <input
                                         value={year}
-                                        onChange={(event) => setYear(event.target.value)}
+                                        onChange={(event) =>
+                                            setYear(event.target.value)
+                                        }
                                         placeholder="Year"
                                         className="w-20 bg-transparent text-sm font-semibold text-[#21180d] outline-none placeholder:text-[#8a7a63] dark:text-white dark:placeholder:text-white/42"
                                     />
@@ -567,7 +585,9 @@ export function MiceRegistryReportPage() {
 
                                 <select
                                     value={status}
-                                    onChange={(event) => setStatus(event.target.value)}
+                                    onChange={(event) =>
+                                        setStatus(event.target.value)
+                                    }
                                     className="min-h-11 rounded-full border border-[#d9c7a6]/70 bg-white px-4 text-sm font-semibold text-[#2f2517] outline-none dark:border-white/10 dark:bg-white/7 dark:text-white"
                                 >
                                     <option value="">All statuses</option>
@@ -592,7 +612,7 @@ export function MiceRegistryReportPage() {
                         <ResourceEmptyState
                             icon={FileSpreadsheet}
                             title="No MICE records found"
-                            description="Submitted MICE survey records and manually encoded MICE registry entries will appear here."
+                            description="MICE details submitted through public booking forms will appear here."
                         />
                     ) : (
                         <div className="grid gap-4">
@@ -601,8 +621,6 @@ export function MiceRegistryReportPage() {
                                     key={record.id}
                                     record={record}
                                     role={role}
-                                    path={path}
-                                    onDelete={() => destroy(record)}
                                 />
                             ))}
                         </div>
@@ -618,13 +636,9 @@ export function MiceRegistryReportPage() {
 function MiceRecordCard({
     record,
     role,
-    path,
-    onDelete,
 }: {
     record: MiceRecord;
     role: string;
-    path: string;
-    onDelete: () => void;
 }) {
     return (
         <article className="overflow-hidden rounded-[1.45rem] border border-[#d9c7a6]/70 bg-[#fffaf0]/72 shadow-[0_18px_58px_rgba(47,37,23,0.08)] dark:border-white/10 dark:bg-white/[0.035]">
@@ -632,16 +646,22 @@ function MiceRecordCard({
                 <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                     <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                            <span className={`rounded-full px-3 py-1 text-xs font-bold ${statusClass(record.status)}`}>
+                            <span
+                                className={`rounded-full px-3 py-1 text-xs font-bold ${statusClass(record.status)}`}
+                            >
                                 {cleanLabel(record.status)}
                             </span>
 
                             <span className="rounded-full border border-[#d9c7a6]/70 bg-white px-3 py-1 text-xs font-bold text-[#7a5a24] dark:border-white/10 dark:bg-white/7 dark:text-[#f1d89b]">
-                                Record #{textValue(record.record_no ?? record.id)}
+                                Record #
+                                {textValue(record.record_no ?? record.id)}
                             </span>
 
                             <span className="rounded-full border border-[#d9c7a6]/70 bg-white px-3 py-1 text-xs font-bold text-[#7a5a24] dark:border-white/10 dark:bg-white/7 dark:text-[#f1d89b]">
-                                {textValue(record.year_recorded, new Date().getFullYear().toString())}
+                                {textValue(
+                                    record.year_recorded,
+                                    new Date().getFullYear().toString(),
+                                )}
                             </span>
                         </div>
 
@@ -650,55 +670,130 @@ function MiceRecordCard({
                         </h3>
 
                         <p className="mt-2 text-sm leading-7 text-[#6e604c] dark:text-white/56">
-                            {textValue(record.event_center_name || record.establishment_name, 'Baguio Convention and Cultural Center')} / {textValue(record.venue_area)} / {officialDates(record)}
+                            {textValue(
+                                record.event_center_name ||
+                                    record.establishment_name,
+                                'Baguio Convention and Cultural Center',
+                            )}{' '}
+                            / {textValue(record.venue_area)} /{' '}
+                            {officialDates(record)}
                         </p>
                     </div>
 
                     <div className="flex flex-wrap gap-2 xl:justify-end">
-                        <Link
-                            href={`${path}/${record.id}/edit`}
-                            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-[#d9c7a6]/70 bg-white px-4 text-sm font-semibold text-[#2f2517] transition hover:bg-[#f7f0e3] dark:border-white/10 dark:bg-white/7 dark:text-white dark:hover:bg-white/12"
-                        >
-                            <Edit3 className="h-4 w-4" />
-                            Edit
-                        </Link>
-
-                        {role === 'admin' ? (
-                            <button
-                                type="button"
-                                onClick={onDelete}
-                                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-rose-600 px-4 text-sm font-semibold text-white transition hover:bg-rose-700"
+                        {record.booking_id ? (
+                            <Link
+                                href={`${role === 'manager' ? '/manager' : '/admin'}/bookings/${record.booking_id}`}
+                                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-[#d9c7a6]/70 bg-white px-4 text-sm font-semibold text-[#2f2517] transition hover:bg-[#f7f0e3] dark:border-white/10 dark:bg-white/7 dark:text-white dark:hover:bg-white/12"
                             >
-                                <Trash2 className="h-4 w-4" />
-                                Delete
-                            </button>
+                                Open Booking
+                            </Link>
                         ) : null}
                     </div>
                 </div>
             </div>
 
             <div className="grid gap-3 p-5 md:grid-cols-2 xl:grid-cols-4">
-                <InfoBox icon={UsersRound} label="Participants" value={participantTotal(record).toLocaleString()} />
-                <InfoBox icon={UsersRound} label="Domestic Attendees" value={officialDomestic(record).toLocaleString()} />
-                <InfoBox icon={Globe2} label="Foreign Attendees" value={officialForeign(record).toLocaleString()} />
-                <InfoBox icon={UsersRound} label="Visitors" value={officialVisitors(record).toLocaleString()} />
-                <InfoBox icon={Globe2} label="Countries" value={`${numberValue(record.total_number_of_countries).toLocaleString()} / ${textValue(record.countries_breakdown_text || record.main_origin_country)}`} />
-                <InfoBox icon={Building2} label="Room Nights" value={numberValue(record.estimated_room_nights).toLocaleString()} />
-                <InfoBox icon={ReceiptText} label="Receipts" value={money(record.estimated_tourism_receipts)} />
-                <InfoBox icon={CalendarDays} label="Submitted" value={formatDateTime(record.submitted_at ?? record.created_at)} />
+                <InfoBox
+                    icon={UsersRound}
+                    label="Participants"
+                    value={participantTotal(record).toLocaleString()}
+                />
+                <InfoBox
+                    icon={UsersRound}
+                    label="Domestic Attendees"
+                    value={officialDomestic(record).toLocaleString()}
+                />
+                <InfoBox
+                    icon={Globe2}
+                    label="Foreign Attendees"
+                    value={officialForeign(record).toLocaleString()}
+                />
+                <InfoBox
+                    icon={UsersRound}
+                    label="Visitors"
+                    value={officialVisitors(record).toLocaleString()}
+                />
+                <InfoBox
+                    icon={Globe2}
+                    label="Countries"
+                    value={`${numberValue(record.total_number_of_countries).toLocaleString()} / ${textValue(record.countries_breakdown_text || record.main_origin_country)}`}
+                />
+                <InfoBox
+                    icon={Building2}
+                    label="Room Nights"
+                    value={numberValue(
+                        record.estimated_room_nights,
+                    ).toLocaleString()}
+                />
+                <InfoBox
+                    icon={ReceiptText}
+                    label="Receipts"
+                    value={money(record.estimated_tourism_receipts)}
+                />
+                <InfoBox
+                    icon={CalendarDays}
+                    label="Submitted"
+                    value={formatDateTime(
+                        record.submitted_at ?? record.created_at,
+                    )}
+                />
             </div>
 
             <div className="border-t border-[#eadcc2]/80 p-5 dark:border-white/10">
                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                    <InfoLine icon={Building2} label="Organizer Organization" value={officialOrganizer(record)} />
-                    <InfoLine icon={UsersRound} label="Contact Person" value={officialContact(record)} />
-                    <InfoLine icon={CalendarDays} label="Covered Month / Hours" value={`${textValue(record.covered_month)} / ${numberValue(record.number_of_hours).toLocaleString()} hr/s`} />
-                    <InfoLine icon={ReceiptText} label="Classification / Type" value={`${textValue(record.classification_of_event || record.event_category)} / ${textValue(record.mice_type_of_event || record.type_of_event)}`} />
-                    <InfoLine icon={MapPin} label="Organizer Address" value={textValue(record.organizer_address || record.address)} />
-                    <InfoLine icon={ShieldCheck} label="Exhibitions / Accreditation" value={`Exhibitions: ${yesNo(record.has_exhibitions)} / Exhibitors: ${numberValue(record.exhibitors_count).toLocaleString()} / DOT: ${yesNo(record.dot_accredited)}`} />
-                    {record.booking_summary ? <InfoLine icon={Mail} label="Linked Booking" value={record.booking_summary} /> : null}
-                    <InfoLine icon={ReceiptText} label="Comments / Feedback" value={textValue(record.comments_feedback || record.remarks, 'No comments')} />
-                    <InfoLine icon={ShieldCheck} label="Permit / Member" value={`Permit: ${yesNo(record.permit_to_engage)} / Member: ${yesNo(record.active_member)}`} />
+                    <InfoLine
+                        icon={Building2}
+                        label="Organizer Organization"
+                        value={officialOrganizer(record)}
+                    />
+                    <InfoLine
+                        icon={UsersRound}
+                        label="Contact Person"
+                        value={officialContact(record)}
+                    />
+                    <InfoLine
+                        icon={CalendarDays}
+                        label="Covered Month / Hours"
+                        value={`${textValue(record.covered_month)} / ${numberValue(record.number_of_hours).toLocaleString()} hr/s`}
+                    />
+                    <InfoLine
+                        icon={ReceiptText}
+                        label="Classification / Type"
+                        value={`${textValue(record.classification_of_event || record.event_category)} / ${textValue(record.mice_type_of_event || record.type_of_event)}`}
+                    />
+                    <InfoLine
+                        icon={MapPin}
+                        label="Organizer Address"
+                        value={textValue(
+                            record.organizer_address || record.address,
+                        )}
+                    />
+                    <InfoLine
+                        icon={ShieldCheck}
+                        label="Exhibitions / Accreditation"
+                        value={`Exhibitions: ${yesNo(record.has_exhibitions)} / Exhibitors: ${numberValue(record.exhibitors_count).toLocaleString()} / DOT: ${yesNo(record.dot_accredited)}`}
+                    />
+                    {record.booking_summary ? (
+                        <InfoLine
+                            icon={Mail}
+                            label="Linked Booking"
+                            value={record.booking_summary}
+                        />
+                    ) : null}
+                    <InfoLine
+                        icon={ReceiptText}
+                        label="Comments / Feedback"
+                        value={textValue(
+                            record.comments_feedback || record.remarks,
+                            'No comments',
+                        )}
+                    />
+                    <InfoLine
+                        icon={ShieldCheck}
+                        label="Permit / Member"
+                        value={`Permit: ${yesNo(record.permit_to_engage)} / Member: ${yesNo(record.active_member)}`}
+                    />
                 </div>
             </div>
         </article>
@@ -717,7 +812,7 @@ function InfoBox({
     return (
         <div className="rounded-[1rem] border border-[#eadcc2]/80 bg-white/70 p-3 dark:border-white/10 dark:bg-white/[0.035]">
             <Icon className="h-4 w-4 text-[#9d7b3d] dark:text-[#f1d89b]" />
-            <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#9d7b3d] dark:text-[#f1d89b]">
+            <p className="mt-2 text-[10px] font-bold tracking-[0.16em] text-[#9d7b3d] uppercase dark:text-[#f1d89b]">
                 {label}
             </p>
             <p className="mt-1 line-clamp-2 text-sm font-semibold text-[#21180d] dark:text-white">
@@ -740,10 +835,10 @@ function InfoLine({
         <div className="flex items-start gap-3 rounded-[1rem] border border-[#eadcc2]/80 bg-white/60 p-3 dark:border-white/10 dark:bg-white/[0.035]">
             <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[#9d7b3d] dark:text-[#f1d89b]" />
             <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9d7b3d] dark:text-[#f1d89b]">
+                <p className="text-[10px] font-bold tracking-[0.16em] text-[#9d7b3d] uppercase dark:text-[#f1d89b]">
                     {label}
                 </p>
-                <p className="mt-1 break-words text-sm leading-6 text-[#6e604c] dark:text-white/56">
+                <p className="mt-1 text-sm leading-6 break-words text-[#6e604c] dark:text-white/56">
                     {value}
                 </p>
             </div>
@@ -754,14 +849,26 @@ function InfoLine({
 export function MiceRegistryPrintPage() {
     const { records, role, path } = useMiceRecords();
 
-    const totalDomestic = records.reduce((sum, record) => sum + officialDomestic(record), 0);
-    const totalForeign = records.reduce((sum, record) => sum + officialForeign(record), 0);
-    const totalVisitors = records.reduce((sum, record) => sum + officialVisitors(record), 0);
-    const totalExhibitors = records.reduce((sum, record) => sum + numberValue(record.exhibitors_count), 0);
+    const totalDomestic = records.reduce(
+        (sum, record) => sum + officialDomestic(record),
+        0,
+    );
+    const totalForeign = records.reduce(
+        (sum, record) => sum + officialForeign(record),
+        0,
+    );
+    const totalVisitors = records.reduce(
+        (sum, record) => sum + officialVisitors(record),
+        0,
+    );
+    const totalExhibitors = records.reduce(
+        (sum, record) => sum + numberValue(record.exhibitors_count),
+        0,
+    );
 
     return (
         <>
-            <Head title="Print MICE Registry" />
+            <Head title="Print MICE Report" />
 
             <div className="official-mice-print min-h-screen bg-white text-[#17120b] print:bg-white">
                 <div className="mx-auto max-w-[14in] px-6 py-6 print:max-w-none print:px-0 print:py-0">
@@ -784,18 +891,39 @@ export function MiceRegistryPrintPage() {
                     </div>
 
                     <section className="official-mice-header">
-                        <p>Republic of the Philippines · City Government of Baguio</p>
+                        <p>
+                            Republic of the Philippines · City Government of
+                            Baguio
+                        </p>
                         <h1>Baguio Convention and Cultural Center</h1>
                         <h2>2025 / 2026 MICE Report Registry</h2>
-                        <small>Generated {formatDateTime(new Date().toISOString())} · Workspace: {cleanLabel(role)}</small>
+                        <small>
+                            Generated {formatDateTime(new Date().toISOString())}{' '}
+                            · Workspace: {cleanLabel(role)}
+                        </small>
                     </section>
 
                     <section className="mt-4 grid grid-cols-5 gap-2">
-                        <PrintKpi label="Records" value={records.length.toLocaleString()} />
-                        <PrintKpi label="Domestic" value={totalDomestic.toLocaleString()} />
-                        <PrintKpi label="Foreign" value={totalForeign.toLocaleString()} />
-                        <PrintKpi label="Visitors" value={totalVisitors.toLocaleString()} />
-                        <PrintKpi label="Exhibitors" value={totalExhibitors.toLocaleString()} />
+                        <PrintKpi
+                            label="Records"
+                            value={records.length.toLocaleString()}
+                        />
+                        <PrintKpi
+                            label="Domestic"
+                            value={totalDomestic.toLocaleString()}
+                        />
+                        <PrintKpi
+                            label="Foreign"
+                            value={totalForeign.toLocaleString()}
+                        />
+                        <PrintKpi
+                            label="Visitors"
+                            value={totalVisitors.toLocaleString()}
+                        />
+                        <PrintKpi
+                            label="Exhibitors"
+                            value={totalExhibitors.toLocaleString()}
+                        />
                     </section>
 
                     <section className="mt-5 overflow-hidden border border-[#17120b]">
@@ -822,47 +950,119 @@ export function MiceRegistryPrintPage() {
                             <tbody>
                                 {records.length === 0 ? (
                                     <tr>
-                                        <td colSpan={14} className="border border-[#17120b] p-4 text-center">
+                                        <td
+                                            colSpan={14}
+                                            className="border border-[#17120b] p-4 text-center"
+                                        >
                                             No MICE records found.
                                         </td>
                                     </tr>
                                 ) : (
                                     records.map((record, index) => (
-                                        <tr key={record.id} className="break-inside-avoid">
-                                            <PrintTd>{textValue(record.record_no ?? index + 1)}</PrintTd>
-                                            <PrintTd>{textValue(record.event_center_name || record.establishment_name, 'Baguio Convention and Cultural Center')}</PrintTd>
-                                            <PrintTd>{textValue(record.covered_month || record.month_added)}</PrintTd>
-                                            <PrintTd>{officialEventName(record)}</PrintTd>
+                                        <tr
+                                            key={record.id}
+                                            className="break-inside-avoid"
+                                        >
                                             <PrintTd>
-                                                {formatDate(record.event_started_at || record.event_date_from)}
-                                                <br />
-                                                {formatDate(record.event_finished_at || record.event_date_to)}
-                                                <br />
-                                                {textValue(record.number_of_hours)} hr/s
+                                                {textValue(
+                                                    record.record_no ??
+                                                        index + 1,
+                                                )}
                                             </PrintTd>
-                                            <PrintTd>{textValue(record.classification_of_event || record.event_category)}</PrintTd>
-                                            <PrintTd>{textValue(record.mice_type_of_event || record.type_of_event)}</PrintTd>
-                                            <PrintTd>{officialDomestic(record).toLocaleString()}</PrintTd>
-                                            <PrintTd>{officialForeign(record).toLocaleString()}</PrintTd>
                                             <PrintTd>
-                                                {textValue(record.total_number_of_countries)}
+                                                {textValue(
+                                                    record.event_center_name ||
+                                                        record.establishment_name,
+                                                    'Baguio Convention and Cultural Center',
+                                                )}
+                                            </PrintTd>
+                                            <PrintTd>
+                                                {textValue(
+                                                    record.covered_month ||
+                                                        record.month_added,
+                                                )}
+                                            </PrintTd>
+                                            <PrintTd>
+                                                {officialEventName(record)}
+                                            </PrintTd>
+                                            <PrintTd>
+                                                {formatDate(
+                                                    record.event_started_at ||
+                                                        record.event_date_from,
+                                                )}
                                                 <br />
-                                                {textValue(record.countries_breakdown_text || record.main_origin_country)}
+                                                {formatDate(
+                                                    record.event_finished_at ||
+                                                        record.event_date_to,
+                                                )}
+                                                <br />
+                                                {textValue(
+                                                    record.number_of_hours,
+                                                )}{' '}
+                                                hr/s
+                                            </PrintTd>
+                                            <PrintTd>
+                                                {textValue(
+                                                    record.classification_of_event ||
+                                                        record.event_category,
+                                                )}
+                                            </PrintTd>
+                                            <PrintTd>
+                                                {textValue(
+                                                    record.mice_type_of_event ||
+                                                        record.type_of_event,
+                                                )}
+                                            </PrintTd>
+                                            <PrintTd>
+                                                {officialDomestic(
+                                                    record,
+                                                ).toLocaleString()}
+                                            </PrintTd>
+                                            <PrintTd>
+                                                {officialForeign(
+                                                    record,
+                                                ).toLocaleString()}
+                                            </PrintTd>
+                                            <PrintTd>
+                                                {textValue(
+                                                    record.total_number_of_countries,
+                                                )}
+                                                <br />
+                                                {textValue(
+                                                    record.countries_breakdown_text ||
+                                                        record.main_origin_country,
+                                                )}
                                             </PrintTd>
                                             <PrintTd>
                                                 {yesNo(record.has_exhibitions)}
                                                 <br />
-                                                {numberValue(record.exhibitors_count).toLocaleString()} exhibitor/s
+                                                {numberValue(
+                                                    record.exhibitors_count,
+                                                ).toLocaleString()}{' '}
+                                                exhibitor/s
                                             </PrintTd>
-                                            <PrintTd>{officialVisitors(record).toLocaleString()}</PrintTd>
+                                            <PrintTd>
+                                                {officialVisitors(
+                                                    record,
+                                                ).toLocaleString()}
+                                            </PrintTd>
                                             <PrintTd>
                                                 {officialOrganizer(record)}
                                                 <br />
-                                                {textValue(record.organizer_address || record.address)}
+                                                {textValue(
+                                                    record.organizer_address ||
+                                                        record.address,
+                                                )}
                                                 <br />
                                                 {officialContact(record)}
                                             </PrintTd>
-                                            <PrintTd>{textValue(record.comments_feedback || record.remarks, '—')}</PrintTd>
+                                            <PrintTd>
+                                                {textValue(
+                                                    record.comments_feedback ||
+                                                        record.remarks,
+                                                    '—',
+                                                )}
+                                            </PrintTd>
                                         </tr>
                                     ))
                                 )}
@@ -871,7 +1071,12 @@ export function MiceRegistryPrintPage() {
                     </section>
 
                     <section className="mt-4 border border-[#17120b] p-3 text-[10px] leading-5">
-                        <strong>Certification:</strong> This report follows the official MICE/Convention Utility Survey fields: event center, function halls/capacity, covered month, event dates, hours, classification, event type, attendee counts, countries, exhibitions, visitors, organizer details, and comments/feedback.
+                        <strong>Certification:</strong> This report follows the
+                        official MICE/Convention Utility Survey fields: event
+                        center, function halls/capacity, covered month, event
+                        dates, hours, classification, event type, attendee
+                        counts, countries, exhibitions, visitors, organizer
+                        details, and comments/feedback.
                     </section>
 
                     <section className="mt-6 grid grid-cols-3 gap-8 text-xs">
@@ -887,18 +1092,28 @@ export function MiceRegistryPrintPage() {
 function PrintKpi({ label, value }: { label: string; value: string }) {
     return (
         <article className="border border-[#17120b] p-3 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em]">{label}</p>
+            <p className="text-[10px] font-bold tracking-[0.18em] uppercase">
+                {label}
+            </p>
             <p className="mt-1 text-lg font-bold">{value}</p>
         </article>
     );
 }
 
 function PrintTh({ children }: { children: React.ReactNode }) {
-    return <th className="border border-[#17120b] px-2 py-2 text-left font-bold">{children}</th>;
+    return (
+        <th className="border border-[#17120b] px-2 py-2 text-left font-bold">
+            {children}
+        </th>
+    );
 }
 
 function PrintTd({ children }: { children: React.ReactNode }) {
-    return <td className="border border-[#17120b] px-2 py-2 align-top">{children}</td>;
+    return (
+        <td className="border border-[#17120b] px-2 py-2 align-top">
+            {children}
+        </td>
+    );
 }
 
 function SignatureBlock({ label }: { label: string }) {

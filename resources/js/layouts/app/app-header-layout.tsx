@@ -119,7 +119,7 @@ function buildPrimaryNav(
                         permission: 'payments.manage',
                     },
                     {
-                        title: 'MICE Registry',
+                        title: 'MICE Report',
                         href: backendMiceRegistryHref(role),
                         icon: FileBarChart,
                         permission: 'bookings.view',
@@ -207,7 +207,7 @@ function buildPrimaryNav(
                         permission: 'payments.manage',
                     },
                     {
-                        title: 'MICE Registry',
+                        title: 'MICE Report',
                         href: backendMiceRegistryHref(role),
                         icon: FileBarChart,
                         permission: 'bookings.view',
@@ -401,11 +401,21 @@ type BackendHeaderUser = {
 
 type BackendHeaderAuth = {
     permissions?: string[];
-    roles?: Array<string | { name?: string | null; role?: string | null; title?: string | null }>;
+    roles?: Array<
+        | string
+        | { name?: string | null; role?: string | null; title?: string | null }
+    >;
     user?: BackendHeaderUser & {
         role?: string | null;
         role_name?: string | null;
-        roles?: Array<string | { name?: string | null; role?: string | null; title?: string | null }>;
+        roles?: Array<
+            | string
+            | {
+                  name?: string | null;
+                  role?: string | null;
+                  title?: string | null;
+              }
+        >;
     };
 };
 

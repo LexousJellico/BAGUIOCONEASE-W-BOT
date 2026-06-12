@@ -98,7 +98,7 @@ function SidebarLeaf({
                     {item.description ? (
                         <span
                             className={cx(
-                                'mt-0.5 block truncate text-[10px] font-medium',
+                                'backend-sidebar-item-description mt-0.5 block truncate text-[10px] font-medium',
                                 active ? 'text-slate-500' : 'text-white/32',
                             )}
                         >
@@ -191,7 +191,7 @@ function SidebarSection({
                         {section.title}
                     </span>
                     {section.description ? (
-                        <span className="mt-0.5 block truncate text-[10px] font-medium text-white/34">
+                        <span className="backend-sidebar-section-description mt-0.5 block truncate text-[10px] font-medium text-white/34">
                             {section.description}
                         </span>
                     ) : null}
@@ -260,7 +260,10 @@ export function AppSidebar({
     );
     const visibleSections = sections;
     const isClientRole = role === 'user';
-    const clientItems = useMemo(() => flattenBackendSections(visibleSections), [visibleSections]);
+    const clientItems = useMemo(
+        () => flattenBackendSections(visibleSections),
+        [visibleSections],
+    );
     const [openSections, setOpenSections] = useState<Record<string, boolean>>(
         {},
     );
@@ -346,13 +349,19 @@ export function AppSidebar({
                 {!collapsed ? (
                     <div className="mt-3 rounded-2xl border border-white/8 bg-black/18 px-3 py-2">
                         <div className="flex items-center justify-between gap-2 text-[10px] font-bold tracking-[0.18em] text-white/34 uppercase">
-                            <span>{isClientRole ? 'Navigation' : (activeSection?.title ?? 'Navigation')}</span>
                             <span>
-                                {(isClientRole ? clientItems.length : visibleSections.reduce(
-                                    (total, section) =>
-                                        total + section.items.length,
-                                    0,
-                                ))}{' '}
+                                {isClientRole
+                                    ? 'Navigation'
+                                    : (activeSection?.title ?? 'Navigation')}
+                            </span>
+                            <span>
+                                {isClientRole
+                                    ? clientItems.length
+                                    : visibleSections.reduce(
+                                          (total, section) =>
+                                              total + section.items.length,
+                                          0,
+                                      )}{' '}
                                 links
                             </span>
                         </div>

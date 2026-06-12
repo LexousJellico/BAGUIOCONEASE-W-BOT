@@ -850,6 +850,19 @@ html.dark .bccc-booking-submitted {
     border-radius: 1rem !important;
 }
 
+.bccc-booking-viewport-overlay {
+    inset: 0 !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    margin: 0 !important;
+}
+
 .bccc-booking-schedule-layout {
     --booking-schedule-page-height: max(
         720px,
@@ -1347,27 +1360,15 @@ html.dark .bccc-booking-open-view-field dd {
 }
 
 .bccc-booking-show-form-sheet {
-    border: 1px solid var(--booking-form-line) !important;
-    border-radius: 1rem !important;
-    background:
-        linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.76),
-            rgba(255, 250, 240, 0.62)
-        ),
-        var(--booking-form-fill) !important;
-    padding: clamp(0.75rem, 1.4vw, 1.1rem) !important;
-    box-shadow: 0 22px 60px rgba(47, 37, 23, 0.075) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
 }
 
 html.dark .bccc-booking-show-form-sheet {
-    background:
-        linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.05),
-            rgba(255, 255, 255, 0.025)
-        ),
-        #0a0d12 !important;
+    background: transparent !important;
 }
 
 .bccc-booking-show-main-grid {
@@ -1378,7 +1379,11 @@ html.dark .bccc-booking-show-form-sheet {
 .bccc-booking-show-section-flow {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 1rem;
+    gap: clamp(0.9rem, 1.5vw, 1.25rem);
+    min-width: 0;
+}
+
+.bccc-booking-show-section-flow > * {
     min-width: 0;
 }
 
@@ -1395,21 +1400,24 @@ html.dark .bccc-booking-show-form-sheet {
 }
 
 .bccc-booking-show-stat {
-    border-radius: 0.85rem !important;
-    padding: 0.85rem !important;
-    box-shadow: none !important;
+    border-top: 3px solid rgba(22, 71, 52, 0.72) !important;
+    border-radius: 0.9rem !important;
+    padding: 0.95rem !important;
+    box-shadow: 0 12px 28px rgba(47, 37, 23, 0.055) !important;
 }
 
 .bccc-booking-show-stat p:last-child {
     font-size: clamp(1rem, 1.5vw, 1.18rem) !important;
     letter-spacing: 0 !important;
+    overflow-wrap: anywhere;
 }
 
 .bccc-booking-show-section {
     scroll-margin-top: calc(var(--bccc-backend-chrome-height, 6.8rem) + 4rem);
-    border-radius: 0.85rem !important;
+    border-left: 4px solid rgba(22, 71, 52, 0.72) !important;
+    border-radius: 0.95rem !important;
     background: var(--booking-form-fill) !important;
-    box-shadow: none !important;
+    box-shadow: 0 16px 42px rgba(47, 37, 23, 0.06) !important;
 }
 
 .bccc-booking-show-section > div:first-child {
@@ -1417,10 +1425,11 @@ html.dark .bccc-booking-show-form-sheet {
     border-bottom-color: var(--booking-form-line) !important;
     background: linear-gradient(
         90deg,
-        rgba(22, 71, 52, 0.08),
-        rgba(244, 216, 148, 0.11)
+        rgba(22, 71, 52, 0.075),
+        rgba(255, 255, 255, 0)
     ) !important;
-    padding: 0.9rem 1rem !important;
+    padding: 1rem 1.1rem !important;
+    text-align: left !important;
 }
 
 html.dark .bccc-booking-show-section > div:first-child {
@@ -1432,7 +1441,7 @@ html.dark .bccc-booking-show-section > div:first-child {
 }
 
 .bccc-booking-show-section > div:last-child {
-    padding: 0.95rem !important;
+    padding: 1.1rem !important;
 }
 
 .bccc-booking-show-section h2 {
@@ -1447,11 +1456,12 @@ html.dark .bccc-booking-show-section > div:first-child {
 }
 
 .bccc-booking-show-field {
-    min-height: 6rem !important;
-    border-radius: 0.55rem !important;
+    min-height: 0 !important;
+    border-radius: 0.65rem !important;
     background: var(--booking-form-soft) !important;
-    padding: 0.72rem 0.78rem !important;
+    padding: 0.8rem 0.85rem !important;
     box-shadow: none !important;
+    text-align: left !important;
 }
 
 .bccc-booking-show-field > div:first-child {
@@ -1476,9 +1486,11 @@ html.dark .bccc-booking-show-section > div:first-child {
 }
 
 .bccc-booking-show-mini {
+    min-height: 5rem;
     border-radius: 0.6rem !important;
     background: var(--booking-form-soft) !important;
     padding: 0.7rem 0.8rem !important;
+    text-align: left !important;
 }
 
 .bccc-booking-show-table {
@@ -1487,11 +1499,16 @@ html.dark .bccc-booking-show-section > div:first-child {
 
 .bccc-booking-show-table th {
     padding: 0.65rem 0.75rem !important;
+    text-align: left !important;
+    vertical-align: bottom !important;
 }
 
 .bccc-booking-show-table td {
     padding: 0.65rem 0.75rem !important;
     line-height: 1.45 !important;
+    text-align: left !important;
+    vertical-align: top !important;
+    overflow-wrap: anywhere;
 }
 
 @media (max-width: 1280px) {
@@ -3039,6 +3056,21 @@ header.backend-topbar {
 @media (max-width: 1180px) {
     .analytics-line-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1366px), (max-height: 760px) {
+    .backend-sidebar-item-description,
+    .backend-sidebar-section-description {
+        display: none !important;
+    }
+
+    .backend-sidebar :is(a, button) {
+        min-height: 2.45rem;
+    }
+
+    .backend-sidebar section {
+        border-radius: 0.85rem !important;
     }
 }
 

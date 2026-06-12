@@ -6,8 +6,8 @@ use App\Models\Booking;
 use App\Models\MiceRecord;
 use App\Services\NotificationService;
 use App\Support\MiceReportCatalog;
-use App\Support\WorkspaceAccess;
 use App\Support\VenueAreaCatalog;
+use App\Support\WorkspaceAccess;
 use App\Support\WorkspacePage;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,9 +21,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MiceRegistryController extends Controller
 {
-    public function __construct(private readonly NotificationService $notifications)
-    {
-    }
+    public function __construct(private readonly NotificationService $notifications) {}
 
     public function index(Request $request): InertiaResponse
     {
@@ -36,35 +34,19 @@ class MiceRegistryController extends Controller
         );
     }
 
-    public function create(Request $request): InertiaResponse
+    public function create(Request $request): RedirectResponse
     {
         $prefillBookingId = $request->integer('booking_id') ?: null;
         $booking = $prefillBookingId
-            ? Booking::query()
-                ->with(['service.serviceType', 'bookingServices.service.serviceType', 'scheduleSegments', 'miceRecord'])
-                ->find($prefillBookingId)
+            ? Booking::query()->find($prefillBookingId)
             : null;
 
-        $existing = $booking?->miceRecord;
+        $redirect = $booking
+            ? route(WorkspacePage::routeName($request, 'bookings.edit'), $booking->id)
+            : route(WorkspacePage::routeName($request, 'reports.mice-registry'));
 
-        return Inertia::render(WorkspacePage::resolve($request, 'reports/mice-registry-form'), [
-            'workspaceRole' => WorkspaceAccess::role($request),
-            'mode' => $existing ? 'edit' : 'create',
-            'record' => $existing
-                ? $this->serializeRecord($existing->loadMissing('booking'))
-                : ($booking ? $this->miceDraftFromBooking($booking) : null),
-            'booking' => $booking ? $this->bookingFormPayload($booking) : null,
-            'booking_options' => $this->bookingOptions(),
-            'prefill_booking_id' => $prefillBookingId,
-            'form_meta' => $this->formMeta(),
-            'submitUrl' => $existing
-                ? route(WorkspacePage::routeName($request, 'reports.mice-registry.update'), $existing->id, false)
-                : route(WorkspacePage::routeName($request, 'reports.mice-registry.store'), [], false),
-            'method' => $existing ? 'put' : 'post',
-            'backUrl' => $booking
-                ? route(WorkspacePage::routeName($request, 'bookings.show'), $booking->id, false)
-                : route(WorkspacePage::routeName($request, 'reports.mice-registry'), [], false),
-        ]);
+        return redirect($redirect)
+            ->with('info', 'MICE report details are now completed inside the booking form.');
     }
 
     public function store(Request $request): RedirectResponse
@@ -91,29 +73,19 @@ class MiceRegistryController extends Controller
             : route(WorkspacePage::routeName($request, 'reports.mice-registry'));
 
         return redirect($redirect)
-            ->with('success', 'MICE registry entry saved successfully.');
+            ->with('success', 'MICE report details saved successfully.');
     }
 
-    public function edit(Request $request, MiceRecord $miceRecord): InertiaResponse
+    public function edit(Request $request, MiceRecord $miceRecord): RedirectResponse
     {
         abort_unless($this->canManage($request), 403);
 
-        $miceRecord->loadMissing('booking.service.serviceType', 'booking.bookingServices.service.serviceType', 'booking.scheduleSegments');
+        $redirect = $miceRecord->booking_id
+            ? route(WorkspacePage::routeName($request, 'bookings.edit'), $miceRecord->booking_id)
+            : route(WorkspacePage::routeName($request, 'reports.mice-registry'));
 
-        return Inertia::render(WorkspacePage::resolve($request, 'reports/mice-registry-form'), [
-            'workspaceRole' => WorkspaceAccess::role($request),
-            'mode' => 'edit',
-            'record' => $this->serializeRecord($miceRecord),
-            'booking' => $miceRecord->booking ? $this->bookingFormPayload($miceRecord->booking) : null,
-            'booking_options' => $this->bookingOptions(),
-            'prefill_booking_id' => $miceRecord->booking_id,
-            'form_meta' => $this->formMeta(),
-            'submitUrl' => route(WorkspacePage::routeName($request, 'reports.mice-registry.update'), $miceRecord->id, false),
-            'method' => 'put',
-            'backUrl' => $miceRecord->booking_id
-                ? route(WorkspacePage::routeName($request, 'bookings.show'), $miceRecord->booking_id, false)
-                : route(WorkspacePage::routeName($request, 'reports.mice-registry'), [], false),
-        ]);
+        return redirect($redirect)
+            ->with('info', 'MICE report details are now edited inside the linked booking form.');
     }
 
     public function update(Request $request, MiceRecord $miceRecord): RedirectResponse
@@ -131,7 +103,7 @@ class MiceRegistryController extends Controller
             : route(WorkspacePage::routeName($request, 'reports.mice-registry'));
 
         return redirect($redirect)
-            ->with('success', 'MICE registry entry updated successfully.');
+            ->with('success', 'MICE report details updated successfully.');
     }
 
     public function destroy(Request $request, MiceRecord $miceRecord): RedirectResponse
@@ -144,7 +116,7 @@ class MiceRegistryController extends Controller
 
         return redirect()
             ->route(WorkspacePage::routeName($request, 'reports.mice-registry'))
-            ->with('success', 'MICE registry entry deleted successfully.');
+            ->with('success', 'MICE report entry deleted successfully.');
     }
 
     public function print(Request $request): InertiaResponse
@@ -165,7 +137,7 @@ class MiceRegistryController extends Controller
         $venueBreakdown = $this->venueBreakdown($records);
         $originBreakdown = $this->originBreakdown($records);
 
-        $filename = 'bccc-mice-report-' . now()->format('Y-m-d-His') . '.xls';
+        $filename = 'bccc-mice-report-'.now()->format('Y-m-d-His').'.xls';
 
         return response()->streamDownload(function () use (
             $records,
@@ -176,9 +148,9 @@ class MiceRegistryController extends Controller
         ) {
             $escape = static fn (mixed $value): string => htmlspecialchars((string) ($value ?? ''), ENT_QUOTES | ENT_XML1, 'UTF-8');
             $sheetStart = static function (string $name, array $widths = []) use ($escape): void {
-                echo '<Worksheet ss:Name="' . $escape($name) . '"><Table>';
+                echo '<Worksheet ss:Name="'.$escape($name).'"><Table>';
                 foreach ($widths as $width) {
-                    echo '<Column ss:AutoFitWidth="0" ss:Width="' . (int) $width . '"/>';
+                    echo '<Column ss:AutoFitWidth="0" ss:Width="'.(int) $width.'"/>';
                 }
             };
             $sheetEnd = static function (): void {
@@ -188,7 +160,7 @@ class MiceRegistryController extends Controller
                 echo '<Row>';
                 foreach ($cells as $cell) {
                     $type = is_numeric($cell) ? 'Number' : 'String';
-                    echo '<Cell ss:StyleID="' . $style . '"><Data ss:Type="' . $type . '">' . $escape($cell) . '</Data></Cell>';
+                    echo '<Cell ss:StyleID="'.$style.'"><Data ss:Type="'.$type.'">'.$escape($cell).'</Data></Cell>';
                 }
                 echo '</Row>';
             };
@@ -203,7 +175,7 @@ class MiceRegistryController extends Controller
             echo '</Styles>';
 
             $sheetStart('Summary', [240, 160, 160, 160]);
-            $row(['BCCC MICE Registry Export'], 'Title');
+            $row(['BCCC MICE Report Export'], 'Title');
             $row(['Generated At', now()->format('Y-m-d H:i:s')]);
             $row([]);
             foreach ($summary as $key => $value) {
@@ -594,7 +566,7 @@ class MiceRegistryController extends Controller
                 'booking:id,client_name,company_name,type_of_event,booking_date_from,booking_date_to,booking_status,payment_status',
             ])
             ->when($filters['q'] !== '', function (Builder $query) use ($filters) {
-                $needle = '%' . $filters['q'] . '%';
+                $needle = '%'.$filters['q'].'%';
 
                 $query->where(function (Builder $nested) use ($needle) {
                     $nested
@@ -633,7 +605,7 @@ class MiceRegistryController extends Controller
             ->when($filters['venue_area'] !== '', fn (Builder $query) => $query->where('venue_area', $filters['venue_area']))
             ->when($filters['enterprise_group'] !== '', fn (Builder $query) => $query->where('enterprise_group', $filters['enterprise_group']))
             ->when($filters['origin'] !== '', function (Builder $query) use ($filters) {
-                $needle = '%' . $filters['origin'] . '%';
+                $needle = '%'.$filters['origin'].'%';
 
                 $query->where(function (Builder $nested) use ($needle) {
                     $nested
@@ -836,7 +808,7 @@ class MiceRegistryController extends Controller
             'event_started_at' => $from->toDateString(),
             'event_finished_at' => $to->toDateString(),
             'number_of_hours' => max(0, (float) ($booking->scheduleSegments?->sum('additional_hours') ?? 0)),
-            'event_name' => $payload['type_of_event'] ?: ('Booking #' . $booking->id),
+            'event_name' => $payload['type_of_event'] ?: ('Booking #'.$booking->id),
             'event_category' => $isPrivate ? 'Private Event' : 'Convention',
             'classification_of_event' => $isPrivate ? 'Private / Personal Event' : 'Public Event',
             'type_of_event' => $payload['type_of_event'],
@@ -890,11 +862,11 @@ class MiceRegistryController extends Controller
                 return [
                     'id' => (int) $booking->id,
                     'label' => trim(implode(' • ', array_filter([
-                        'BKG-' . str_pad((string) $booking->id, 5, '0', STR_PAD_LEFT),
+                        'BKG-'.str_pad((string) $booking->id, 5, '0', STR_PAD_LEFT),
                         $booking->client_name,
                         $booking->company_name,
                         $booking->type_of_event,
-                        $dateFrom && $dateTo ? $dateFrom . ' to ' . $dateTo : null,
+                        $dateFrom && $dateTo ? $dateFrom.' to '.$dateTo : null,
                     ]))),
                 ];
             })
@@ -976,7 +948,7 @@ class MiceRegistryController extends Controller
             'booking_id' => $record->booking_id,
             'booking_summary' => $record->booking
                 ? trim(implode(' • ', array_filter([
-                    'BKG-' . str_pad((string) $record->booking->id, 5, '0', STR_PAD_LEFT),
+                    'BKG-'.str_pad((string) $record->booking->id, 5, '0', STR_PAD_LEFT),
                     $record->booking->client_name,
                     $record->booking->company_name,
                     $record->booking->type_of_event,

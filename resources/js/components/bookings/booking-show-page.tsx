@@ -7,7 +7,6 @@ import { PaymentProofPanel } from '@/components/bookings/payment-proof-panel';
 import {
     bookingBasePath,
     bookingEditPath,
-    bookingSurveyPath,
     cleanLabel,
     formatDateTime,
     formatMoney,
@@ -330,20 +329,7 @@ function bookingMiceReportPath(
     role: ReturnType<typeof normalizeWorkspaceRole>,
     booking: BookingLike,
 ): string {
-    const report = (booking.mice_report ??
-        booking.miceRecord ??
-        booking.mice_record) as Record<string, unknown> | null | undefined;
-    const reportId = report && typeof report === 'object' ? report.id : null;
-
-    if (role === 'admin' || role === 'manager') {
-        const prefix = role === 'manager' ? '/manager' : '/admin';
-
-        return reportId
-            ? `${prefix}/reports/mice-registry/${reportId}/edit`
-            : `${prefix}/reports/mice-registry/create?booking_id=${booking.id}`;
-    }
-
-    return bookingSurveyPath(role, booking.id);
+    return bookingEditPath(role, booking.id);
 }
 
 function bookingPostEventTotal(booking: BookingLike): number {
@@ -975,6 +961,51 @@ function miceSnapshotGroups(
                 ],
             ],
         },
+        {
+            title: 'Registry and compliance',
+            rows: [
+                [
+                    'Enterprise group',
+                    reportValue(report, ['enterprise_group'], '-'),
+                ],
+                [
+                    'BTC group code',
+                    reportValue(report, ['btc_group_code'], '-'),
+                ],
+                [
+                    'Event category',
+                    reportValue(report, ['event_category'], '-'),
+                ],
+                [
+                    'Organizer type',
+                    reportValue(report, ['organizer_type'], '-'),
+                ],
+                [
+                    'Total employees',
+                    reportValue(report, ['total_employees'], '0'),
+                ],
+                [
+                    'Female employees',
+                    reportValue(report, ['female_employees'], '0'),
+                ],
+                [
+                    'Male employees',
+                    reportValue(report, ['male_employees'], '0'),
+                ],
+                [
+                    'Permit to engage',
+                    report ? (report.permit_to_engage ? 'Yes' : 'No') : '-',
+                ],
+                [
+                    'DOT accredited',
+                    report ? (report.dot_accredited ? 'Yes' : 'No') : '-',
+                ],
+                [
+                    'Active member',
+                    report ? (report.active_member ? 'Yes' : 'No') : '-',
+                ],
+            ],
+        },
     ];
 }
 
@@ -1036,7 +1067,7 @@ function SummaryCard({
                         {label}
                     </p>
 
-                    <p className="mt-2 truncate text-xl font-semibold tracking-normal text-[#21180d] dark:text-white">
+                    <p className="mt-2 text-xl leading-tight font-semibold tracking-normal break-words text-[#21180d] dark:text-white">
                         {value}
                     </p>
                 </div>
@@ -1069,8 +1100,8 @@ function SectionCard({
             id={id}
             className="bccc-booking-show-section overflow-hidden rounded-[1.55rem] border border-[#d9c7a6]/70 bg-white/84 shadow-[0_22px_70px_rgba(47,37,23,0.08)] backdrop-blur-2xl dark:border-white/10 dark:bg-white/[0.055]"
         >
-            <div className="flex flex-col gap-4 border-b border-[#eadcc2]/80 p-5 lg:flex-row lg:items-end lg:justify-between dark:border-white/10">
-                <div>
+            <div className="flex flex-col items-start gap-4 border-b border-[#eadcc2]/80 p-5 lg:flex-row lg:justify-between dark:border-white/10">
+                <div className="min-w-0">
                     <p className="text-[10px] font-bold tracking-[0.22em] text-[#9d7b3d] uppercase dark:text-[#f1d89b]">
                         {eyebrow}
                     </p>
@@ -1087,7 +1118,9 @@ function SectionCard({
                 </div>
 
                 {actions ? (
-                    <div className="flex flex-wrap gap-2">{actions}</div>
+                    <div className="flex flex-wrap items-center gap-2 lg:shrink-0">
+                        {actions}
+                    </div>
                 ) : null}
             </div>
 
@@ -2531,7 +2564,7 @@ export function BookingShowPage() {
                                         className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[#2f2517] px-5 text-sm font-semibold text-white transition hover:bg-[#4a3921] dark:bg-white dark:text-[#17120b]"
                                     >
                                         <ShieldCheck className="h-4 w-4" />
-                                        Open / Edit MICE Report
+                                        Edit Booking MICE Details
                                     </Link>
                                 </div>
                             </SectionCard>
@@ -2568,12 +2601,12 @@ export function BookingShowPage() {
 
 function MiniBox({ label, value }: { label: string; value: string }) {
     return (
-        <div className="bccc-booking-show-mini flex items-center justify-between gap-4 rounded-[1rem] border border-[#eadcc2]/80 bg-[#fffaf0]/72 px-4 py-3 dark:border-white/10 dark:bg-white/[0.035]">
+        <div className="bccc-booking-show-mini grid content-start gap-2 rounded-[1rem] border border-[#eadcc2]/80 bg-[#fffaf0]/72 px-4 py-3 dark:border-white/10 dark:bg-white/[0.035]">
             <span className="text-xs font-bold tracking-[0.16em] text-[#9d7b3d] uppercase dark:text-[#f1d89b]">
                 {label}
             </span>
 
-            <strong className="text-right text-sm font-semibold text-[#21180d] dark:text-white">
+            <strong className="text-left text-sm leading-6 font-semibold break-words text-[#21180d] dark:text-white">
                 {value}
             </strong>
         </div>

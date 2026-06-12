@@ -63,7 +63,10 @@ function normalizeRoleText(value?: unknown): string | null {
         return null;
     }
 
-    const normalized = String(value).trim().toLowerCase().replace(/[_-]+/g, ' ');
+    const normalized = String(value)
+        .trim()
+        .toLowerCase()
+        .replace(/[_-]+/g, ' ');
 
     return normalized || null;
 }
@@ -77,7 +80,11 @@ function roleName(role: RoleLike): string | null {
         return normalizeRoleText(role);
     }
 
-    return normalizeRoleText(role.name) ?? normalizeRoleText(role.role) ?? normalizeRoleText(role.title);
+    return (
+        normalizeRoleText(role.name) ??
+        normalizeRoleText(role.role) ??
+        normalizeRoleText(role.title)
+    );
 }
 
 function pathRoleFallback(): BackendRole | null {
@@ -114,8 +121,8 @@ function pathRoleFallback(): BackendRole | null {
 
 export function getBackendRole(auth?: AuthLike | null): BackendRole {
     const roleValues = [
-        ...(Array.isArray(auth?.roles) ? auth?.roles ?? [] : []),
-        ...(Array.isArray(auth?.user?.roles) ? auth?.user?.roles ?? [] : []),
+        ...(Array.isArray(auth?.roles) ? (auth?.roles ?? []) : []),
+        ...(Array.isArray(auth?.user?.roles) ? (auth?.user?.roles ?? []) : []),
         auth?.user?.role,
         auth?.user?.role_name,
     ]
@@ -265,7 +272,8 @@ export function backendNavSections(role: BackendRole): BackendNavSection[] {
                         icon: LayoutDashboard,
                         exact: true,
                         permission: 'dashboard.view',
-                        description: 'Metrics, monitoring, reports, and operational command center',
+                        description:
+                            'Metrics, monitoring, reports, and operational command center',
                     },
                 ],
             },
@@ -302,7 +310,7 @@ export function backendNavSections(role: BackendRole): BackendNavSection[] {
             {
                 key: 'review',
                 title: 'Review & Reports',
-                description: 'Payments, analytics, and MICE registry',
+                description: 'Payments, analytics, and MICE reports',
                 icon: FileBarChart,
                 defaultOpen: true,
                 items: [
@@ -314,7 +322,7 @@ export function backendNavSections(role: BackendRole): BackendNavSection[] {
                         description: 'Review proof and payment status',
                     },
                     {
-                        title: 'MICE Registry',
+                        title: 'MICE Report',
                         href: '/admin/reports/mice-registry',
                         icon: FileBarChart,
                         permission: 'bookings.view',
@@ -440,7 +448,7 @@ export function backendNavSections(role: BackendRole): BackendNavSection[] {
                         description: 'Review submitted payment proofs',
                     },
                     {
-                        title: 'MICE Registry',
+                        title: 'MICE Report',
                         href: '/manager/reports/mice-registry',
                         icon: FileBarChart,
                         permission: 'bookings.view',
@@ -557,11 +565,17 @@ export function backendUtilityItems(role: BackendRole): BackendNavItem[] {
     ];
 }
 
-export function flattenBackendSections(sections: BackendNavSection[]): BackendNavItem[] {
+export function flattenBackendSections(
+    sections: BackendNavSection[],
+): BackendNavItem[] {
     return sections.flatMap((section) => section.items);
 }
 
-export function isBackendActive(currentUrl: string, href: string, exact = false): boolean {
+export function isBackendActive(
+    currentUrl: string,
+    href: string,
+    exact = false,
+): boolean {
     const currentPath = currentUrl.split('?')[0].split('#')[0];
     const target = href.split('?')[0].split('#')[0];
 
@@ -576,8 +590,13 @@ export function isBackendActive(currentUrl: string, href: string, exact = false)
     return currentPath === target || currentPath.startsWith(`${target}/`);
 }
 
-export function sectionIsActive(currentUrl: string, section: BackendNavSection): boolean {
-    return section.items.some((item) => isBackendActive(currentUrl, item.href, item.exact));
+export function sectionIsActive(
+    currentUrl: string,
+    section: BackendNavSection,
+): boolean {
+    return section.items.some((item) =>
+        isBackendActive(currentUrl, item.href, item.exact),
+    );
 }
 
 export function userHasPermission(
@@ -604,7 +623,9 @@ export function filterBackendSectionsByPermission(
     return sections
         .map((section) => ({
             ...section,
-            items: section.items.filter((item) => userHasPermission(permissions, item.permission)),
+            items: section.items.filter((item) =>
+                userHasPermission(permissions, item.permission),
+            ),
         }))
         .filter((section) => section.items.length > 0);
 }

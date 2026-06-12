@@ -88,7 +88,7 @@ export const roleWorkspaces: Record<RoleKey, RoleWorkspace> = {
                 description: 'Review payment compliance and settlement status.',
             },
             {
-                title: 'MICE Registry',
+                title: 'MICE Report',
                 href: '/admin/reports/mice-registry',
                 icon: FileBarChart,
                 permission: 'bookings.view',
@@ -169,7 +169,7 @@ export const roleWorkspaces: Record<RoleKey, RoleWorkspace> = {
                 description: 'Check payment compliance and reservations.',
             },
             {
-                title: 'MICE Registry',
+                title: 'MICE Report',
                 href: '/manager/reports/mice-registry',
                 icon: FileBarChart,
                 permission: 'bookings.view',
